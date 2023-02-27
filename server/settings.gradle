@@ -1,0 +1,5 @@
+rootProject.name = 'server'
+include 'module-shared'
+include 'module-api'
+include 'module-batch'
+
