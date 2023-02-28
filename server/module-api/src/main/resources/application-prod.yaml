@@ -1,0 +1,8 @@
+profile-name: prod
+
+spring:
+  config:
+    import: application-aws.yaml
+logging:
+  level:
+    root: error
