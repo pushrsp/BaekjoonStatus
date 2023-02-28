@@ -338,3 +338,5 @@ thumb
 sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij+all,java,react,node
+
+application-aws.yaml
