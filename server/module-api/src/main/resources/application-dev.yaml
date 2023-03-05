@@ -20,3 +20,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
 server:
   port: 8080
+logging:
+  level:
+    org.hibernate.SQL: debug
