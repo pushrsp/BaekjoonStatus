@@ -13,10 +13,9 @@ import java.util.UUID;
 public class Tag {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "tag_id", columnDefinition = "BINARY(16)")
-    private UUID id;
+    @GeneratedValue
+    @Column(name = "tag_id")
+    private Long id;
 
     @Column(name = "eng_name", nullable = false, length = 100)
     private String engName;
