@@ -3,6 +3,8 @@ package project.BaekjoonStatus.shared.domain.problemtag.entity;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
+import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -12,15 +14,16 @@ import java.util.UUID;
 @Data
 public class ProblemTag {
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "problem_tag_id", columnDefinition = "BINARY(16)")
-    private UUID id;
+    @GeneratedValue
+    @Column(name = "problem_tag_id")
+    private Long id;
 
-    @Column(name = "problem_id", nullable = false)
-    private Long problemId;
+    @ManyToOne
+    @JoinColumn(name = "problem_id", columnDefinition = "BIGINT")
+    private Problem problem;
 
-    @Column(name = "tag_id", columnDefinition = "BINARY(16)", nullable = false)
-    private UUID tagId;
+    @ManyToOne
+    @JoinColumn(name = "tag_id", columnDefinition = "BIGINT")
+    private Tag tag;
 
 }

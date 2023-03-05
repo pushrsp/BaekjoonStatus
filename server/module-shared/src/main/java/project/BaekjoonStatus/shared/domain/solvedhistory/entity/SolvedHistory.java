@@ -4,6 +4,8 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
+import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
+import project.BaekjoonStatus.shared.domain.user.entity.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,13 +17,17 @@ import java.util.UUID;
 public class SolvedHistory {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "solved_history_id", columnDefinition = "BINARY(16)")
-    private UUID id;
+    @GeneratedValue
+    @Column(name = "solved_history_id")
+    private Long id;
 
-    @Column(name = "problem_id", nullable = false)
-    private Long problemId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", columnDefinition = "BIGINT")
+    private User user;
+
+    @OneToOne
+    @JoinColumn(name = "problem_id", columnDefinition = "BIGINT")
+    private Problem problem;
 
     @Column(name = "is_before", nullable = false)
     private boolean isBefore;

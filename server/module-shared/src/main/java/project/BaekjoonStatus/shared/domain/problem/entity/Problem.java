@@ -3,12 +3,12 @@ package project.BaekjoonStatus.shared.domain.problem.entity;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import project.BaekjoonStatus.shared.domain.problemtag.entity.ProblemTag;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "PROBLEM")
@@ -16,11 +16,14 @@ import java.time.LocalDateTime;
 public class Problem {
 
     @Id
-    @Column(name = "problem_id", nullable = false)
+    @Column(name = "problem_id")
     private Long id;
 
     @Column(name = "level", nullable = false)
     private int level;
+
+    @OneToMany(mappedBy = "problem")
+    private List<ProblemTag> problemTags = new ArrayList<>();
 
     @Column(name = "created_time", nullable = false)
     @CreatedDate
