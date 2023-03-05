@@ -1,5 +1,15 @@
 profile-name: prod
 
+spring:
+  config:
+    import: application-aws.yaml
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: create
+    database: mysql
+
 server:
   port: 9090
 logging:
