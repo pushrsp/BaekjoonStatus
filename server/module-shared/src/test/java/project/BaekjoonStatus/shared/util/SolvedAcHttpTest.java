@@ -4,10 +4,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import project.BaekjoonStatus.shared.dto.SolvedAcProblemResp;
-import project.BaekjoonStatus.shared.dto.SolvedAcUserResp;
+import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
+import project.BaekjoonStatus.shared.dto.response.SolvedAcUserResp;
 import project.BaekjoonStatus.shared.exception.SolvedAcProblemNotFound;
 import project.BaekjoonStatus.shared.exception.SolvedAcUserNotFound;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class SolvedAcHttpTest {
 
@@ -62,6 +65,20 @@ class SolvedAcHttpTest {
 
         //then
         Assertions.assertThrows(SolvedAcProblemNotFound.class, () -> solvedAcHttp.getProblemByProblemId(problemId));
+    }
+
+    @Test
+    public void 여러_문제_가져오기() throws Exception {
+        //given
+        BaekjoonCrawling crawling = new BaekjoonCrawling("pushrsp");
+        crawling.start();
+        List<Long> solved = crawling.getSolved();
+
+        //when
+        List<SolvedAcProblemResp> problems = solvedAcHttp.getProblemsByProblemIds(solved);
+
+        //then
+        Assertions.assertEquals(solved.size(), problems.size());
     }
 
 }
