@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.shared.domain.solvedhistory.entity;
 
 import lombok.Data;
+import lombok.Getter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,7 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "SOLVED_HISTORY")
-@Data
+@Getter
 public class SolvedHistory {
 
     @Id
