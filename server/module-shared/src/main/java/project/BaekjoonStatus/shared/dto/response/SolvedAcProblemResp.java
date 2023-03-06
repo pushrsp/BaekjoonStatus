@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.dto;
+package project.BaekjoonStatus.shared.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class SolvedAcProblemResp {
     private List<Tag> tags = new ArrayList<>();
 
     @Data
-    static class Tag {
+    public static class Tag {
         private String key;
         private boolean isMeta;
         private Long bojTagId;
@@ -29,7 +29,7 @@ public class SolvedAcProblemResp {
         private List<Alias> aliases = new ArrayList<>();
 
         @Data
-        static class DisplayName {
+        public static class DisplayName {
             private String language;
             private String name;
             @JsonProperty("short")
@@ -37,7 +37,7 @@ public class SolvedAcProblemResp {
         }
 
         @Data
-        static class Alias {
+        public static class Alias {
             private String alias;
         }
     }

@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.dto;
+package project.BaekjoonStatus.shared.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
