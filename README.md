@@ -3,6 +3,7 @@
 ## 외부 API
 * 크롤링
   * https://www.acmicpc.net/user/{{baekjoon_username}}
+  * https://github.com/tony9402/baekjoon/blob/main/picked.md 오늘의 백준 문제
 * API
   * https://solved.ac/api/v3/user/show 유저 정보 [GET]
   * https://solved.ac/api/v3/problem/show 문제 정보 [GET]
