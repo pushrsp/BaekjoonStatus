@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.BaekjoonNotFound;
+import project.BaekjoonStatus.shared.exception.MyException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,8 +30,21 @@ public class BaekjoonCrawling {
         try {
             Document document = conn.get();
             setSolved(document);
-        } catch (IOException e) {
-            throw new BaekjoonNotFound(CodeEnum.BAEKJOON_NOT_FOUND);
+        } catch (Exception e) {
+            throw new MyException(CodeEnum.BAEKJOON_SERVER_ERROR);
+        }
+    }
+
+    public List<Long> getMySolvedHistories() {
+        try {
+            Document document = conn.get();
+            Elements elements = document.select("div.problem-list");
+
+            return Arrays.stream(elements.get(0).text().split(" "))
+                    .map(Long::parseLong)
+                    .toList();
+        } catch (Exception e) {
+            throw new MyException(CodeEnum.BAEKJOON_SERVER_ERROR);
         }
     }
 
