@@ -37,11 +37,11 @@ public class ProblemWriteServiceTest {
         List<SolvedAcProblemResp> infos = solvedAcHttp.getProblemsByProblemIds(solved);
         List<Problem> problems = new ArrayList<>();
 
-        for (SolvedAcProblemResp info : infos)
-            problems.add(Problem.create(info.getProblemId(), info.getLevel().intValue(), info.getTitleKo(), new ArrayList<>()));
+//        for (SolvedAcProblemResp info : infos)
+//            problems.add(Problem.create(info.getProblemId(), info.getLevel().intValue(), info.getTitleKo(), new ArrayList<>()));
 
 
-        int totalLen = problemWriteService.bulkInsert(problems);
+        int totalLen = problemWriteService.bulkInsert(problems).size();
 
         //then
         Assertions.assertEquals(solved.size(), totalLen);
