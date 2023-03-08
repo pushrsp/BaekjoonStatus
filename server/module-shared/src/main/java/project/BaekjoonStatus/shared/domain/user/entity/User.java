@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import project.BaekjoonStatus.shared.dto.command.UserCommand;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -49,16 +50,20 @@ public class User {
     @LastModifiedDate
     private LocalDateTime modifiedTime;
 
-    public User(String username, String password, String baekjoonUsername, boolean isPrivate) {
-        this.username = username;
-        this.password = password;
-        this.baekjoonUsername = baekjoonUsername;
-        this.isPrivate = isPrivate;
+    private User(UserCommand userCommand) {
+        this.username = userCommand.getUsername();
+        this.password = userCommand.getPassword();
+        this.baekjoonUsername = userCommand.getBaekjoonUsername();
+        this.isPrivate = false;
 
         ZoneId zoneId = ZoneId.of("UTC");
 
         this.createdTime = LocalDateTime.now(zoneId);
         if(this.modifiedTime == null)
             this.modifiedTime = LocalDateTime.now(zoneId);
+    }
+
+    public static User create(UserCommand userCommand) {
+        return new User(userCommand);
     }
 }
