@@ -5,18 +5,20 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
+import project.BaekjoonStatus.shared.dto.command.TagCommand;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "PROBLEM_TAG")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProblemTag {
     @Id
-    @GeneratedValue
+    @GeneratedValue()
     @Column(name = "problem_tag_id")
     private Long id;
 
@@ -25,23 +27,44 @@ public class ProblemTag {
     private Problem problem;
 
     @ManyToOne
-    @JoinColumn(name = "tag_id", columnDefinition = "BIGINT")
+    @JoinColumn(name = "tag_id")
+    @Type(type = "uuid-char")
     private Tag tag;
 
     public void setProblem(Problem problem) {
         this.problem = problem;
+        this.problem.getProblemTags().add(this);
     }
 
-    public void setTag(Tag tag) {
+    private void setTag(Tag tag) {
         this.tag = tag;
     }
 
-    /* 생성 메서드 */
-    public static ProblemTag create(Tag tag) {
-        ProblemTag problemTag = new ProblemTag();
-        problemTag.setTag(tag);
+    private ProblemTag(Tag tag) {
+        setTag(tag);
+    }
 
-        return problemTag;
+    public static ProblemTag create(Tag tag) {
+        return new ProblemTag(tag);
+    }
+
+    /* 생성 메서드 */
+    public static List<ProblemTag> create(List<TagCommand> tagCommands) {
+        List<ProblemTag> problemTags = new ArrayList<>();
+        for (TagCommand tagCommand : tagCommands)
+            problemTags.add(ProblemTag.create(Tag.create(tagCommand)));
+
+        return problemTags;
+    }
+
+    public static List<ProblemTag> create(Problem problem, List<TagCommand> tagCommands) {
+        List<ProblemTag> problemTags = new ArrayList<>();
+        for (TagCommand tagCommand : tagCommands) {
+            ProblemTag problemTag = ProblemTag.create(Tag.create(tagCommand));
+            problemTag.setProblem(problem);
+        }
+
+        return problemTags;
     }
 
 }

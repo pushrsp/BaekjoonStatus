@@ -6,6 +6,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcUserResp;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
+import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.exception.SolvedAcProblemNotFound;
 import project.BaekjoonStatus.shared.exception.SolvedAcUserNotFound;
 
@@ -36,7 +37,7 @@ public class SolvedAcHttp {
         try {
             return restTemplate.getForObject(uri, SolvedAcUserResp.class);
         } catch (HttpClientErrorException e) {
-            throw new SolvedAcUserNotFound(CodeEnum.SOLVED_AC_USER_NOT_FOUND);
+            throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
         }
     }
 
@@ -48,12 +49,12 @@ public class SolvedAcHttp {
                 .encode(Charset.defaultCharset())
                 .build()
                 .toUri();
-        RestTemplate restTemplate = new RestTemplate();
 
         try {
+            RestTemplate restTemplate = new RestTemplate();
             return restTemplate.getForObject(uri, SolvedAcProblemResp.class);
         } catch (HttpClientErrorException e) {
-            throw new SolvedAcProblemNotFound(CodeEnum.SOLVED_AC_PROBLEM_NOT_FOUND);
+            throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
         }
     }
 
@@ -66,9 +67,12 @@ public class SolvedAcHttp {
                 .build()
                 .toUri();
 
-        //TODO 예외처리
-        RestTemplate restTemplate = new RestTemplate();
-        return Arrays.stream(Objects.requireNonNull(restTemplate.getForObject(uri, SolvedAcProblemResp[].class))).toList();
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            return Arrays.stream(Objects.requireNonNull(restTemplate.getForObject(uri, SolvedAcProblemResp[].class))).toList();
+        } catch (HttpClientErrorException e) {
+            throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
+        }
     }
 
     public List<SolvedAcProblemResp> getProblemsByProblemIds(List<Long> problemIds) {

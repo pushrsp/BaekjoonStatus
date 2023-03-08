@@ -31,7 +31,7 @@ public class TagWriteServiceTest {
             tags.add(new Tag(i + " test"));
 
         //when
-        int totalLen = tagWriteService.bulkInsert(tags);
+        int totalLen = tagWriteService.bulkInsert(tags).size();
 
         //then
         Assertions.assertEquals(100, totalLen);
