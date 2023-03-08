@@ -11,8 +11,10 @@
 
 ## 서버 제공 API
 
-* /users 회원가입 [POST]
-* /users/login 로그인 [POST]
+* /auth/signup 회원가입 [POST]
+* /auth/:username 아이디 중복 체크 [GET]
+* /auth/baekjoon/:username 백준 아이디 체크 [GET]
+* /auth/login 로그인 [POST]
 * /users/me 자동 로그인 [GET]
 * /daily-problems 오늘의 문제 [GET]
 * /stats/daily 일별 solved 개수 [GET]
