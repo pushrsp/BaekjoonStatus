@@ -1,5 +1,8 @@
 # BaekjoonStatus
 
+## 데이터베이스 관계도
+![ERD](https://raw.githubusercontent.com/pushrsp/BaekjoonStatus/7139025db940ae98553509d95fed18ee3a8327f7/docs/erd.svg)
+
 ## 외부 API
 * 크롤링
   * https://www.acmicpc.net/user/{{baekjoon_username}}
