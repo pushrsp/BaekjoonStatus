@@ -12,8 +12,8 @@
 ## 서버 제공 API
 
 * /auth/signup 회원가입 [POST]
-* /auth/:username 아이디 중복 체크 [GET]
-* /auth/baekjoon/:username 백준 아이디 체크 [GET]
+* /auth?username 아이디 중복 체크 [GET]
+* /auth/baekjoon?username 백준 아이디 체크 [GET]
 * /auth/login 로그인 [POST]
 * /users/me 자동 로그인 [GET]
 * /daily-problems 오늘의 문제 [GET]
