@@ -26,15 +26,6 @@ public class BaekjoonCrawling {
         this.conn = Jsoup.connect(BAEKJOON_URL + "/" + username);
     }
 
-    public void start() {
-        try {
-            Document document = conn.get();
-            setSolved(document);
-        } catch (Exception e) {
-            throw new MyException(CodeEnum.BAEKJOON_SERVER_ERROR);
-        }
-    }
-
     public List<Long> getMySolvedHistories() {
         try {
             Document document = conn.get();
