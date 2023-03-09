@@ -5,7 +5,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
-import project.BaekjoonStatus.shared.dto.command.TagCommand;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,11 +17,13 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProblemTag {
     @Id
-    @GeneratedValue()
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "problem_tag_id")
-    private Long id;
+    @Type(type = "uuid-char")
+    private UUID id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "problem_id", columnDefinition = "BIGINT")
     private Problem problem;
 
@@ -33,38 +34,28 @@ public class ProblemTag {
 
     public void setProblem(Problem problem) {
         this.problem = problem;
-        this.problem.getProblemTags().add(this);
+        problem.getProblemTags().add(this);
     }
 
     private void setTag(Tag tag) {
         this.tag = tag;
     }
 
-    private ProblemTag(Tag tag) {
+    private ProblemTag(Problem problem, Tag tag) {
+        setProblem(problem);
         setTag(tag);
     }
 
-    public static ProblemTag create(Tag tag) {
-        return new ProblemTag(tag);
-    }
-
     /* 생성 메서드 */
-    public static List<ProblemTag> create(List<TagCommand> tagCommands) {
+    public static ProblemTag create(Problem problem, Tag tag) {
+        return new ProblemTag(problem, tag);
+    }
+
+    public static List<ProblemTag> create(Problem problem, List<Tag> tags) {
         List<ProblemTag> problemTags = new ArrayList<>();
-        for (TagCommand tagCommand : tagCommands)
-            problemTags.add(ProblemTag.create(Tag.create(tagCommand)));
+        for (Tag tag : tags)
+            problemTags.add(ProblemTag.create(problem, tag));
 
         return problemTags;
     }
-
-    public static List<ProblemTag> create(Problem problem, List<TagCommand> tagCommands) {
-        List<ProblemTag> problemTags = new ArrayList<>();
-        for (TagCommand tagCommand : tagCommands) {
-            ProblemTag problemTag = ProblemTag.create(Tag.create(tagCommand));
-            problemTag.setProblem(problem);
-        }
-
-        return problemTags;
-    }
-
 }

@@ -5,30 +5,24 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import project.BaekjoonStatus.shared.dto.command.UserCommand;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "USER", uniqueConstraints = {
-        @UniqueConstraint(
-                name = "username_unique",
-                columnNames = "username"
-        )
-})
+@Table(name = "USER")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
-    @GeneratedValue
-    @Column(name = "user_id")
-    private Long id;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "tag_id")
+    @Type(type = "uuid-char")
+    private UUID id;
 
     @Column(name = "username", length = 20, nullable = false)
     private String username;
@@ -50,20 +44,17 @@ public class User {
     @LastModifiedDate
     private LocalDateTime modifiedTime;
 
-    private User(UserCommand userCommand) {
-        this.username = userCommand.getUsername();
-        this.password = userCommand.getPassword();
-        this.baekjoonUsername = userCommand.getBaekjoonUsername();
-        this.isPrivate = false;
+    private User(String username, String password, String baekjoonUsername) {
+        this.username = username;
+        this.password = password;
+        this.baekjoonUsername = baekjoonUsername;
 
-        ZoneId zoneId = ZoneId.of("UTC");
-
-        this.createdTime = LocalDateTime.now(zoneId);
-        if(this.modifiedTime == null)
-            this.modifiedTime = LocalDateTime.now(zoneId);
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
+        this.createdTime = now;
+        this.modifiedTime = now;
     }
 
-    public static User create(UserCommand userCommand) {
-        return new User(userCommand);
+    public static User create(String username, String password, String baekjoonUsername) {
+        return new User(username, password, baekjoonUsername);
     }
 }
