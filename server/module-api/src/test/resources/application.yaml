@@ -9,7 +9,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
@@ -19,7 +19,7 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.MySQL5Dialect
         jdbc:
-          batch_size: 50
+          batch_size: 100
 server:
   port: 8080
 logging:
