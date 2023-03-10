@@ -51,13 +51,13 @@ public class AuthService {
 
     @Transactional
     public void create(AuthDto.SignupReq signupReq) {
-        List<Long> solvedHistories = getSolvedHistories(signupReq.getUsername());
+        List<Long> solvedHistories = getSolvedHistories(signupReq.getBaekjoonUsername());
 
         CreateUserAndSolvedHistoryCommand command = CreateUserAndSolvedHistoryCommand.builder()
                 .username(signupReq.getUsername())
                 .password(signupReq.getPassword())
                 .baekjoonUsername(signupReq.getBaekjoonUsername())
-                .isBefore(true)
+                .isBefore(false)
                 .solvedHistories(solvedHistories)
                 .build();
 
