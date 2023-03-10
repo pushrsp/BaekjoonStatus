@@ -22,7 +22,7 @@ public class Problem {
     private Long id;
 
     @Column(name = "level", nullable = false)
-    private int level;
+    private Integer level;
 
     @Column(name = "title", nullable = false)
     private String title;

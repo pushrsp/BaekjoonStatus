@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.shared.util;
 
 import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -34,6 +35,8 @@ public class BaekjoonCrawling {
             return Arrays.stream(elements.get(0).text().split(" "))
                     .map(Long::parseLong)
                     .toList();
+        } catch (HttpStatusException e) {
+          throw new MyException(CodeEnum.BAEKJOON_NOT_FOUND);
         } catch (Exception e) {
             throw new MyException(CodeEnum.BAEKJOON_SERVER_ERROR);
         }
