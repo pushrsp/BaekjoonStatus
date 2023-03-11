@@ -57,7 +57,7 @@ public class AuthService {
                 .username(signupReq.getUsername())
                 .password(signupReq.getPassword())
                 .baekjoonUsername(signupReq.getBaekjoonUsername())
-                .isBefore(false)
+                .isBefore(true)
                 .solvedHistories(solvedHistories)
                 .build();
 
