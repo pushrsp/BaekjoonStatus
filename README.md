@@ -3,6 +3,10 @@
 ## 데이터베이스 관계도
 ![ERD](https://raw.githubusercontent.com/pushrsp/BaekjoonStatus/7139025db940ae98553509d95fed18ee3a8327f7/docs/erd.svg)
 
+## 고민한 포인트
+- [데이터베이스 insert 성능관련 문제](https://push-rsp.tistory.com/353)
+- [MYSQL 데이터 중복에 관한 주관적인 생각 정리](https://push-rsp.tistory.com/355)
+
 ## 외부 API
 * 크롤링
   * https://www.acmicpc.net/user/{{baekjoon_username}}
