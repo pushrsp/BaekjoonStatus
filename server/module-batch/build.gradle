@@ -1,4 +1,6 @@
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation project(':module-shared')
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    api project(':module-shared')
+
+    testImplementation 'org.springframework.batch:spring-batch-test'
 }

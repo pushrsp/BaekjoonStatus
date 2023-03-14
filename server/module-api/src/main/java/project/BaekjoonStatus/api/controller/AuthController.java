@@ -10,6 +10,8 @@ import project.BaekjoonStatus.shared.enums.CodeEnum;
 
 import javax.validation.Valid;
 
+import static project.BaekjoonStatus.api.dto.AuthDto.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -18,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("")
-    public CommonResponse validUsername(@Valid AuthDto.ValidParams validParams) {
+    public CommonResponse validUsername(@Valid ValidParams validParams) {
         authService.duplicateUsername(validParams.getUsername());
 
         return CommonResponse.builder()
@@ -28,8 +30,8 @@ public class AuthController {
     }
 
     @GetMapping("/baekjoon")
-    public CommonResponse validBaekjoonUsername(@Valid AuthDto.ValidParams validParams) {
-        AuthDto.SolvedCountResp solvedCountResp = authService.validBaekjoonUsername(validParams.getUsername());
+    public CommonResponse validBaekjoonUsername(@Valid ValidParams validParams) {
+        SolvedCountResp solvedCountResp = authService.validBaekjoonUsername(validParams.getUsername());
 
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
@@ -39,12 +41,21 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public CommonResponse signup(@RequestBody @Valid AuthDto.SignupReq signupReq) {
-        authService.create(signupReq);
+    public CommonResponse signup(@RequestBody @Valid SignupReq body) {
+        authService.create(body);
 
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
+                .build();
+    }
+
+    @PostMapping("/login")
+    public CommonResponse login(@RequestBody @Valid LoginReq body) {
+        return CommonResponse.builder()
+                .code(CodeEnum.SUCCESS.getCode())
+                .message(CodeEnum.SUCCESS.getMessage())
+                .data(authService.login(body))
                 .build();
     }
 }
