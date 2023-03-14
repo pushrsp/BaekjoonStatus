@@ -17,14 +17,13 @@ public class BaekjoonCrawling {
 
     public static final String BAEKJOON_URL = "https://www.acmicpc.net/user";
     private final Connection conn;
-    private List<Long> solved;
-
-    public BaekjoonCrawling(Connection conn) {
-        this.conn = conn;
-    }
 
     public BaekjoonCrawling(String username) {
         this.conn = Jsoup.connect(BAEKJOON_URL + "/" + username);
+    }
+
+    public void validBaekjoonUsername() {
+        getMySolvedHistories();
     }
 
     public List<Long> getMySolvedHistories() {
@@ -41,20 +40,4 @@ public class BaekjoonCrawling {
             throw new MyException(CodeEnum.BAEKJOON_SERVER_ERROR);
         }
     }
-
-    private void setSolved(Document document) {
-        Elements elements = document.select("div.problem-list");
-        this.solved = Arrays.stream(elements.get(0).text().split(" "))
-                .map(Long::parseLong)
-                .toList();
-    }
-
-    public int getSolvedSize() {
-        return this.solved.size();
-    }
-
-    public List<Long> getSolved() {
-        return this.solved;
-    }
-
 }

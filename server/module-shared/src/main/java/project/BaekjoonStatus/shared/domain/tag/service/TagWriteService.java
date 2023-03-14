@@ -20,16 +20,6 @@ public class TagWriteService {
     }
 
     public List<Tag> bulkInsertByCommandTags(List<SolvedAcProblemResp.Tag> commandTags) {
-        Set<String> tagNames = new HashSet<>();
-        for (SolvedAcProblemResp.Tag commandTag : commandTags)
-            tagNames.add(commandTag.getKey());
-
-        List<Tag> findTags = tagJpaRepository.findByNameIn(tagNames.stream().toList());
-        for (Tag tag : findTags)
-            tagNames.remove(tag.getName());
-
-        findTags.addAll(bulkInsert(Tag.createByNames(tagNames.stream().toList())));
-
-        return findTags;
+        return this.bulkInsert(Tag.createByNames(commandTags.stream().map(SolvedAcProblemResp.Tag::getKey).toList()));
     }
 }

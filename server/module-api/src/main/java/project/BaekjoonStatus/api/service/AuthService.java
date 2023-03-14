@@ -1,35 +1,43 @@
 package project.BaekjoonStatus.api.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.BaekjoonStatus.api.dto.AuthDto;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import project.BaekjoonStatus.api.dto.AuthDto.LoginReq;
 import project.BaekjoonStatus.api.dto.AuthDto.SignupReq;
-import project.BaekjoonStatus.shared.application.CreateProblemsAndTagsUsecase;
 import project.BaekjoonStatus.shared.application.CreateUserAndSolvedHistoryUsecase;
 import project.BaekjoonStatus.shared.domain.user.service.UserReadService;
-import project.BaekjoonStatus.shared.dto.command.CreateProblemsAndTagsCommand;
 import project.BaekjoonStatus.shared.dto.command.CreateUserAndSolvedHistoryCommand;
-import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
-import project.BaekjoonStatus.shared.dto.response.SolvedAcUserResp;
+import project.BaekjoonStatus.shared.dto.response.CommonResponse;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.util.BaekjoonCrawling;
 import project.BaekjoonStatus.shared.util.BcryptProvider;
 import project.BaekjoonStatus.shared.util.JWTProvider;
-import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 
+import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.List;
+
+import static project.BaekjoonStatus.api.dto.AuthDto.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
+    private static final String CREATE_PROBLEMS="/problems";
     private final UserReadService userReadService;
     private final CreateUserAndSolvedHistoryUsecase createUserAndSolvedHistoryUsecase;
-    private final CreateProblemsAndTagsUsecase createProblemsAndTagsUsecase;
     private final JWTProvider jwtProvider;
     private final BcryptProvider bcryptProvider;
+
+    @Value("${batch_url}")
+    private String BATCH_URL;
 
     public void duplicateUsername(String username) {
         boolean isPresent = userReadService.existByUsername(username);
@@ -37,21 +45,25 @@ public class AuthService {
             throw new MyException(CodeEnum.USER_DUPLICATE);
     }
 
-    @Transactional
-    public AuthDto.SolvedCountResp validBaekjoonUsername(String username) {
-        SolvedAcHttp solvedAcHttp = new SolvedAcHttp();
-        SolvedAcUserResp info = solvedAcHttp.getBaekjoonUser(username);
-        if(info == null)
-            throw new MyException(CodeEnum.SOLVED_AC_USER_NOT_FOUND);
+    public SolvedCountResp validBaekjoonUsername(String username) {
+        BaekjoonCrawling crawling = new BaekjoonCrawling(username);
+        List<Long> solvedHistories = crawling.getMySolvedHistories();
 
-        List<Long> solvedHistories = getSolvedHistories(username);
-        List<SolvedAcProblemResp> problemInfos = solvedAcHttp.getProblemsByProblemIds(solvedHistories);
-
-        CreateProblemsAndTagsCommand command = CreateProblemsAndTagsCommand.builder()
-                .problemInfos(problemInfos)
+        return SolvedCountResp.builder()
+                .solvedCount(solvedHistories.size())
                 .build();
+    }
 
-        return new AuthDto.SolvedCountResp(createProblemsAndTagsUsecase.execute(command));
+    @Async
+    public void createSolvedProblems(String username) {
+        URI uri = UriComponentsBuilder
+                .fromHttpUrl(BATCH_URL)
+                .path("/" + username + CREATE_PROBLEMS)
+                .build()
+                .toUri();
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForObject(uri, null,CommonResponse.class);
     }
 
     @Transactional

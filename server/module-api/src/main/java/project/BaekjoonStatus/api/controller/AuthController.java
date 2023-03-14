@@ -30,13 +30,13 @@ public class AuthController {
     }
 
     @GetMapping("/baekjoon")
-    public CommonResponse validBaekjoonUsername(@Valid ValidParams validParams) {
-        SolvedCountResp solvedCountResp = authService.validBaekjoonUsername(validParams.getUsername());
+    public CommonResponse validBaekjoonUsername(@Valid ValidParams validParams) throws InterruptedException {
+        authService.createSolvedProblems(validParams.getUsername());
 
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(solvedCountResp)
+                .data(authService.validBaekjoonUsername(validParams.getUsername()))
                 .build();
     }
 

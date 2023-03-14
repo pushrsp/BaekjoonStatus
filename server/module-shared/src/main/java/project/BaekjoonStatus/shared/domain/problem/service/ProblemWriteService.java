@@ -26,16 +26,6 @@ public class ProblemWriteService {
     }
 
     public List<Problem> bulkInsertByCommandInfos(List<SolvedAcProblemResp> commandInfos) {
-        Map<Long, SolvedAcProblemResp> ids = new HashMap<>();
-        for (SolvedAcProblemResp info : commandInfos)
-            ids.put(info.getProblemId(), info);
-
-        List<Problem> problems = problemJpaRepository.findByIdIn(ids.keySet().stream().toList());
-        for (Problem problem : problems)
-            ids.remove(problem.getId());
-
-        problems.addAll(bulkInsert(Problem.create(ids.values().stream().toList())));
-
-        return problems;
+        return this.bulkInsert(Problem.create(commandInfos));
     }
 }

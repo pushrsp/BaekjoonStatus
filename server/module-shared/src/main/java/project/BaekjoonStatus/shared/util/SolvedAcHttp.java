@@ -58,7 +58,7 @@ public class SolvedAcHttp {
         }
     }
 
-    private List<SolvedAcProblemResp> getProblemsByProblemIds(String ids) {
+    public List<SolvedAcProblemResp> getProblemsByProblemIds(String ids) {
         URI uri = UriComponentsBuilder
                 .fromHttpUrl(SOLVED_AC_URL)
                 .path(SOLVED_AC_GET_PROBLEMS_PATH)
@@ -76,18 +76,6 @@ public class SolvedAcHttp {
     }
 
     public List<SolvedAcProblemResp> getProblemsByProblemIds(List<Long> problemIds) {
-        List<SolvedAcProblemResp> problems = new ArrayList<>();
-        int offset = 0;
-        for (int i = 0; i < (problemIds.size() / SOLVED_AC_MAX_LEN) + 1; i++) {
-            List<String> ids = problemIds.subList(offset, Math.min(problemIds.size(), offset + SOLVED_AC_MAX_LEN))
-                    .stream()
-                    .map(Object::toString)
-                    .toList();
-
-            problems.addAll(this.getProblemsByProblemIds(String.join(",", ids)));
-            offset += SOLVED_AC_MAX_LEN;
-        }
-
-        return problems;
+        return this.getProblemsByProblemIds(String.join(",",problemIds.stream().map(Object::toString).toList()));
     }
 }
