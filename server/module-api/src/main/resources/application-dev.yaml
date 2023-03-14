@@ -1,4 +1,5 @@
 profile-name: dev
+batch_url: "http://localhost:9090/batch"
 
 spring:
   datasource:
@@ -9,7 +10,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
