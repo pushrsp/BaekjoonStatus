@@ -1,10 +1,11 @@
 package project.BaekjoonStatus.api.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.api.dto.AuthDto;
+import project.BaekjoonStatus.api.dto.AuthDto.LoginReq;
+import project.BaekjoonStatus.api.dto.AuthDto.SignupReq;
 import project.BaekjoonStatus.shared.application.CreateProblemsAndTagsUsecase;
 import project.BaekjoonStatus.shared.application.CreateUserAndSolvedHistoryUsecase;
 import project.BaekjoonStatus.shared.domain.user.service.UserReadService;
@@ -15,6 +16,8 @@ import project.BaekjoonStatus.shared.dto.response.SolvedAcUserResp;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.util.BaekjoonCrawling;
+import project.BaekjoonStatus.shared.util.BcryptProvider;
+import project.BaekjoonStatus.shared.util.JWTProvider;
 import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 
 import java.util.List;
@@ -25,6 +28,8 @@ public class AuthService {
     private final UserReadService userReadService;
     private final CreateUserAndSolvedHistoryUsecase createUserAndSolvedHistoryUsecase;
     private final CreateProblemsAndTagsUsecase createProblemsAndTagsUsecase;
+    private final JWTProvider jwtProvider;
+    private final BcryptProvider bcryptProvider;
 
     public void duplicateUsername(String username) {
         boolean isPresent = userReadService.existByUsername(username);
@@ -50,18 +55,22 @@ public class AuthService {
     }
 
     @Transactional
-    public void create(AuthDto.SignupReq signupReq) {
+    public void create(SignupReq signupReq) {
         List<Long> solvedHistories = getSolvedHistories(signupReq.getBaekjoonUsername());
 
         CreateUserAndSolvedHistoryCommand command = CreateUserAndSolvedHistoryCommand.builder()
                 .username(signupReq.getUsername())
-                .password(signupReq.getPassword())
+                .password(bcryptProvider.hashPassword(signupReq.getPassword()))
                 .baekjoonUsername(signupReq.getBaekjoonUsername())
                 .isBefore(true)
                 .solvedHistories(solvedHistories)
                 .build();
 
         createUserAndSolvedHistoryUsecase.execute(command);
+    }
+
+    public String login(LoginReq data) {
+        return jwtProvider.generateToken(data.getUsername());
     }
 
     private List<Long> getSolvedHistories(String username) {
