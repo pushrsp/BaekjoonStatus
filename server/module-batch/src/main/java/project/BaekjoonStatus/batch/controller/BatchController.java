@@ -27,7 +27,7 @@ public class BatchController {
     private final AddSolvedProblems addSolvedProblems;
 
     @PostMapping("/{baekjoon}/problems")
-    public CommonResponse executeJob(@PathVariable String baekjoon) throws NoSuchJobException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+    public CommonResponse executeJob(@PathVariable String baekjoon) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         jobLauncher.run(addSolvedProblems.addSolvedProblemsJob(LocalDateTime.now().toString(), baekjoon), new JobParameters());
 
         return CommonResponse.builder()

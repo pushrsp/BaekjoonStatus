@@ -7,21 +7,15 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
-import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Configuration;
 import project.BaekjoonStatus.shared.application.CreateProblemsAndTagsUsecase;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.problem.service.ProblemReadService;
 import project.BaekjoonStatus.shared.dto.command.CreateProblemsAndTagsCommand;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
-import project.BaekjoonStatus.shared.util.BaekjoonCrawling;
 import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 
-import javax.persistence.EntityManagerFactory;
 import java.util.*;
 
 @Configuration
