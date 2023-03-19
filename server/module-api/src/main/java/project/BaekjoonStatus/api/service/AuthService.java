@@ -21,7 +21,6 @@ import project.BaekjoonStatus.shared.util.BcryptProvider;
 import project.BaekjoonStatus.shared.util.JWTProvider;
 
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.List;
 
 import static project.BaekjoonStatus.api.dto.AuthDto.*;

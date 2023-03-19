@@ -19,16 +19,6 @@ import static project.BaekjoonStatus.api.dto.AuthDto.*;
 public class AuthController {
     private final AuthService authService;
 
-    @GetMapping("")
-    public CommonResponse validUsername(@Valid ValidParams validParams) {
-        authService.duplicateUsername(validParams.getUsername());
-
-        return CommonResponse.builder()
-                .code(CodeEnum.SUCCESS.getCode())
-                .message(CodeEnum.SUCCESS.getMessage())
-                .build();
-    }
-
     @GetMapping("/baekjoon")
     public CommonResponse validBaekjoonUsername(@Valid ValidParams validParams) throws InterruptedException {
         authService.createSolvedProblems(validParams.getUsername());
