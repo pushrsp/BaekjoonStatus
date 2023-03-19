@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
 
@@ -40,7 +41,7 @@ public class AuthDto {
         private String baekjoonUsername;
 
         @NotBlank(message = "비밀번호를 입력해주세요.")
-        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        @Length(min = 6, max = 16, message = "최소 6자 최대 16자 이내여야 합니다.")
         private String password;
     }
 
@@ -53,7 +54,7 @@ public class AuthDto {
         private String username;
 
         @NotBlank(message = "비밀번호를 입력해주세요.")
-        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        @Length(min = 6, max = 16, message = "최소 6자 최대 16자 이내여야 합니다.")
         private String password;
     }
 }
