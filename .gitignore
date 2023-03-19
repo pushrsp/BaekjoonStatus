@@ -341,3 +341,4 @@ sketch
 
 application-aws.yaml
 generated
+.env.production
