@@ -1,74 +1,89 @@
-export const mockDataTeam = [
+const SolvedCountByTag = [
     {
-        id: 1,
-        name: "Jon Snow",
-        email: "jonsnow@gmail.com",
-        age: 35,
-        phone: "(665)121-5454",
-        access: "admin",
+        tag: 'dp',
+        count: 100,
     },
     {
-        id: 2,
-        name: "Cersei Lannister",
-        email: "cerseilannister@gmail.com",
-        age: 42,
-        phone: "(421)314-2288",
-        access: "manager",
+        tag: 'greedy',
+        count: 9,
     },
     {
-        id: 3,
-        name: "Jaime Lannister",
-        email: "jaimelannister@gmail.com",
-        age: 45,
-        phone: "(422)982-6739",
-        access: "user",
+        tag: 'data_structures',
+        count: 28,
     },
     {
-        id: 4,
-        name: "Anya Stark",
-        email: "anyastark@gmail.com",
-        age: 16,
-        phone: "(921)425-6742",
-        access: "admin",
+        tag: 'graphs',
+        count: 58,
     },
     {
-        id: 5,
-        name: "Daenerys Targaryen",
-        email: "daenerystargaryen@gmail.com",
-        age: 31,
-        phone: "(421)445-1189",
-        access: "user",
+        tag: 'impl',
+        count: 32,
+    },
+]
+
+const SolvedCountByLevel = [
+    {
+        level: 'bronze',
+        count: 291,
+        color: 'rgb(173, 86, 0)',
     },
     {
-        id: 6,
-        name: "Ever Melisandre",
-        email: "evermelisandre@gmail.com",
-        age: 150,
-        phone: "(232)545-6483",
-        access: "manager",
+        level: 'silver',
+        count: 360,
+        color: 'rgb(173, 86, 0)',
     },
     {
-        id: 7,
-        name: "Ferrara Clifford",
-        email: "ferraraclifford@gmail.com",
-        age: 44,
-        phone: "(543)124-0123",
-        access: "user",
+        level: 'gold',
+        count: 113,
+        color: 'rgb(173, 86, 0)',
     },
     {
-        id: 8,
-        name: "Rossini Frances",
-        email: "rossinifrances@gmail.com",
-        age: 36,
-        phone: "(222)444-5555",
-        access: "user",
+        level: 'platinum',
+        count: 31,
+        color: 'rgb(173, 86, 0)',
     },
     {
-        id: 9,
-        name: "Harvey Roxie",
-        email: "harveyroxie@gmail.com",
-        age: 65,
-        phone: "(444)555-6239",
-        access: "admin",
+        level: 'diamond',
+        count: 500,
+        color: 'rgb(173, 86, 0)',
     },
-];
+    {
+        level: 'ruby',
+        count: 10,
+        color: 'rgb(173, 86, 0)',
+    },
+    {
+        level: 'unrated',
+        count: 10,
+        color: 'rgb(173, 86, 0)',
+    },
+]
+
+const SolvedCountByDate = [
+    {
+        day: '2023-01-01',
+        value: 1,
+    },
+    {
+        day: '2023-02-01',
+        value: 3,
+    },
+    {
+        day: '2023-03-01',
+        value: 2,
+    },
+    {
+        day: '2023-04-01',
+        value: 100,
+    },
+    {
+        day: '2023-12-01',
+        value: 4,
+    },
+    {
+        day: '2023-12-31',
+        value: 3,
+    },
+]
+
+export { SolvedCountByTag, SolvedCountByLevel, SolvedCountByDate }

@@ -21,7 +21,8 @@ const App = () => {
                         <main className="content">
                             <Header />
                             <Routes>
-                                <Route path="/" element={<Login />} />
+                                <Route path="/" element={<Dashboard />} />
+                                {/*<Route path="/" element={<Login />} />*/}
                                 <Route path="/signup" element={<Signup />} />
                                 {/*<Route path="/*" element={<Error />} />*/}
                             </Routes>
