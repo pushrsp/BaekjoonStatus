@@ -29,6 +29,7 @@ const CalendarChart = () => {
             monthBorderColor="#ffffff"
             dayBorderColor="#ffffff"
             isInteractive={true}
+            align="top"
             legends={[
                 {
                     anchor: 'bottom-right',
