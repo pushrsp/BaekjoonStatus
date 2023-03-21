@@ -86,4 +86,110 @@ const SolvedCountByDate = [
     },
 ]
 
-export { SolvedCountByTag, SolvedCountByLevel, SolvedCountByDate }
+const DailProblems = [
+    {
+        problemId: 1000,
+        level: 1,
+        tags: [
+            {
+                key: 'hi',
+            },
+            {
+                key: 'bye',
+            },
+        ],
+    },
+    {
+        problemId: 2000,
+        level: 13,
+        tags: [
+            {
+                key: 'hi',
+            },
+            {
+                key: 'bye',
+            },
+        ],
+    },
+    {
+        problemId: 3000,
+        level: 12,
+        tags: [
+            {
+                key: 'hi',
+            },
+            {
+                key: 'bye',
+            },
+        ],
+    },
+    {
+        problemId: 4000,
+        level: 8,
+        tags: [
+            {
+                key: 'hi',
+            },
+            {
+                key: 'bye',
+            },
+        ],
+    },
+]
+
+const SolvedProblems = [
+    {
+        problemId: 1000,
+        title: 'aaaaa',
+        level: 1,
+        tags: [
+            {
+                key: 'hi',
+            },
+            {
+                key: 'bye',
+            },
+        ],
+    },
+    {
+        problemId: 2000,
+        level: 13,
+        title: 'aaaaa',
+        tags: [
+            {
+                key: 'hi',
+            },
+            {
+                key: 'bye',
+            },
+        ],
+    },
+    {
+        problemId: 3000,
+        level: 12,
+        title: 'aaaaa',
+        tags: [
+            {
+                key: 'hi',
+            },
+            {
+                key: 'bye',
+            },
+        ],
+    },
+    {
+        problemId: 4000,
+        level: 8,
+        title: 'aaaaa',
+        tags: [
+            {
+                key: 'hi',
+            },
+            {
+                key: 'bye',
+            },
+        ],
+    },
+]
+
+export { SolvedCountByTag, SolvedCountByLevel, SolvedCountByDate, DailProblems, SolvedProblems }
