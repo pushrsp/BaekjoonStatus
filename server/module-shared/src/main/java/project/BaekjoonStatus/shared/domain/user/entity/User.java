@@ -44,7 +44,7 @@ public class User {
     @LastModifiedDate
     private LocalDateTime modifiedTime;
 
-    private User(String username, String password, String baekjoonUsername) {
+    private User(String username,  String baekjoonUsername, String password) {
         this.username = username;
         this.password = password;
         this.baekjoonUsername = baekjoonUsername;
@@ -54,7 +54,7 @@ public class User {
         this.modifiedTime = now;
     }
 
-    public static User create(String username, String password, String baekjoonUsername) {
-        return new User(username, password, baekjoonUsername);
+    public static User create(String username, String baekjoonUsername, String password) {
+        return new User(username, baekjoonUsername, password);
     }
 }

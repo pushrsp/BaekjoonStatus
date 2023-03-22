@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.BaekjoonStatus.api.dto.SolvedHistoryDto.SolvedHistoriesReq;
-import project.BaekjoonStatus.api.service.SolvedHistoryService;
+import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.dto.response.CommonResponse;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 
@@ -23,7 +23,7 @@ public class SolvedHistoryController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(solvedHistoryService.getSolvedHistories(body))
+                .data(solvedHistoryService.findSolvedHistories(body.getUserId(), body.getOffset()))
                 .build();
     }
 }

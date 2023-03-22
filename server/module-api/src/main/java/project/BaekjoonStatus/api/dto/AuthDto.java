@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
+import java.util.List;
 
 public class AuthDto {
 
@@ -24,7 +25,7 @@ public class AuthDto {
     @Builder
     @AllArgsConstructor
     public static class SolvedCountResp {
-        private long solvedCount;
+        private List<Long> solvedHistories;
     }
 
 

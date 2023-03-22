@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -42,6 +43,11 @@ public class Tag {
     }
 
     /* 생성 메서드 */
+    public static List<Tag> createByNames(Set<String> names) {
+        return names.stream()
+                .map(Tag::create)
+                .toList();
+    }
 
     public static List<Tag> createByNames(List<String> tagNames) {
         return tagNames.stream()
