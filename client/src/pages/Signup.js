@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Button, TextField, Typography, useTheme } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -13,7 +13,12 @@ const Signup = () => {
     const { state } = useLocation()
     const navigate = useNavigate()
 
+    useEffect(() => {
+        if (state === null || state.from !== 'login') navigate('/', { replace: true })
+    }, [])
+
     const [activeStep, setActiveStep] = useState(0)
+    const [registerToken, setRegisterToken] = useState('')
     const [username, setUsername] = useState('')
     const [baekjoonUsername, setBaekjoonUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -22,20 +27,17 @@ const Signup = () => {
     const onClick = async () => {
         if (activeStep === 0) {
             const {
-                data: {
-                    code,
-                    message,
-                    data: { solvedCount },
-                },
+                data: { code, data, message },
             } = await axios.get(`${process.env.REACT_APP_SERVER_URL}/auth/baekjoon`, {
                 params: { username: baekjoonUsername },
             })
 
-            if (code !== '0000') {
-                toast.error(message)
-            } else {
-                toast.success(`총 ${solvedCount} 문제를 푸셨군요!`)
+            if (code === '0000') {
+                toast.success(`총 ${data.solvedCount} 문제를 푸셨군요!`)
+                setRegisterToken(data.registerToken)
                 setActiveStep(1)
+            } else {
+                toast.error(message)
             }
         } else if (activeStep === 1) {
             const {
@@ -44,6 +46,7 @@ const Signup = () => {
                 username,
                 password,
                 baekjoonUsername,
+                registerToken,
             })
 
             if (code !== '0000') {
@@ -131,6 +134,7 @@ const Signup = () => {
                                 margin="normal"
                                 required
                                 label="비빌번호"
+                                type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 fullWidth
@@ -150,6 +154,7 @@ const Signup = () => {
                                 required
                                 label="비밀번호 확인"
                                 value={passwordCheck}
+                                type="password"
                                 onChange={(e) => setPasswordCheck(e.target.value)}
                                 fullWidth
                                 sx={{

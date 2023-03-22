@@ -18,14 +18,9 @@ import project.BaekjoonStatus.shared.domain.user.service.UserService;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
-import project.BaekjoonStatus.shared.util.BaekjoonCrawling;
-import project.BaekjoonStatus.shared.util.BcryptProvider;
-import project.BaekjoonStatus.shared.util.JWTProvider;
-import project.BaekjoonStatus.shared.util.SolvedAcHttp;
+import project.BaekjoonStatus.shared.util.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static project.BaekjoonStatus.api.dto.AuthDto.*;
 
@@ -34,39 +29,57 @@ import static project.BaekjoonStatus.api.dto.AuthDto.*;
 @Slf4j
 public class AuthService {
     private static final int PROBLEM_ID_OFFSET = 100;
+    private final HashMap<String, RegisterToken> registerTokenStore = new HashMap<>();
     private final ProblemService problemService;
     private final ProblemTagService problemTagService;
     private final TagService tagService;
     private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
     private final JWTProvider jwtProvider;
-    private final BcryptProvider bcryptProvider;
 
-    public SolvedCountResp validBaekjoonUsername(String username) {
-        return SolvedCountResp.builder()
-                .solvedHistories(getSolvedHistories(username))
+    public ValidBaekjoonUsernameResp validBaekjoonUsername(String username) {
+        List<Long> solvedHistories = getSolvedHistories(username);
+        RegisterToken token = RegisterToken.builder()
+                .createdAt(DateProvider.getDate())
+                .solvedHistories(solvedHistories)
+                .build();
+
+        String key = UUID.randomUUID().toString();
+        registerTokenStore.put(key, token);
+
+        return ValidBaekjoonUsernameResp.builder()
+                .solvedHistories(solvedHistories)
+                .solvedCount(solvedHistories.size())
+                .registerToken(key)
                 .build();
     }
 
     @Transactional
-    public User createUser(SignupReq data) {
-        if(userService.exist(data.getUsername()))
-            throw new MyException(CodeEnum.USER_DUPLICATE);
+    public CreateUserDto createUser(SignupReq data) {
+        if(registerTokenStore.get(data.getRegisterToken()) == null)
+            throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
 
-        return userService.save(data.getUsername(), data.getBaekjoonUsername(), bcryptProvider.hashPassword(data.getPassword()));
+        if(userService.exist(data.getUsername()))
+            throw new MyException(CodeEnum.MY_SERVER_DUPLICATE);
+
+        User saveUser = userService.save(data.getUsername(), data.getBaekjoonUsername(), BcryptProvider.hashPassword(data.getPassword()));
+        return CreateUserDto.builder()
+                .user(saveUser)
+                .registerTokenKey(data.getRegisterToken())
+                .build();
     }
 
     @Async
     @Transactional
-    public void createSolvedHistories(User user) {
-        List<Long> problemIds = getSolvedHistories(user.getBaekjoonUsername());
+    public void createSolvedHistories(CreateUserDto data) {
+        List<Long> problemIds = getProblemIds(data.getRegisterTokenKey());
 
         int startIndex = 0;
         while (startIndex < problemIds.size()) {
             List<Long> ids = problemIds.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, problemIds.size()));
-            solvedHistoryService.saveAll(user, problemService.findByIds(ids), true);
-
             startIndex += PROBLEM_ID_OFFSET;
+
+            solvedHistoryService.saveAll(data.getUser(), problemService.findByIds(ids), true);
         }
     }
 
@@ -78,14 +91,16 @@ public class AuthService {
         int startIndex = 0;
         while (startIndex < problemIds.size()) {
             List<Long> ids = problemIds.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, problemIds.size()));
+            startIndex += PROBLEM_ID_OFFSET;
+
             List<Long> saveIds = problemService.findProblemIdsByNotInclude(ids);
+            if(saveIds.isEmpty())
+                continue;
 
             List<SolvedAcProblemResp> infos = solvedAcHttp.getProblemsByProblemIds(saveIds);
             List<Problem> problems = problemService.saveAll(infos);
             List<Tag> tags = tagService.saveAllByNotIn(getTagNames(infos));
             problemTagService.saveAllByProblemInfos(infos, problems, tags);
-
-            startIndex += PROBLEM_ID_OFFSET;
         }
     }
 
@@ -99,8 +114,26 @@ public class AuthService {
         return ret;
     }
 
-    public String login(LoginReq data) {
-        return jwtProvider.generateToken(data.getUsername());
+    public LoginResp login(LoginReq data) {
+        Optional<User> findUser = userService.findByUsername(data.getUsername());
+        if(findUser.isEmpty())
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+
+        if(!BcryptProvider.validPassword(data.getPassword(), findUser.get().getPassword()))
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+
+        return LoginResp.builder()
+                .id(findUser.get().getId().toString())
+                .username(findUser.get().getUsername())
+                .token(jwtProvider.generateToken(findUser.get().getId().toString()))
+                .build();
+    }
+
+    private List<Long> getProblemIds(String tokenKey) {
+        RegisterToken registerToken = registerTokenStore.get(tokenKey);
+        registerTokenStore.remove(tokenKey);
+
+        return registerToken.getSolvedHistories();
     }
 
     private List<Long> getSolvedHistories(String username) {
