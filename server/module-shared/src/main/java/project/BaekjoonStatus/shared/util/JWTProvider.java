@@ -2,19 +2,28 @@ package project.BaekjoonStatus.shared.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 @Component
 public class JWTProvider {
-    private static final Algorithm ALGORITHM = Algorithm.HMAC256("TEST");
-    private static final long EXPIRE_TIME = 3600;
+    @Value("${token.secret}")
+    private String secret;
 
-    public String generateToken(String username) {
+    private static final Long EXPIRE_TIME = 1000L * 60 * 60 * 24; //하루
+
+    public String generateToken(String userId) {
         return JWT.create()
-                .withSubject(username)
-                .sign(ALGORITHM);
+                .withClaim("id", userId)
+                .withExpiresAt(new Date(System.currentTimeMillis() + 3000))
+                .sign(Algorithm.HMAC256(secret));
     }
 
-    public void validateToken(String token) {
+    public String validateToken(String token) {
+        DecodedJWT info = JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
+        return info.getClaim("id").toString();
     }
 }
