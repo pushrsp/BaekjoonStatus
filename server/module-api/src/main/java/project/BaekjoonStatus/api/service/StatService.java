@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedCountByDateDto;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedCountDto;
-import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryReadService;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.SolvedCountByDate;
+import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.SolvedCountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.SolvedCountByTag;
 import project.BaekjoonStatus.shared.dto.command.GetSolvedCountGroupByDateCommand;
@@ -20,7 +19,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class StatService {
-    private final SolvedHistoryReadService solvedHistoryReadService;
+    private final SolvedHistoryService solvedHistoryService;
 
     public Map<String, Long> getSolvedCountGroupByDate(SolvedCountDto data) {
         GetSolvedCountGroupByDateCommand command = GetSolvedCountGroupByDateCommand.builder()
@@ -28,7 +27,7 @@ public class StatService {
                 .year(String.valueOf(LocalDate.now(ZoneId.of("UTC")).getYear()))
                 .build();
 
-        return SolvedCountByDateDto.of(solvedHistoryReadService.getSolvedCountGroupByDate(command)).getResult();
+        return SolvedCountByDateDto.of(solvedHistoryService.getSolvedCountGroupByDate(command)).getResult();
     }
 
     public List<SolvedCountByLevel> getSolvedCountGroupByLevel(SolvedCountDto data) {
@@ -36,7 +35,7 @@ public class StatService {
                 .userId(data.getUserId())
                 .build();
 
-        return solvedHistoryReadService.getSolvedCountGroupByLevel(command);
+        return solvedHistoryService.getSolvedCountGroupByLevel(command);
     }
 
     public List<SolvedCountByTag> getSolvedCountGroupByTag(SolvedCountDto data) {
@@ -44,6 +43,6 @@ public class StatService {
                 .userId(data.getUserId())
                 .build();
 
-        return solvedHistoryReadService.getSolvedCountGroupByTag(command);
+        return solvedHistoryService.getSolvedCountGroupByTag(command);
     }
 }

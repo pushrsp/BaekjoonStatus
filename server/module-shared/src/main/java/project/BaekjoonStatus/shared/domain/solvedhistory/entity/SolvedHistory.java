@@ -8,6 +8,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
+import project.BaekjoonStatus.shared.util.DateProvider;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -59,12 +60,11 @@ public class SolvedHistory {
         this.problem = problem;
         this.isBefore = isBefore;
         this.problemLevel = problem.getLevel();
-
-        ZoneId utc = ZoneId.of("UTC");
-        this.createdDate = LocalDate.now(utc);
-        this.createdTime = LocalDateTime.now(utc);
+        this.createdDate = DateProvider.getDate();;
+        this.createdTime = DateProvider.getDateTime();
     }
 
+    /* 생성 메서드 */
     public static SolvedHistory create(User user, Problem problem, boolean isBefore) {
         return new SolvedHistory(user, problem, isBefore);
     }

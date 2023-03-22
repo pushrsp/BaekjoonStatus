@@ -8,18 +8,21 @@ import project.BaekjoonStatus.shared.domain.problemtag.repository.ProblemTagJpaR
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class ProblemTagWriteService {
+public class ProblemTagService {
     private final ProblemTagJpaRepository problemTagJpaRepository;
 
     public List<ProblemTag> bulkInsert(List<ProblemTag> problemTags) {
         return problemTagJpaRepository.saveAll(problemTags);
     }
 
-    public void bulkInsertByProblemInfos(List<SolvedAcProblemResp> problemInfos, List<Problem> problems, List<Tag> tags) {
+    public void saveAllByProblemInfos(List<SolvedAcProblemResp> infos, List<Problem> problems, List<Tag> tags) {
         Map<String, Tag> tagToMap = new HashMap<>();
         for (Tag tag : tags)
             tagToMap.put(tag.getName(), tag);
@@ -29,7 +32,7 @@ public class ProblemTagWriteService {
             problemToMap.put(problem.getId(), problem);
 
         List<ProblemTag> problemTags = new ArrayList<>();
-        for (SolvedAcProblemResp info : problemInfos) {
+        for (SolvedAcProblemResp info : infos) {
             List<Tag> tagList = new ArrayList<>();
             for (SolvedAcProblemResp.Tag tag : info.getTags())
                 tagList.add(tagToMap.get(tag.getKey()));
