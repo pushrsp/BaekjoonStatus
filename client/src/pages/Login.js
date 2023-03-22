@@ -2,19 +2,37 @@ import React, { useState } from 'react'
 import { Box, Avatar, Typography, TextField, useTheme, Button } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import { useRecoilState } from 'recoil'
 
 import { tokens } from '../config/theme'
+import { userState } from '../atom'
 
 const Login = () => {
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
     const navigate = useNavigate()
+    const [_, setUser] = useRecoilState(userState)
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const onSubmit = (values) => {
-        console.log(values)
+    const onSubmit = async (e) => {
+        e.preventDefault()
+        const {
+            data: { code, data, message },
+        } = await axios.post(`${process.env.REACT_APP_SERVER_URL}/auth/login`, {
+            username,
+            password,
+        })
+
+        if (code === '0000') {
+            window.localStorage.setItem('token', data.token)
+            setUser({ username: data.username, id: data.id })
+        } else {
+            toast.error(message)
+        }
     }
 
     return (
