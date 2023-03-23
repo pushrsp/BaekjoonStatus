@@ -12,19 +12,17 @@ import App from './App'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-    <React.StrictMode>
+    <RecoilRoot>
         <BrowserRouter>
-            <RecoilRoot>
-                <ToastContainer
-                    theme="colored"
-                    pauseOnHover={false}
-                    draggable={false}
-                    autoClose={1300}
-                />
-                <ProSidebarProvider>
-                    <App />
-                </ProSidebarProvider>
-            </RecoilRoot>
+            <ToastContainer
+                theme="colored"
+                pauseOnHover={false}
+                draggable={false}
+                autoClose={1300}
+            />
+            <ProSidebarProvider>
+                <App />
+            </ProSidebarProvider>
         </BrowserRouter>
-    </React.StrictMode>,
+    </RecoilRoot>,
 )

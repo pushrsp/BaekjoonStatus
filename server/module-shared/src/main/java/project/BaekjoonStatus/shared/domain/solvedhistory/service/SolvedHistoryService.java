@@ -7,10 +7,7 @@ import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryJpaRepository;
 import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryRepository;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto;
-import project.BaekjoonStatus.shared.dto.command.GetSolvedCountGroupByDateCommand;
-import project.BaekjoonStatus.shared.dto.command.GetSolvedCountGroupByLevelCommand;
-import project.BaekjoonStatus.shared.dto.command.GetSolvedCountGroupByTagCommand;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,19 +28,19 @@ public class SolvedHistoryService {
         return bulkInsert(SolvedHistory.create(user, problems, isBefore));
     }
 
-    public List<SolvedHistoryDto.SolvedCountByDate> getSolvedCountGroupByDate(GetSolvedCountGroupByDateCommand command) {
-        return solvedHistoryRepository.getSolvedCountGroupByDate(command.getUUIDUserId(), command.getYear());
+    public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
+        return solvedHistoryRepository.getSolvedCountGroupByDate(UUID.fromString(userId), year);
     }
 
-    public List<SolvedHistoryDto.SolvedCountByLevel> getSolvedCountGroupByLevel(GetSolvedCountGroupByLevelCommand command) {
-        return solvedHistoryRepository.getSolvedCountGroupByLevel(command.getUUIDUserId());
+    public List<CountByLevel> getSolvedCountGroupByLevel(String userId) {
+        return solvedHistoryRepository.getSolvedCountGroupByLevel(UUID.fromString(userId));
     }
 
-    public List<SolvedHistoryDto.SolvedCountByTag> getSolvedCountGroupByTag(GetSolvedCountGroupByTagCommand command) {
-        return solvedHistoryRepository.getSolvedCountGroupByTag(command.getUUIDUserId());
+    public List<CountByTag> getSolvedCountGroupByTag(String userId) {
+        return solvedHistoryRepository.getSolvedCountGroupByTag(UUID.fromString(userId));
     }
 
-    public List<SolvedHistoryDto.SolvedHistoryResp> findSolvedHistories(String userId, Integer offset) {
+    public List<SolvedHistoryByUserId> findSolvedHistoriesByUserId(String userId, Integer offset) {
         return solvedHistoryRepository.findSolvedHistories(UUID.fromString(userId), offset, PAGE_SIZE);
     }
 }

@@ -2,17 +2,16 @@ package project.BaekjoonStatus.api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.api.dto.StatDto.SolvedCountByDateDto;
-import project.BaekjoonStatus.api.dto.StatDto.SolvedCountDto;
+import project.BaekjoonStatus.api.dto.StatDto.DailyCountDto;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.SolvedCountByLevel;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.SolvedCountByTag;
-import project.BaekjoonStatus.shared.dto.command.GetSolvedCountGroupByDateCommand;
-import project.BaekjoonStatus.shared.dto.command.GetSolvedCountGroupByLevelCommand;
-import project.BaekjoonStatus.shared.dto.command.GetSolvedCountGroupByTagCommand;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.SolvedHistoryByUserId;
+import project.BaekjoonStatus.shared.util.DateProvider;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,28 +20,35 @@ import java.util.Map;
 public class StatService {
     private final SolvedHistoryService solvedHistoryService;
 
-    public Map<String, Long> getSolvedCountGroupByDate(SolvedCountDto data) {
-        GetSolvedCountGroupByDateCommand command = GetSolvedCountGroupByDateCommand.builder()
-                .userId(data.getUserId())
-                .year(String.valueOf(LocalDate.now(ZoneId.of("UTC")).getYear()))
-                .build();
+    public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
+        if(year.isEmpty())
+            year = String.valueOf(DateProvider.getDate().getYear());
 
-        return SolvedCountByDateDto.of(solvedHistoryService.getSolvedCountGroupByDate(command)).getResult();
+       return solvedHistoryService.getSolvedCountGroupByDate(userId, year);
     }
 
-    public List<SolvedCountByLevel> getSolvedCountGroupByLevel(SolvedCountDto data) {
-        GetSolvedCountGroupByLevelCommand command = GetSolvedCountGroupByLevelCommand.builder()
-                .userId(data.getUserId())
-                .build();
+    public List<CountByLevel> getSolvedCountGroupByLevel(String userId) {
+        List<CountByLevel> solvedCountGroupByLevel = solvedHistoryService.getSolvedCountGroupByLevel(userId);
+        Map<String, Long> map = new HashMap<>();
 
-        return solvedHistoryService.getSolvedCountGroupByLevel(command);
+        for (CountByLevel countByLevel : solvedCountGroupByLevel) {
+            if(map.containsKey(countByLevel.getLevel())) {
+                map.replace(countByLevel.getLevel(), map.get(countByLevel.getLevel()) + countByLevel.getCount());
+            } else {
+                map.put(countByLevel.getLevel(), countByLevel.getCount());
+            }
+        }
+
+        return map.keySet().stream()
+                .map((k) -> new CountByLevel(k, map.get(k)))
+                .toList();
     }
 
-    public List<SolvedCountByTag> getSolvedCountGroupByTag(SolvedCountDto data) {
-        GetSolvedCountGroupByTagCommand command = GetSolvedCountGroupByTagCommand.builder()
-                .userId(data.getUserId())
-                .build();
+    public List<CountByTag> getSolvedCountGroupByTag(String userId) {
+        return solvedHistoryService.getSolvedCountGroupByTag(userId);
+    }
 
-        return solvedHistoryService.getSolvedCountGroupByTag(command);
+    public List<SolvedHistoryByUserId> getSolvedHistoriesByUserId(String userId, Integer offset) {
+        return solvedHistoryService.findSolvedHistoriesByUserId(userId, offset);
     }
 }

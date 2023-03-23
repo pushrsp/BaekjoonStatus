@@ -16,8 +16,6 @@ const Dashboard = () => {
 
     const [tab, setTab] = useState('0')
 
-    console.log(tab)
-
     return (
         <Box m="20px" height="100%">
             <TabContext value={tab}>
@@ -63,8 +61,8 @@ const Dashboard = () => {
                     <Box width="100%" height="30%" display="flex" justifyContent="center">
                         <CalendarChart />
                     </Box>
-                    <Box width="100%" height="45%" display="flex" justifyContent="space-between">
-                        <Box height="100%" width="30%" margin={0}>
+                    <Box width="100%" height="55%" display="flex" justifyContent="space-around">
+                        <Box height="100%" width="60%" margin={0}>
                             <RadarChart />
                         </Box>
                         <Box height="100%" width="30%" margin={0}>

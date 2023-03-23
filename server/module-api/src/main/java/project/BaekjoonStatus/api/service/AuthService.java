@@ -2,6 +2,7 @@ package project.BaekjoonStatus.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +31,24 @@ import static project.BaekjoonStatus.api.dto.AuthDto.*;
 public class AuthService {
     private static final int PROBLEM_ID_OFFSET = 100;
     private final HashMap<String, RegisterToken> registerTokenStore = new HashMap<>();
+    @Value("${token.secret}")
+    private String tokenSecret;
     private final ProblemService problemService;
     private final ProblemTagService problemTagService;
     private final TagService tagService;
     private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
-    private final JWTProvider jwtProvider;
+
+    public LoginResp validMe(String userId) {
+        Optional<User> findUser = userService.findById(userId);
+        if(findUser.isEmpty())
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+
+        return LoginResp.builder()
+                .username(findUser.get().getUsername())
+                .id(findUser.get().getId().toString())
+                .build();
+    }
 
     public ValidBaekjoonUsernameResp validBaekjoonUsername(String username) {
         List<Long> solvedHistories = getSolvedHistories(username);
@@ -66,6 +79,21 @@ public class AuthService {
         return CreateUserDto.builder()
                 .user(saveUser)
                 .registerTokenKey(data.getRegisterToken())
+                .build();
+    }
+
+    public LoginResp login(LoginReq data) {
+        Optional<User> findUser = userService.findByUsername(data.getUsername());
+        if(findUser.isEmpty())
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+
+        if(!BcryptProvider.validPassword(data.getPassword(), findUser.get().getPassword()))
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+
+        return LoginResp.builder()
+                .id(findUser.get().getId().toString())
+                .username(findUser.get().getUsername())
+                .token(JWTProvider.generateToken(findUser.get().getId().toString(), tokenSecret))
                 .build();
     }
 
@@ -112,21 +140,6 @@ public class AuthService {
         }
 
         return ret;
-    }
-
-    public LoginResp login(LoginReq data) {
-        Optional<User> findUser = userService.findByUsername(data.getUsername());
-        if(findUser.isEmpty())
-            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
-
-        if(!BcryptProvider.validPassword(data.getPassword(), findUser.get().getPassword()))
-            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
-
-        return LoginResp.builder()
-                .id(findUser.get().getId().toString())
-                .username(findUser.get().getUsername())
-                .token(jwtProvider.generateToken(findUser.get().getId().toString()))
-                .build();
     }
 
     private List<Long> getProblemIds(String tokenKey) {
