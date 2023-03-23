@@ -16,8 +16,6 @@ const Dashboard = () => {
 
     const [tab, setTab] = useState('0')
 
-    console.log(tab)
-
     return (
         <Box m="20px" height="100%">
             <TabContext value={tab}>

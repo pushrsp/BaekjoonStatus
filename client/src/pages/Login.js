@@ -28,7 +28,7 @@ const Login = () => {
         })
 
         if (code === '0000') {
-            window.localStorage.setItem('token', data.token)
+            window.localStorage.setItem('@token', data.token)
             setUser({ username: data.username, id: data.id })
         } else {
             toast.error(message)
