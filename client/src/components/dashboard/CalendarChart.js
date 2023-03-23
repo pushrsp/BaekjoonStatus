@@ -1,17 +1,53 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material'
 import { ResponsiveCalendar } from '@nivo/calendar'
+import axios from 'axios'
+import { useSetRecoilState } from 'recoil'
 
-import { SolvedCountByDate } from '../../data/mockData'
 import { tokens } from '../../config/theme'
+import { userState } from '../../atom'
 
 const CalendarChart = () => {
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
+    const [data, setData] = useState([])
+    const setUser = useSetRecoilState(userState)
+
+    useEffect(() => {
+        ;(async () => {
+            const token = window.localStorage.getItem('@token')
+            if (token === null) {
+                setUser({})
+                return
+            }
+
+            const now = new Date() // 현재 시간
+            const utcNow = now.getTime() + now.getTimezoneOffset() * 60 * 1000
+            const koreaTimeDiff = 9 * 60 * 60 * 1000
+            const koreaNow = new Date(utcNow + koreaTimeDiff)
+
+            const {
+                data: { code, data },
+            } = await axios.get(`${process.env.REACT_APP_SERVER_URL}/stat/date`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params: {
+                    year: koreaNow.getFullYear(),
+                },
+            })
+
+            if (code === '0000') {
+                setData(data)
+            } else {
+                setUser({})
+            }
+        })()
+    }, [])
 
     return (
         <ResponsiveCalendar
-            data={SolvedCountByDate}
+            data={data}
             theme={{
                 textColor: colors.grey['100'],
                 tooltip: {

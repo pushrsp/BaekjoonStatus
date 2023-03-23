@@ -1,17 +1,46 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material'
 import { ResponsivePie } from '@nivo/pie'
+import axios from 'axios'
+import { useSetRecoilState } from 'recoil'
 
 import { SolvedCountByLevel } from '../../data/mockData'
 import { tokens } from '../../config/theme'
+import { userState } from '../../atom'
 
 const PieChart = () => {
     const theme = useTheme()
     const colors = tokens(theme.palette.mode)
+    const [data, setData] = useState([])
+    const setUser = useSetRecoilState(userState)
+
+    useEffect(() => {
+        ;(async () => {
+            const token = window.localStorage.getItem('@token')
+            if (token === null) {
+                setUser({})
+                return
+            }
+
+            const {
+                data: { code, data },
+            } = await axios.get(`${process.env.REACT_APP_SERVER_URL}/stat/level`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if (code === '0000') {
+                setData(data)
+            } else {
+                setUser({})
+            }
+        })()
+    }, [])
 
     return (
         <ResponsivePie
-            data={SolvedCountByLevel}
+            data={data}
             theme={{
                 textColor: colors.grey['100'],
                 tooltip: {
