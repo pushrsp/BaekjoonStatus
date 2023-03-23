@@ -2,6 +2,7 @@ package project.BaekjoonStatus.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
@@ -42,6 +43,7 @@ public class AuthDto {
     public static class LoginResp {
         private String id;
         private String username;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         private String token;
     }
 

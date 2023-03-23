@@ -3,14 +3,12 @@ package project.BaekjoonStatus.api.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import project.BaekjoonStatus.api.argumentresolver.Auth;
 import project.BaekjoonStatus.api.service.AuthService;
-import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.dto.response.CommonResponse;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 
 import javax.validation.Valid;
-
-import java.util.Map;
 
 import static project.BaekjoonStatus.api.dto.AuthDto.*;
 
@@ -22,10 +20,11 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/me")
-    public CommonResponse validMe() {
+    public CommonResponse validMe(@Auth String userId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
+                .data(authService.validMe(userId))
                 .build();
     }
 
