@@ -6,10 +6,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
-import project.BaekjoonStatus.shared.exception.BaekjoonNotFound;
 import project.BaekjoonStatus.shared.exception.MyException;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,10 +18,6 @@ public class BaekjoonCrawling {
 
     public BaekjoonCrawling(String username) {
         this.conn = Jsoup.connect(BAEKJOON_URL + "/" + username);
-    }
-
-    public void validBaekjoonUsername() {
-        getMySolvedHistories();
     }
 
     public List<Long> getMySolvedHistories() {

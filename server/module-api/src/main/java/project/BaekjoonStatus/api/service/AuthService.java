@@ -11,7 +11,6 @@ import project.BaekjoonStatus.api.dto.AuthDto.SignupReq;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
-import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.domain.user.service.UserService;
@@ -105,7 +104,7 @@ public class AuthService {
             List<Long> ids = problemIds.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, problemIds.size()));
             startIndex += PROBLEM_ID_OFFSET;
 
-            solvedHistoryService.saveAll(data.getUser(), problemService.findByIds(ids), true);
+            solvedHistoryService.saveAll(data.getUser(), problemService.findAllByIds(ids), true);
         }
     }
 
@@ -119,7 +118,7 @@ public class AuthService {
             List<Long> ids = problemIds.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, problemIds.size()));
             startIndex += PROBLEM_ID_OFFSET;
 
-            List<Long> saveIds = problemService.findProblemIdsByNotInclude(ids);
+            List<Long> saveIds = problemService.findProblemIdsByNotIn(ids);
             if(saveIds.isEmpty())
                 continue;
 
@@ -127,16 +126,6 @@ public class AuthService {
             List<Problem> problems = problemService.saveAll(infos);
             tagService.saveAll(infos, problems);
         }
-    }
-
-    private Set<String> getTagNames(List<SolvedAcProblemResp> infos) {
-        Set<String> ret = new HashSet<>();
-        for (SolvedAcProblemResp info : infos) {
-            for (SolvedAcProblemResp.Tag tag : info.getTags())
-                ret.add(tag.getKey());
-        }
-
-        return ret;
     }
 
     private List<Long> getProblemIds(String tokenKey) {

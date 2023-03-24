@@ -32,6 +32,14 @@ public class SolvedHistoryService {
         return bulkInsert(SolvedHistory.create(user, problems, isBefore));
     }
 
+    public List<SolvedHistory> findAllByUserId(String userId) {
+        return solvedHistoryJpaRepository.findAllByUserId(UUID.fromString(userId));
+    }
+
+    public List<SolvedHistory> findAllByUserId(UUID userId) {
+        return solvedHistoryJpaRepository.findAllByUserId(userId);
+    }
+
     public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
         return solvedHistoryRepository.findSolvedCountGroupByDate(UUID.fromString(userId), year);
     }

@@ -16,13 +16,18 @@ import java.util.Set;
 public class ProblemService {
     private final ProblemJpaRepository problemJpaRepository;
 
-    public List<Problem> findByIds(List<Long> ids) {
-        return problemJpaRepository.findByIdIn(ids);
+    public Problem save(Problem problem) {
+        return problemJpaRepository.save(problem);
     }
-    public List<Long> findProblemIdsByNotInclude(List<Long> ids) {
+
+    public List<Problem> findAllByIds(List<Long> ids) {
+        return problemJpaRepository.findAllByIdIn(ids);
+    }
+
+    public List<Long> findProblemIdsByNotIn(List<Long> ids) {
         Set<Long> set = new HashSet<>(ids);
 
-        List<Problem> problems = findByIds(ids);
+        List<Problem> problems = findAllByIds(ids);
         for (Problem problem : problems)
             set.remove(problem.getId());
 

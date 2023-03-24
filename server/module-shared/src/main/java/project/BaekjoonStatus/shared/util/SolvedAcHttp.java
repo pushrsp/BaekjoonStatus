@@ -7,12 +7,9 @@ import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcUserResp;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
-import project.BaekjoonStatus.shared.exception.SolvedAcProblemNotFound;
-import project.BaekjoonStatus.shared.exception.SolvedAcUserNotFound;
 
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +19,6 @@ public class SolvedAcHttp {
     private static final String SOLVED_AC_GET_USER_PATH = "/user/show";
     private static final String SOLVED_AC_GET_PROBLEM_PATH = "/problem/show";
     private static final String SOLVED_AC_GET_PROBLEMS_PATH = "/problem/lookup";
-    private static final int SOLVED_AC_MAX_LEN = 100;
 
     public SolvedAcUserResp getBaekjoonUser(String baekjoonUsername) {
         URI uri = UriComponentsBuilder

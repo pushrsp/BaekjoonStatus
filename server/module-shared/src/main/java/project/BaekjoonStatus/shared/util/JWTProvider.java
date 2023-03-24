@@ -5,14 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
-import java.io.IOException;
 import java.util.Date;
 
 public class JWTProvider {
