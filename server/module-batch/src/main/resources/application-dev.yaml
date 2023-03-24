@@ -1,11 +1,13 @@
 profile-name: dev
 
 spring:
+  main:
+    web-application-type: none
   batch:
     jdbc:
       initialize-schema: always
     job:
-      enabled: false
+      names: ${job.name:NONE}
   datasource:
     url: jdbc:mysql://localhost:3306/BAEKJOON_STATUS?rewriteBatchedStatements=true
     username: root
