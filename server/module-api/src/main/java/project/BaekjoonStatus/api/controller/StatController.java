@@ -45,7 +45,6 @@ public class StatController {
 
     @GetMapping("/solved-histories")
     public CommonResponse getSolvedHistories(@Auth String userId, @RequestParam Integer offset) {
-        System.out.println(offset);
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())

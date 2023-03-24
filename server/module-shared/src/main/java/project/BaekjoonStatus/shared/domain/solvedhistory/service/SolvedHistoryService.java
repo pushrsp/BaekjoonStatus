@@ -1,6 +1,10 @@
 package project.BaekjoonStatus.shared.domain.solvedhistory.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
@@ -29,18 +33,19 @@ public class SolvedHistoryService {
     }
 
     public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
-        return solvedHistoryRepository.getSolvedCountGroupByDate(UUID.fromString(userId), year);
+        return solvedHistoryRepository.findSolvedCountGroupByDate(UUID.fromString(userId), year);
     }
 
     public List<CountByLevel> getSolvedCountGroupByLevel(String userId) {
-        return solvedHistoryRepository.getSolvedCountGroupByLevel(UUID.fromString(userId));
+        return solvedHistoryRepository.findSolvedCountGroupByLevel(UUID.fromString(userId));
     }
 
     public List<CountByTag> getSolvedCountGroupByTag(String userId) {
-        return solvedHistoryRepository.getSolvedCountGroupByTag(UUID.fromString(userId));
+        return solvedHistoryRepository.findSolvedCountGroupByTag(UUID.fromString(userId));
     }
 
-    public List<SolvedHistoryByUserId> findSolvedHistoriesByUserId(String userId, Integer offset) {
-        return solvedHistoryRepository.findSolvedHistories(UUID.fromString(userId), offset, PAGE_SIZE);
+    public Slice<SolvedHistory> findSolvedHistoriesByUserId(String userId, Integer offset) {
+        Pageable pageable = PageRequest.of(offset, PAGE_SIZE, Sort.by(Sort.Order.desc("problem_level"), Sort.Order.asc("problem_id")));
+        return solvedHistoryJpaRepository.findByUserId(UUID.fromString(userId), pageable);
     }
 }

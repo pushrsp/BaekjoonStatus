@@ -1,14 +1,15 @@
 package project.BaekjoonStatus.api.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.api.dto.StatDto.DailyCountDto;
+import project.BaekjoonStatus.api.dto.StatDto;
+import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
+import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.SolvedHistoryByUserId;
 import project.BaekjoonStatus.shared.util.DateProvider;
 
 import java.util.HashMap;
@@ -48,7 +49,8 @@ public class StatService {
         return solvedHistoryService.getSolvedCountGroupByTag(userId);
     }
 
-    public List<SolvedHistoryByUserId> getSolvedHistoriesByUserId(String userId, Integer offset) {
-        return solvedHistoryService.findSolvedHistoriesByUserId(userId, offset);
+    public SolvedHistoriesByUserId getSolvedHistoriesByUserId(String userId, Integer offset) {
+        Slice<SolvedHistory> solvedHistories = solvedHistoryService.findSolvedHistoriesByUserId(userId, offset);
+        return SolvedHistoriesByUserId.of(solvedHistories);
     }
 }
