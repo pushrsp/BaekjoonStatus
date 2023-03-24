@@ -6,5 +6,5 @@ import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import java.util.List;
 
 public interface ProblemJpaRepository extends JpaRepository<Problem, Long> {
-    List<Problem> findByIdIn(List<Long> ids);
+    List<Problem> findAllByIdIn(List<Long> ids);
 }
