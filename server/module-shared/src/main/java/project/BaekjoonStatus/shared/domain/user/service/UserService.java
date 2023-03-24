@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.domain.user.repository.UserJpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,6 +13,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserJpaRepository userJpaRepository;
+
+    public List<User> findAll() {
+        return userJpaRepository.findAll();
+    }
 
     public Optional<User> findById(String userId) {
         return userJpaRepository.findById(UUID.fromString(userId));
