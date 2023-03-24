@@ -4,7 +4,6 @@ import { ResponsiveRadar } from '@nivo/radar'
 import axios from 'axios'
 import { useSetRecoilState } from 'recoil'
 
-import { SolvedCountByTag } from '../../data/mockData'
 import { tokens } from '../../config/theme'
 import { userState } from '../../atom'
 
