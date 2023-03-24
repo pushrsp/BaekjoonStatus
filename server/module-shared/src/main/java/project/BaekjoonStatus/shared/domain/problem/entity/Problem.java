@@ -1,15 +1,12 @@
 package project.BaekjoonStatus.shared.domain.problem.entity;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import project.BaekjoonStatus.shared.domain.problemtag.entity.ProblemTag;
+import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.util.DateProvider;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,15 +26,10 @@ public class Problem {
     private String title;
 
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL)
-    private List<ProblemTag> problemTags = new ArrayList<>();
+    private List<Tag> tags = new ArrayList<>();
 
     @Column(name = "created_time", nullable = false)
     private LocalDateTime createdTime;
-
-    private void setProblemTag(ProblemTag problemTag) {
-        this.problemTags.add(problemTag);
-        problemTag.setProblem(this);
-    }
 
     private Problem(SolvedAcProblemResp info, LocalDateTime createdTime) {
         this.id = info.getProblemId();

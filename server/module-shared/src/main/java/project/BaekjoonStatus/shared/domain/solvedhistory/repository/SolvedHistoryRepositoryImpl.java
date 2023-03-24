@@ -2,11 +2,8 @@ package project.BaekjoonStatus.shared.domain.solvedhistory.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.*;
 
 import javax.persistence.EntityManager;
@@ -14,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static project.BaekjoonStatus.shared.domain.problem.entity.QProblem.problem;
-import static project.BaekjoonStatus.shared.domain.problemtag.entity.QProblemTag.problemTag;
 import static project.BaekjoonStatus.shared.domain.solvedhistory.entity.QSolvedHistory.solvedHistory;
 import static project.BaekjoonStatus.shared.domain.tag.entity.QTag.tag;
 
@@ -32,20 +28,7 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     }
 
     @Override
-    public List<SolvedHistoryByUserId> findSolvedHistories(UUID userId, int offset, int limit) {
-        return queryFactory
-                .select(Projections.bean(SolvedHistoryByUserId.class, problem.id.as("problemId"), problem.title.as("title"), solvedHistory.problemLevel.as("level")))
-                .from(solvedHistory)
-                .join(problem).on(solvedHistory.problem.id.eq(problem.id))
-                .where(solvedHistory.user.id.eq(userId))
-                .orderBy(solvedHistory.problemLevel.desc(), solvedHistory.problem.id.asc())
-                .limit(limit)
-                .offset((long) offset * limit)
-                .fetch();
-    }
-
-    @Override
-    public List<CountByDate> getSolvedCountGroupByDate(UUID userId, String year) {
+    public List<CountByDate> findSolvedCountGroupByDate(UUID userId, String year) {
         StringTemplate dateFormat = getDateFormat(solvedHistory.createdDate, DATE_FORMAT);
         StringTemplate yearFormat = getDateFormat(solvedHistory.createdDate, YEAR_FORMAT);
 
@@ -58,7 +41,7 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     }
 
     @Override
-    public List<CountByLevel> getSolvedCountGroupByLevel(UUID userId) {
+    public List<CountByLevel> findSolvedCountGroupByLevel(UUID userId) {
         return queryFactory
                 .select(Projections.bean(CountByLevel.class, caseBuilder(), solvedHistory.user.id.count().as("count")))
                 .from(solvedHistory)
@@ -68,16 +51,15 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     }
 
     @Override
-    public List<CountByTag> getSolvedCountGroupByTag(UUID userId) {
+    public List<CountByTag> findSolvedCountGroupByTag(UUID userId) {
         return queryFactory
-                .select(Projections.bean(CountByTag.class, tag.name.as("tag"), solvedHistory.user.id.count().as("count")))
+                .select(Projections.bean(CountByTag.class, tag.tagName.as("tag"), solvedHistory.user.id.count().as("count")))
                 .from(solvedHistory)
                 .join(problem).on(problem.id.eq(solvedHistory.problem.id))
-                .join(problemTag).on(problemTag.problem.id.eq(problem.id))
-                .join(tag).on(tag.id.eq(problemTag.tag.id))
+                .join(tag).on(tag.problem.id.eq(problem.id))
                 .where(solvedHistory.user.id.eq(userId))
-                .groupBy(tag.name)
-                .having(tag.name.in(TAG_IN))
+                .groupBy(tag.tagName)
+                .having(tag.tagName.in(TAG_IN))
                 .fetch();
     }
 

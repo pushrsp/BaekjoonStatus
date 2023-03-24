@@ -10,7 +10,6 @@ import project.BaekjoonStatus.api.dto.AuthDto.LoginReq;
 import project.BaekjoonStatus.api.dto.AuthDto.SignupReq;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.problem.service.ProblemService;
-import project.BaekjoonStatus.shared.domain.problemtag.service.ProblemTagService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
@@ -34,7 +33,6 @@ public class AuthService {
     @Value("${token.secret}")
     private String tokenSecret;
     private final ProblemService problemService;
-    private final ProblemTagService problemTagService;
     private final TagService tagService;
     private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
@@ -127,8 +125,7 @@ public class AuthService {
 
             List<SolvedAcProblemResp> infos = solvedAcHttp.getProblemsByProblemIds(saveIds);
             List<Problem> problems = problemService.saveAll(infos);
-            List<Tag> tags = tagService.saveAllByNotIn(getTagNames(infos));
-            problemTagService.saveAllByProblemInfos(infos, problems, tags);
+            tagService.saveAll(infos, problems);
         }
     }
 

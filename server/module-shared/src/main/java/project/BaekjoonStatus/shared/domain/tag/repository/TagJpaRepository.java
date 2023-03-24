@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TagJpaRepository extends JpaRepository<Tag, Long> {
-    Optional<Tag> findByName(String name);
-    List<Tag> findByNameIn(List<String> names);
+    Optional<Tag> findByTagName(String name);
+    List<Tag> findByTagNameIn(List<String> names);
 }

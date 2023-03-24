@@ -3,6 +3,7 @@ package project.BaekjoonStatus.shared.domain.tag.entity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 
 import javax.persistence.*;
 import java.util.List;
@@ -22,36 +23,20 @@ public class Tag {
     @Type(type = "uuid-char")
     private UUID id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "problem_id")
+    private Problem problem;
 
-    private Tag(String name) {
-        this.name = name;
-    }
+    @Column(name = "tag_name", nullable = false)
+    private String tagName;
 
-    private Tag(UUID id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public static Tag create(String name) {
-        return new Tag(name);
-    }
-
-    public static Tag create(UUID id, String name) {
-        return new Tag(id, name);
+    private Tag(Problem problem, String tagName) {
+        this.problem = problem;
+        this.tagName = tagName;
     }
 
     /* 생성 메서드 */
-    public static List<Tag> createByNames(Set<String> names) {
-        return names.stream()
-                .map(Tag::create)
-                .toList();
-    }
-
-    public static List<Tag> createByNames(List<String> tagNames) {
-        return tagNames.stream()
-                .map(Tag::create)
-                .toList();
+    public static Tag create(Problem problem, String tagName) {
+        return new Tag(problem, tagName);
     }
 }

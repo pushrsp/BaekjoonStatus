@@ -3,7 +3,6 @@ package project.BaekjoonStatus.api.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.CacheControl;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -13,7 +12,6 @@ import project.BaekjoonStatus.api.argumentresolver.AuthArgumentResolver;
 import project.BaekjoonStatus.api.interceptor.AuthInterceptor;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 @RequiredArgsConstructor

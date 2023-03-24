@@ -27,13 +27,4 @@ public class SolvedHistoryDto {
         private String day;
         private Long value;
     }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SolvedHistoryByUserId {
-        private Long problemId;
-        private String title;
-        private Integer level;
-    }
 }
