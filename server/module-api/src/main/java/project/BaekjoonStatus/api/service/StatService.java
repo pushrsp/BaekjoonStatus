@@ -3,8 +3,10 @@ package project.BaekjoonStatus.api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.api.dto.StatDto;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
+import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
+import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
+import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
@@ -20,6 +22,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class StatService {
     private final SolvedHistoryService solvedHistoryService;
+    private final DailyProblemService dailyProblemService;
+
+    public List<Problem> getDailyProblems() {
+        return dailyProblemService.findDailyProblems().stream()
+                .map(DailyProblem::getProblem)
+                .map(Problem::of)
+                .toList();
+    }
 
     public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
         if(year.isEmpty())
@@ -33,11 +43,10 @@ public class StatService {
         Map<String, Long> map = new HashMap<>();
 
         for (CountByLevel countByLevel : solvedCountGroupByLevel) {
-            if(map.containsKey(countByLevel.getLevel())) {
+            if(map.containsKey(countByLevel.getLevel()))
                 map.replace(countByLevel.getLevel(), map.get(countByLevel.getLevel()) + countByLevel.getCount());
-            } else {
+            else
                 map.put(countByLevel.getLevel(), countByLevel.getCount());
-            }
         }
 
         return map.keySet().stream()

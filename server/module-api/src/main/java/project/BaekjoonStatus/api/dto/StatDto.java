@@ -36,7 +36,7 @@ public class StatDto {
         }
 
         @Getter
-        private static class Problem {
+        public static class Problem {
             public Long problemId;
             public String title;
             public Integer problemLevel;
