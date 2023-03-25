@@ -14,7 +14,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "DAILY_PROBLEM")
+@Table(name = "DAILY_PROBLEM", indexes = {
+        @Index(name = "idx__created_date", columnList = "created_date")
+})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DailyProblem {
@@ -30,7 +32,6 @@ public class DailyProblem {
     private Problem problem;
 
     @Column(name = "created_date", nullable = false)
-    @CreatedDate
     private LocalDate createdDate;
 
     private DailyProblem(Problem problem) {
