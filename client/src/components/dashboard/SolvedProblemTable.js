@@ -11,9 +11,8 @@ import {
     TablePagination,
 } from '@mui/material'
 import axios from 'axios'
-
-import { SolvedProblems } from '../../data/mockData'
 import { useSetRecoilState } from 'recoil'
+
 import { userState } from '../../atom'
 
 const dailyProblemHeads = [
