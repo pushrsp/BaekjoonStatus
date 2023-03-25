@@ -1,12 +1,7 @@
 package project.BaekjoonStatus.api.interceptor;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.web.servlet.HandlerInterceptor;
-import project.BaekjoonStatus.shared.enums.CodeEnum;
-import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.util.JWTProvider;
 
 import javax.servlet.http.HttpServletRequest;
