@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { CssBaseline, ThemeProvider } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useSetRecoilState } from 'recoil'
 
 import { ColorModeContext, useMode } from './config/theme'
-import { userState } from './atom'
+import { userState, loadingState } from './atom'
 
 import Header from './components/global/Header'
 import Signup from './pages/Signup'
@@ -17,6 +16,7 @@ import ProtectedRoute from './pages/ProtectedRoute'
 const App = () => {
     const [theme, colorMode] = useMode()
     const setUser = useSetRecoilState(userState)
+    const setLoading = useSetRecoilState(loadingState)
 
     useEffect(() => {
         ;(async () => {
@@ -34,6 +34,8 @@ const App = () => {
                     setUser({ id: data.id, username: data.username })
                 }
             }
+
+            setTimeout(() => setLoading(false), [1000])
         })()
     }, [])
 

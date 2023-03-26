@@ -1,17 +1,26 @@
 profile-name: prod
 
 spring:
+  main:
+    web-application-type: none
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      names: ${job.name:NONE}
   config:
     import: application-aws.yaml
   jpa:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-      ddl-auto: create
+      ddl-auto: none
     database: mysql
-
-server:
-  port: 9090
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        dialect: org.hibernate.dialect.MySQL8Dialect
 logging:
   level:
     root: error

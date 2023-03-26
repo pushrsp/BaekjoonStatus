@@ -22,7 +22,7 @@ public class Problem {
     @Column(name = "level", nullable = false)
     private Integer level;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", length = 1000)
     private String title;
 
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL)

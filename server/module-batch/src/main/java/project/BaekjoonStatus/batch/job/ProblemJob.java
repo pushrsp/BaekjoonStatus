@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
@@ -25,8 +27,11 @@ import project.BaekjoonStatus.shared.domain.user.service.UserService;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.util.BaekjoonCrawling;
 import project.BaekjoonStatus.shared.util.DailyProblemCrawling;
+import project.BaekjoonStatus.shared.util.DateProvider;
 import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Configuration
@@ -46,20 +51,17 @@ public class ProblemJob {
 
     @Bean
     public Job saveProblemJob() {
-        userService.save("test1", "pushrsp", "test1234");
-        userService.save("test2", "0917jong", "test1234");
-        userService.save("test3", "oh20020409", "test1234");
-
         return this.jobBuilderFactory.get("saveProblemJob")
                 .incrementer(new RunIdIncrementer())
-                .start(this.saveDailyProblemStep())
-                .next(this.saveUserSolvedProblemStep())
+                .start(this.saveDailyProblemStep(null))
+                .next(this.saveUserSolvedProblemStep(null))
                 .build();
     }
 
     @Bean
-    public Step saveDailyProblemStep() {
-        return this.stepBuilderFactory.get("saveDailyProblemStep")
+    @JobScope
+    public Step saveDailyProblemStep(@Value("#{jobParameters[date]}") String date) {
+        return this.stepBuilderFactory.get(date + "_saveDailyProblemStep")
                 .<Long, Problem>chunk(1)
                 .reader(this.saveDailyProblemItemReader())
                 .processor(this.saveDailyProblemItemProcessor())
@@ -68,8 +70,9 @@ public class ProblemJob {
     }
 
     @Bean
-    public Step saveUserSolvedProblemStep() {
-        return this.stepBuilderFactory.get("saveUserSolvedProblemStep")
+    @JobScope
+    public Step saveUserSolvedProblemStep(@Value("#{jobParameters[date]}") String date) {
+        return this.stepBuilderFactory.get(date + "saveUserSolvedProblemStep")
                 .<User, Map<User, List<Problem>>>chunk(5)
                 .reader(this.saveUserSolvedProblemItemReader())
                 .processor(this.saveUserSolvedProblemItemProcessor())
@@ -121,9 +124,10 @@ public class ProblemJob {
 
     private ItemWriter<Map<User, List<Problem>>> saveUserSolvedProblemItemWriter() {
         return items -> {
+            LocalDate now = DateProvider.getDate().minusDays(1);
             for (Map<User, List<Problem>> item : items) {
                 for (User user : item.keySet())
-                    solvedHistoryService.bulkInsert(SolvedHistory.create(user, item.get(user), false));
+                    solvedHistoryService.bulkInsert(SolvedHistory.create(user, item.get(user), false, now));
             }
         };
     }

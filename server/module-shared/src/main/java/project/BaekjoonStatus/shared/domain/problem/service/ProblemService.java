@@ -6,10 +6,8 @@ import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.problem.repository.ProblemJpaRepository;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class ProblemService {
         for (Problem problem : problems)
             set.remove(problem.getId());
 
-        return set.stream().toList();
+        return new ArrayList<>(set);
     }
 
     public Optional<Problem> findById(Long problemId) {
@@ -40,6 +38,9 @@ public class ProblemService {
 
     public List<Problem> bulkInsert(List<Problem> problems) {
         return problemJpaRepository.saveAll(problems);
+    }
+    public List<Problem> bulkInsertAndFlush(List<Problem> problems) {
+        return problemJpaRepository.saveAllAndFlush(problems);
     }
 
     public List<Problem> saveAll(List<SolvedAcProblemResp> infos) {

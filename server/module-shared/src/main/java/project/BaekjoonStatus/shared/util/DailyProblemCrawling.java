@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DailyProblemCrawling {
     public static final String URL = "https://github.com/tony9402/baekjoon/blob/main/picked.md";
@@ -28,7 +29,7 @@ public class DailyProblemCrawling {
 
             return body.stream()
                     .map((data) -> Long.parseLong(data.getElementsByTag("td").get(1).text()))
-                    .toList();
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             return null;
         }

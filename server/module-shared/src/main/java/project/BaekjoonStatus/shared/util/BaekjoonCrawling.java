@@ -10,6 +10,7 @@ import project.BaekjoonStatus.shared.exception.MyException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BaekjoonCrawling {
 
@@ -27,7 +28,7 @@ public class BaekjoonCrawling {
 
             return Arrays.stream(elements.get(0).text().split(" "))
                     .map(Long::parseLong)
-                    .toList();
+                    .collect(Collectors.toList());
         } catch (HttpStatusException e) {
           throw new MyException(CodeEnum.BAEKJOON_NOT_FOUND);
         } catch (Exception e) {

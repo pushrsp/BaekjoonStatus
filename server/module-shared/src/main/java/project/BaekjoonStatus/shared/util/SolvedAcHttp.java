@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SolvedAcHttp {
     private static final String SOLVED_AC_URL = "https://solved.ac/api/v3";
@@ -65,13 +66,13 @@ public class SolvedAcHttp {
 
         try {
             RestTemplate restTemplate = new RestTemplate();
-            return Arrays.stream(Objects.requireNonNull(restTemplate.getForObject(uri, SolvedAcProblemResp[].class))).toList();
+            return Arrays.stream(Objects.requireNonNull(restTemplate.getForObject(uri, SolvedAcProblemResp[].class))).collect(Collectors.toList());
         } catch (HttpClientErrorException e) {
             throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
         }
     }
 
     public List<SolvedAcProblemResp> getProblemsByProblemIds(List<Long> problemIds) {
-        return this.getProblemsByProblemIds(String.join(",",problemIds.stream().map(Object::toString).toList()));
+        return this.getProblemsByProblemIds(problemIds.stream().map(Object::toString).collect(Collectors.joining(",")));
     }
 }

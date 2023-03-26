@@ -63,15 +63,36 @@ public class SolvedHistory {
         this.createdTime = DateProvider.getDateTime();
     }
 
+    private SolvedHistory(User user, Problem problem, Boolean isBefore, LocalDate createdDate) {
+        this.user = user;
+        this.problem = problem;
+        this.isBefore = isBefore;
+        this.problemLevel = problem.getLevel();
+        this.createdDate = createdDate;
+        this.createdTime = DateProvider.getDateTime();
+    }
+
     /* 생성 메서드 */
     public static SolvedHistory create(User user, Problem problem, boolean isBefore) {
         return new SolvedHistory(user, problem, isBefore);
+    }
+
+    public static SolvedHistory create(User user, Problem problem, boolean isBefore, LocalDate createdDate) {
+        return new SolvedHistory(user, problem, isBefore, createdDate);
     }
 
     public static List<SolvedHistory> create(User user, List<Problem> problems, boolean isBefore) {
         List<SolvedHistory> solvedHistories = new ArrayList<>();
         for (Problem problem : problems)
             solvedHistories.add(SolvedHistory.create(user, problem, isBefore));
+
+        return solvedHistories;
+    }
+
+    public static List<SolvedHistory> create(User user, List<Problem> problems, boolean isBefore, LocalDate createdDate) {
+        List<SolvedHistory> solvedHistories = new ArrayList<>();
+        for (Problem problem : problems)
+            solvedHistories.add(SolvedHistory.create(user, problem, isBefore, createdDate));
 
         return solvedHistories;
     }

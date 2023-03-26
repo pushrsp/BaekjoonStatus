@@ -18,6 +18,10 @@ public class TagService {
         return tagJpaRepository.saveAll(tags);
     }
 
+    public List<Tag> bulkInsertAndFlush(List<Tag> tags) {
+        return tagJpaRepository.saveAllAndFlush(tags);
+    }
+
     public List<Tag> saveAll( List<SolvedAcProblemResp> infos, List<Problem> problems) {
         Map<Long, Problem> map = new HashMap<>();
         for (Problem problem : problems)

@@ -35,7 +35,7 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
         return queryFactory
                 .select(Projections.bean(CountByDate.class, dateFormat.as("day"), solvedHistory.user.id.count().as("value")))
                 .from(solvedHistory)
-                .where(solvedHistory.user.id.eq(userId).and(yearFormat.eq(year).and(solvedHistory.isBefore.eq(true))))
+                .where(solvedHistory.user.id.eq(userId).and(yearFormat.eq(year).and(solvedHistory.isBefore.eq(false))))
                 .groupBy(solvedHistory.createdDate)
                 .fetch();
     }

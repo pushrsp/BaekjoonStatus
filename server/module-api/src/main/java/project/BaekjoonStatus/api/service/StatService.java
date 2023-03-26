@@ -17,6 +17,7 @@ import project.BaekjoonStatus.shared.util.DateProvider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class StatService {
         return dailyProblemService.findDailyProblems().stream()
                 .map(DailyProblem::getProblem)
                 .map(Problem::of)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
@@ -51,7 +52,7 @@ public class StatService {
 
         return map.keySet().stream()
                 .map((k) -> new CountByLevel(k, map.get(k)))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public List<CountByTag> getSolvedCountGroupByTag(String userId) {

@@ -28,6 +28,10 @@ public class SolvedHistoryService {
         return solvedHistoryJpaRepository.saveAll(solvedHistories);
     }
 
+    public List<SolvedHistory> bulkInsertAndFlush(List<SolvedHistory> solvedHistories) {
+        return solvedHistoryJpaRepository.saveAllAndFlush(solvedHistories);
+    }
+
     public List<SolvedHistory> saveAll(User user, List<Problem> problems, boolean isBefore) {
         return bulkInsert(SolvedHistory.create(user, problems, isBefore));
     }

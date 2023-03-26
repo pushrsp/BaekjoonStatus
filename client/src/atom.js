@@ -5,4 +5,9 @@ const userState = atom({
     default: {},
 })
 
-export { userState }
+const loadingState = atom({
+    key: 'loadingState',
+    default: true,
+})
+
+export { userState, loadingState }

@@ -3,11 +3,9 @@ package project.BaekjoonStatus.api.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.argumentresolver.Auth;
-import project.BaekjoonStatus.api.dto.StatDto;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
 import project.BaekjoonStatus.api.service.StatService;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
@@ -35,7 +33,7 @@ public class StatController {
 
     private LocalDateTime getNextCacheKey() {
         LocalDateTime now = DateProvider.getDateTime();
-        LocalDateTime next = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 4,10,0);
+        LocalDateTime next = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 5,10,0);
         if(now.isBefore(next))
             return next;
 

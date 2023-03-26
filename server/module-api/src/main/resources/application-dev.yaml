@@ -4,14 +4,14 @@ token:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/BAEKJOON_STATUS?rewriteBatchedStatements=true
+    url: jdbc:mysql://127.0.0.1:3306/BAEKJOON_STATUS?rewriteBatchedStatements=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
@@ -19,7 +19,7 @@ spring:
 #        format_sql: true
 #        show_sql: true
 #        use_sql_comments: true
-        dialect: org.hibernate.dialect.MySQL5Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
         jdbc:
           batch_size: 100
 server:

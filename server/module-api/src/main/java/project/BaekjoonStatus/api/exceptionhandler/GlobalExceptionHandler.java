@@ -51,11 +51,11 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public CommonResponse exceptionHandler(Exception e) {
-//        return CommonResponse.builder()
-//                .code(CodeEnum.UNKNOWN_SERVER_ERROR.getCode())
-//                .message(CodeEnum.UNKNOWN_SERVER_ERROR.getMessage())
-//                .build();
-//    }
+    @ExceptionHandler(Exception.class)
+    public CommonResponse exceptionHandler(Exception e) {
+        return CommonResponse.builder()
+                .code(CodeEnum.UNKNOWN_EXCEPTION.getCode())
+                .message(CodeEnum.UNKNOWN_EXCEPTION.getMessage())
+                .build();
+    }
 }
