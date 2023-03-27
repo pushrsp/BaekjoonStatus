@@ -22,7 +22,6 @@ const Signup = () => {
     const [username, setUsername] = useState('')
     const [baekjoonUsername, setBaekjoonUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [passwordCheck, setPasswordCheck] = useState('')
 
     const onClick = async () => {
         if (activeStep === 0) {
@@ -137,25 +136,6 @@ const Signup = () => {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                fullWidth
-                                sx={{
-                                    '& label.Mui-focused': {
-                                        color: colors.grey['100'],
-                                    },
-                                    '& .MuiOutlinedInput-root': {
-                                        '&.Mui-focused fieldset': {
-                                            borderColor: colors.blueAccent['200'],
-                                        },
-                                    },
-                                }}
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                label="비밀번호 확인"
-                                value={passwordCheck}
-                                type="password"
-                                onChange={(e) => setPasswordCheck(e.target.value)}
                                 fullWidth
                                 sx={{
                                     '& label.Mui-focused': {
