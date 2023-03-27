@@ -84,7 +84,7 @@ const Signup = () => {
                 </Box>
                 <Box marginTop={1}>
                     {activeStep === 0 && <Typography variant="h5">백준 아이디 확인</Typography>}
-                    {activeStep === 1 && <Typography variant="h5">비밀번호 입력</Typography>}
+                    {activeStep === 1 && <Typography variant="h5">아이디/비밀번호 입력</Typography>}
                 </Box>
                 <Box display="flex" flexDirection="column" width="40%">
                     {activeStep === 0 && (
