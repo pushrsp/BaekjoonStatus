@@ -1,7 +1,7 @@
 # BaekjoonStatus
 
 ## 서버 인프라 구조
-![INFRA](https://user-images.githubusercontent.com/58874665/227873505-f87ae197-27a2-49eb-bba3-ee889fe42fc5.png)
+![INFRA](https://user-images.githubusercontent.com/58874665/227874793-ca4fd40e-b84d-42ad-9860-d2c5f310695f.png)
 
 ## 데이터베이스 관계도
 ![ERD](https://user-images.githubusercontent.com/58874665/227873361-ebeffda5-4dd3-434c-8c7a-165778678468.png)
