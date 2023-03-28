@@ -13,6 +13,9 @@ public class CacheTemplate<V> {
 
         cache.entrySet().removeIf(entry -> entry.getKey().isBefore(key));
 
-        return cache.put(key, callback.execute());
+        V data = callback.execute();
+        cache.put(key, data);
+
+        return data;
     }
 }

@@ -29,7 +29,7 @@ public class StatService {
         return dailyProblemService.findDailyProblems().stream()
                 .map(DailyProblem::getProblem)
                 .map(Problem::of)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
@@ -52,7 +52,7 @@ public class StatService {
 
         return map.keySet().stream()
                 .map((k) -> new CountByLevel(k, map.get(k)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<CountByTag> getSolvedCountGroupByTag(String userId) {
