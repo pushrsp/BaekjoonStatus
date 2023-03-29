@@ -14,6 +14,7 @@ import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import project.BaekjoonStatus.batch.listener.JobListener;
 import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
 import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
@@ -31,7 +32,6 @@ import project.BaekjoonStatus.shared.util.DateProvider;
 import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Configuration
@@ -53,6 +53,7 @@ public class ProblemJob {
     public Job saveProblemJob() {
         return this.jobBuilderFactory.get("saveProblemJob")
                 .incrementer(new RunIdIncrementer())
+                .listener(new JobListener())
                 .start(this.saveDailyProblemStep(null))
                 .next(this.saveUserSolvedProblemStep(null))
                 .build();
