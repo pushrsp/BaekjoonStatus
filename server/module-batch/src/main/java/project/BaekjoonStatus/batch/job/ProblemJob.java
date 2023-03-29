@@ -10,6 +10,8 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +33,7 @@ import project.BaekjoonStatus.shared.util.DailyProblemCrawling;
 import project.BaekjoonStatus.shared.util.DateProvider;
 import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 
+import javax.persistence.EntityManagerFactory;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -39,14 +42,15 @@ import java.util.*;
 public class ProblemJob {
     private static final SolvedAcHttp SOLVED_AC_HTTP = new SolvedAcHttp();
     private static final int PROBLEM_ID_OFFSET = 100;
+    private static final int SAVE_PROBLEMS_CHUNK_SIZE = 5;
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final EntityManagerFactory entityManagerFactory;
 
     private final ProblemService problemService;
     private final TagService tagService;
     private final DailyProblemService dailyProblemService;
-    private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
 
     @Bean
@@ -73,19 +77,24 @@ public class ProblemJob {
     @Bean
     @JobScope
     public Step saveUserSolvedProblemStep(@Value("#{jobParameters[date]}") String date) {
-        return this.stepBuilderFactory.get(date + "saveUserSolvedProblemStep")
-                .<User, Map<User, List<Problem>>>chunk(5)
-                .reader(this.saveUserSolvedProblemItemReader())
-                .processor(this.saveUserSolvedProblemItemProcessor())
-                .writer(this.saveUserSolvedProblemItemWriter())
+        return this.stepBuilderFactory.get(date + "_saveUserSolvedProblemStep")
+                .<User, List<SolvedHistory>>chunk(SAVE_PROBLEMS_CHUNK_SIZE)
+                .reader(this.saveUserSolvedProblemJpaPagingItemReader())
+                .processor(this.saveUserSolvedProblemItemJpaPagingProcessor())
+                .writer(this.saveUserSolvedProblemJpaPagingItemWriter())
                 .build();
     }
 
-    private ItemReader<User> saveUserSolvedProblemItemReader() {
-        return new ListItemReader<>(userService.findAll());
+    private JpaPagingItemReader<User> saveUserSolvedProblemJpaPagingItemReader() {
+        return new JpaPagingItemReaderBuilder<User>()
+                .name("saveUserSolvedProblemJpaPagingItemReader")
+                .entityManagerFactory(entityManagerFactory)
+                .pageSize(SAVE_PROBLEMS_CHUNK_SIZE)
+                .queryString("SELECT u FROM User u")
+                .build();
     }
 
-    private ItemProcessor<User, Map<User, List<Problem>>> saveUserSolvedProblemItemProcessor() {
+    private ItemProcessor<User, List<SolvedHistory>> saveUserSolvedProblemItemJpaPagingProcessor() {
         return user -> {
             BaekjoonCrawling crawling = new BaekjoonCrawling(user.getBaekjoonUsername());
             List<Long> newSolvedHistories = crawling.getMySolvedHistories();
@@ -94,10 +103,9 @@ public class ProblemJob {
             if(newSolvedHistories.size() == oldSolvedHistories.size())
                 return null;
 
-            Map<User, List<Problem>> ret = new HashMap<>();
             Set<Long> newIds = new HashSet<>(newSolvedHistories);
-            for (SolvedHistory solved : oldSolvedHistories)
-                newIds.remove(solved.getProblem().getId());
+            for (SolvedHistory oldSolvedHistory : oldSolvedHistories)
+                newIds.remove(oldSolvedHistory.getProblem().getId());
 
             List<Long> ids = newIds.stream().toList();
             List<Problem> problems = new ArrayList<>();
@@ -117,19 +125,18 @@ public class ProblemJob {
                 problems.addAll(problemService.findAllByIds(problemIds));
             }
 
-            ret.put(user, problems);
+            List<SolvedHistory> ret = new ArrayList<>();
+            for (Problem problem : problems)
+                ret.add(SolvedHistory.create(user, problem, false));
 
             return ret;
         };
     }
 
-    private ItemWriter<Map<User, List<Problem>>> saveUserSolvedProblemItemWriter() {
+    private ItemWriter<List<SolvedHistory>> saveUserSolvedProblemJpaPagingItemWriter() {
         return items -> {
-            LocalDate now = DateProvider.getDate().minusDays(1);
-            for (Map<User, List<Problem>> item : items) {
-                for (User user : item.keySet())
-                    solvedHistoryService.bulkInsert(SolvedHistory.create(user, item.get(user), false, now));
-            }
+            for (List<SolvedHistory> item : items)
+                solvedHistoryService.bulkInsert(item);
         };
     }
 
