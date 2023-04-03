@@ -26,7 +26,6 @@ import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryS
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
-import project.BaekjoonStatus.shared.domain.user.service.UserService;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.util.BaekjoonCrawling;
 import project.BaekjoonStatus.shared.util.DailyProblemCrawling;
@@ -34,7 +33,6 @@ import project.BaekjoonStatus.shared.util.DateProvider;
 import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 
 import javax.persistence.EntityManagerFactory;
-import java.time.LocalDate;
 import java.util.*;
 
 @Configuration
@@ -127,7 +125,7 @@ public class ProblemJob {
 
             List<SolvedHistory> ret = new ArrayList<>();
             for (Problem problem : problems)
-                ret.add(SolvedHistory.create(user, problem, false));
+                ret.add(SolvedHistory.create(user, problem, false, DateProvider.getDate().minusDays(1)));
 
             return ret;
         };
