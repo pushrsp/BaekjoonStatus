@@ -7,7 +7,6 @@ import project.BaekjoonStatus.shared.domain.problem.repository.ProblemJpaReposit
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class ProblemService {
         for (Problem problem : problems)
             set.remove(problem.getId());
 
-        return new ArrayList<>(set);
+        return set.stream().toList();
     }
 
     public Optional<Problem> findById(Long problemId) {
