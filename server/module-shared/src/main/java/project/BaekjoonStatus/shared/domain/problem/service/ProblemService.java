@@ -31,6 +31,20 @@ public class ProblemService {
         return set.stream().toList();
     }
 
+    public List<Long> findProblemIdsByNotInWithLock(List<Long> ids) {
+        Set<Long> set = new HashSet<>(ids);
+
+        List<Problem> problems = findAllByIdsWithLock(ids);
+        for (Problem problem : problems)
+            set.remove(problem.getId());
+
+        return set.stream().toList();
+    }
+
+    public List<Problem> findAllByIdsWithLock(List<Long> ids) {
+        return problemJpaRepository.findAllByIdInWithLock(ids);
+    }
+
     public Optional<Problem> findById(Long problemId) {
         return problemJpaRepository.findById(problemId);
     }

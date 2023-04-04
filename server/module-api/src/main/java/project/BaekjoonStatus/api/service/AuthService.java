@@ -3,6 +3,7 @@ package project.BaekjoonStatus.api.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,10 @@ import static project.BaekjoonStatus.api.dto.AuthDto.*;
 public class AuthService {
     private static final int PROBLEM_ID_OFFSET = 100;
     private final HashMap<String, RegisterToken> registerTokenStore = new HashMap<>();
+
     @Value("${token.secret}")
     private String tokenSecret;
+
     private final ProblemService problemService;
     private final TagService tagService;
     private final UserService userService;
@@ -104,7 +107,7 @@ public class AuthService {
             List<Long> ids = problemIds.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, problemIds.size()));
             startIndex += PROBLEM_ID_OFFSET;
 
-            solvedHistoryService.saveAll(data.getUser(), problemService.findAllByIds(ids), true);
+            solvedHistoryService.saveAll(data.getUser(), problemService.findAllByIdsWithLock(ids), true);
         }
     }
 
@@ -118,7 +121,7 @@ public class AuthService {
             List<Long> ids = problemIds.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, problemIds.size()));
             startIndex += PROBLEM_ID_OFFSET;
 
-            List<Long> saveIds = problemService.findProblemIdsByNotIn(ids);
+            List<Long> saveIds = problemService.findProblemIdsByNotInWithLock(ids);
             if(saveIds.isEmpty())
                 continue;
 
