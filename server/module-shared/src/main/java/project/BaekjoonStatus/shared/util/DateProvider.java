@@ -14,4 +14,13 @@ public class DateProvider {
     public static LocalDateTime getDateTime() {
         return LocalDateTime.now(ZoneId.of(ZONE_ID));
     }
+
+    public static LocalDateTime getNextCacheKey() {
+        LocalDateTime now = DateProvider.getDateTime();
+        LocalDateTime next = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 5,10,0);
+        if(now.isBefore(next))
+            return next;
+
+        return next.plusDays(1);
+    }
 }
