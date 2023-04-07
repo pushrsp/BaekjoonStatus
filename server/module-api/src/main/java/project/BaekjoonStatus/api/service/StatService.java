@@ -12,12 +12,10 @@ import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryS
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
-import project.BaekjoonStatus.shared.util.DateProvider;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +31,6 @@ public class StatService {
     }
 
     public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
-        if(year.isEmpty())
-            year = String.valueOf(DateProvider.getDate().getYear());
-
        return solvedHistoryService.getSolvedCountGroupByDate(userId, year);
     }
 

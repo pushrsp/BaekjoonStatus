@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.api.template.cache;
+package project.BaekjoonStatus.api.cache;
 
 public interface CacheCallback<T> {
     T execute();

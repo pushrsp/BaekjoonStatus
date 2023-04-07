@@ -1,5 +1,7 @@
 package project.BaekjoonStatus.api.template.cache;
 
+import project.BaekjoonStatus.api.cache.CacheCallback;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
