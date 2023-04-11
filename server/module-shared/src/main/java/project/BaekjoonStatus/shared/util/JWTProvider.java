@@ -13,10 +13,10 @@ import java.util.Date;
 public class JWTProvider {
     private static final Long EXPIRE_TIME = 1000L * 60 * 60 * 24; //하루
 
-    public static String generateToken(String userId, String secret) {
+    public static String generateToken(String userId, String secret, Long expireTime) {
         return JWT.create()
                 .withClaim("id", userId)
-                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRE_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + expireTime))
                 .sign(Algorithm.HMAC256(secret));
     }
 
