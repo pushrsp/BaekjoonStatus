@@ -3,7 +3,6 @@ package project.BaekjoonStatus.api.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +20,7 @@ import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.util.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static project.BaekjoonStatus.api.dto.AuthDto.*;
 
@@ -29,7 +29,9 @@ import static project.BaekjoonStatus.api.dto.AuthDto.*;
 @Slf4j
 public class AuthService {
     private static final int PROBLEM_ID_OFFSET = 100;
-    private final HashMap<String, RegisterToken> registerTokenStore = new HashMap<>();
+    private static final Long EXPIRE_TIME = 1000L * 60 * 60 * 24; //하루
+
+    private final ConcurrentHashMap<String, RegisterToken> registerTokenStore = new ConcurrentHashMap<>();
 
     @Value("${token.secret}")
     private String tokenSecret;
@@ -93,7 +95,7 @@ public class AuthService {
         return LoginResp.builder()
                 .id(findUser.get().getId().toString())
                 .username(findUser.get().getUsername())
-                .token(JWTProvider.generateToken(findUser.get().getId().toString(), tokenSecret))
+                .token(JWTProvider.generateToken(findUser.get().getId().toString(), tokenSecret, EXPIRE_TIME))
                 .build();
     }
 
