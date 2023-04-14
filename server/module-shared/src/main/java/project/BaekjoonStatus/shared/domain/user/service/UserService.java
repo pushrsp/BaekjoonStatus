@@ -2,6 +2,7 @@ package project.BaekjoonStatus.shared.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.domain.user.repository.UserJpaRepository;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserJpaRepository userJpaRepository;
 
@@ -30,6 +32,7 @@ public class UserService {
         return userJpaRepository.findByUsername(username);
     }
 
+    @Transactional
     public User save(String username, String baekjoonUsername, String password) {
         return userJpaRepository.save(User.create(username, baekjoonUsername, password));
     }

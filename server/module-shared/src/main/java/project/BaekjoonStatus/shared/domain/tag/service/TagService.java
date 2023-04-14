@@ -2,6 +2,7 @@ package project.BaekjoonStatus.shared.domain.tag.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.domain.tag.repository.TagJpaRepository;
@@ -11,6 +12,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TagService {
     private final TagJpaRepository tagJpaRepository;
 
@@ -22,7 +24,7 @@ public class TagService {
         return tagJpaRepository.saveAllAndFlush(tags);
     }
 
-    public List<Tag> saveAll( List<SolvedAcProblemResp> infos, List<Problem> problems) {
+    public List<Tag> saveAll(List<SolvedAcProblemResp> infos, List<Problem> problems) {
         Map<Long, Problem> map = new HashMap<>();
         for (Problem problem : problems)
             map.put(problem.getId(), problem);
