@@ -1,13 +1,13 @@
 package project.BaekjoonStatus.api.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.api.dto.AuthDto.LoginReq;
 import project.BaekjoonStatus.api.dto.AuthDto.SignupReq;
+import project.BaekjoonStatus.api.template.divider.ListDividerTemplate;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
@@ -20,18 +20,18 @@ import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.util.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static project.BaekjoonStatus.api.dto.AuthDto.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AuthService {
-    private static final int PROBLEM_ID_OFFSET = 100;
+    private static final int OFFSET = 100;
     private static final Long EXPIRE_TIME = 1000L * 60 * 60 * 24; //하루
+    private static final SolvedAcHttp SOLVED_AC_HTTP = new SolvedAcHttp();
 
-    private final ConcurrentHashMap<String, RegisterToken> registerTokenStore = new ConcurrentHashMap<>();
+    private final RegisterTokenStore registerTokenStore = new RegisterTokenStore();
 
     @Value("${token.secret}")
     private String tokenSecret;
@@ -53,25 +53,34 @@ public class AuthService {
     }
 
     public ValidBaekjoonUsernameResp validBaekjoonUsername(String username) {
-        List<Long> solvedHistories = getSolvedHistories(username);
-        RegisterToken token = RegisterToken.builder()
-                .createdAt(DateProvider.getDate())
-                .solvedHistories(solvedHistories)
-                .build();
-
-        String key = UUID.randomUUID().toString();
-        registerTokenStore.put(key, token);
-
+        List<Long> problemIds = getProblemIds(username);
         return ValidBaekjoonUsernameResp.builder()
-                .solvedHistories(solvedHistories)
-                .solvedCount(solvedHistories.size())
-                .registerToken(key)
+                .solvedCount(problemIds.size())
+                .registerToken(registerTokenStore.put(problemIds))
                 .build();
     }
 
+    @Async
     @Transactional
+    public void createProblems(String registerTokenKey) {
+        RegisterToken token = registerTokenStore.get(registerTokenKey);
+        ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
+
+        listDivider.execute((List<Long> ids) -> {
+            List<Long> saveIds = problemService.findProblemIdsByNotInWithLock(ids);
+            if(saveIds.isEmpty())
+                return null;
+
+            List<SolvedAcProblemResp> infos = SOLVED_AC_HTTP.getProblemsByProblemIds(saveIds);
+            List<Problem> problems = problemService.saveAll(infos);
+            tagService.saveAll(infos, problems);
+
+            return null;
+        });
+    }
+
     public CreateUserDto createUser(SignupReq data) {
-        if(registerTokenStore.get(data.getRegisterToken()) == null)
+        if(!registerTokenStore.exist(data.getRegisterToken()))
             throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
 
         if(userService.exist(data.getUsername()))
@@ -82,6 +91,20 @@ public class AuthService {
                 .user(saveUser)
                 .registerTokenKey(data.getRegisterToken())
                 .build();
+    }
+
+    @Async
+    @Transactional
+    public void createSolvedHistories(CreateUserDto data) {
+        RegisterToken token = registerTokenStore.get(data.getRegisterTokenKey());
+        ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
+
+        listDivider.execute((List<Long> ids) -> {
+            solvedHistoryService.saveAll(data.getUser(), problemService.findAllByIdsWithLock(ids), true);
+            return null;
+        });
+
+        registerTokenStore.remove(data.getRegisterTokenKey());
     }
 
     public LoginResp login(LoginReq data) {
@@ -99,48 +122,7 @@ public class AuthService {
                 .build();
     }
 
-    @Async
-    @Transactional
-    public void createSolvedHistories(CreateUserDto data) {
-        List<Long> problemIds = getProblemIds(data.getRegisterTokenKey());
-
-        int startIndex = 0;
-        while (startIndex < problemIds.size()) {
-            List<Long> ids = problemIds.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, problemIds.size()));
-            startIndex += PROBLEM_ID_OFFSET;
-
-            solvedHistoryService.saveAll(data.getUser(), problemService.findAllByIdsWithLock(ids), true);
-        }
-    }
-
-    @Async
-    @Transactional
-    public void createSolvedProblems(List<Long> problemIds) {
-        SolvedAcHttp solvedAcHttp = new SolvedAcHttp();
-
-        int startIndex = 0;
-        while (startIndex < problemIds.size()) {
-            List<Long> ids = problemIds.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, problemIds.size()));
-            startIndex += PROBLEM_ID_OFFSET;
-
-            List<Long> saveIds = problemService.findProblemIdsByNotInWithLock(ids);
-            if(saveIds.isEmpty())
-                continue;
-
-            List<SolvedAcProblemResp> infos = solvedAcHttp.getProblemsByProblemIds(saveIds);
-            List<Problem> problems = problemService.saveAll(infos);
-            tagService.saveAll(infos, problems);
-        }
-    }
-
-    private List<Long> getProblemIds(String tokenKey) {
-        RegisterToken registerToken = registerTokenStore.get(tokenKey);
-        registerTokenStore.remove(tokenKey);
-
-        return registerToken.getSolvedHistories();
-    }
-
-    private List<Long> getSolvedHistories(String username) {
+    private List<Long> getProblemIds(String username) {
         return new BaekjoonCrawling(username)
                 .getMySolvedHistories();
     }

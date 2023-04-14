@@ -31,9 +31,8 @@ public class AuthController {
     @GetMapping("/baekjoon")
     public CommonResponse validBaekjoonUsername(@Valid ValidParams validParams) {
         ValidBaekjoonUsernameResp info = authService.validBaekjoonUsername(validParams.getUsername());
-
-        if(info.getSolvedHistories().size() > 0)
-            authService.createSolvedProblems(info.getSolvedHistories());
+        if(info.getSolvedCount() > 0)
+            authService.createProblems(info.getRegisterToken());
 
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())

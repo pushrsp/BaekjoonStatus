@@ -7,8 +7,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-@Builder
 public class RegisterToken {
-    private LocalDate createdAt;
-    private List<Long> solvedHistories;
+    private final LocalDate createdAt;
+    private final List<Long> problemIds;
+
+    @Builder
+    public RegisterToken(LocalDate createdAt, List<Long> problemIds) {
+        this.createdAt = createdAt;
+        this.problemIds = problemIds;
+    }
 }

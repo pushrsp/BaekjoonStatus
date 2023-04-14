@@ -3,6 +3,7 @@ package project.BaekjoonStatus.api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
 import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
@@ -23,6 +24,7 @@ public class StatService {
     private final SolvedHistoryService solvedHistoryService;
     private final DailyProblemService dailyProblemService;
 
+    @Transactional
     public List<Problem> getDailyProblems() {
         return dailyProblemService.findDailyProblems().stream()
                 .map(DailyProblem::getProblem)
@@ -54,6 +56,7 @@ public class StatService {
         return solvedHistoryService.getSolvedCountGroupByTag(userId);
     }
 
+    @Transactional
     public SolvedHistoriesByUserId getSolvedHistoriesByUserId(String userId, Integer offset) {
         Slice<SolvedHistory> solvedHistories = solvedHistoryService.findSolvedHistoriesByUserId(userId, offset);
         return SolvedHistoriesByUserId.of(solvedHistories);

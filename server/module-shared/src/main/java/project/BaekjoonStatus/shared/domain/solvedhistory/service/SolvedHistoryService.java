@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryJpaRepository;
@@ -18,20 +19,24 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SolvedHistoryService {
     private static final int PAGE_SIZE = 10;
 
     private final SolvedHistoryJpaRepository solvedHistoryJpaRepository;
     private final SolvedHistoryRepository solvedHistoryRepository;
 
+    @Transactional
     public List<SolvedHistory> bulkInsert(List<SolvedHistory> solvedHistories) {
         return solvedHistoryJpaRepository.saveAll(solvedHistories);
     }
 
+    @Transactional
     public List<SolvedHistory> bulkInsertAndFlush(List<SolvedHistory> solvedHistories) {
         return solvedHistoryJpaRepository.saveAllAndFlush(solvedHistories);
     }
 
+    @Transactional
     public List<SolvedHistory> saveAll(User user, List<Problem> problems, boolean isBefore) {
         return bulkInsert(SolvedHistory.create(user, problems, isBefore));
     }
