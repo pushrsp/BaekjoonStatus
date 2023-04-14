@@ -1,14 +1,11 @@
 package project.BaekjoonStatus.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 
 import javax.validation.constraints.*;
-import java.util.List;
 
 public class AuthDto {
 
@@ -25,8 +22,6 @@ public class AuthDto {
     @Builder
     @AllArgsConstructor
     public static class ValidBaekjoonUsernameResp {
-        @JsonIgnore
-        private List<Long> solvedHistories;
         private int solvedCount;
         private String registerToken;
     }
