@@ -6,8 +6,6 @@ import org.hibernate.annotations.Type;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +13,6 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
-
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
