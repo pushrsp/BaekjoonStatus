@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.shared.domain.problem.entity;
 
 import lombok.*;
+import org.springframework.data.domain.Persistable;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.util.DateProvider;
@@ -14,7 +15,7 @@ import java.util.List;
 @Table(name = "PROBLEM")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Problem {
+public class Problem implements Persistable<Long> {
     @Id
     @Column(name = "problem_id")
     private Long id;
@@ -51,5 +52,10 @@ public class Problem {
             problems.add(Problem.create(info));
 
         return problems;
+    }
+
+    @Override
+    public boolean isNew() {
+        return true;
     }
 }
