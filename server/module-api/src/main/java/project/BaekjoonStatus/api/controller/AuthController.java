@@ -21,7 +21,7 @@ public class AuthController {
 
     @GetMapping("/health")
     public String healthCheck() {
-        return "ok";
+        return "health";
     }
 
     @GetMapping("/me")
