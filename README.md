@@ -3,6 +3,9 @@
 ## 서버 인프라 구조
 ![INFRA](https://user-images.githubusercontent.com/58874665/227874793-ca4fd40e-b84d-42ad-9860-d2c5f310695f.png)
 
+## CD 인프라 구조
+![CICD](https://user-images.githubusercontent.com/58874665/232942166-b48fdc44-3bb9-4014-8221-22b581a15d11.png)
+
 ## 데이터베이스 관계도
 ![ERD](https://user-images.githubusercontent.com/58874665/227873361-ebeffda5-4dd3-434c-8c7a-165778678468.png)
 
