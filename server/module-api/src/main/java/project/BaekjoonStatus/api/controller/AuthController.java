@@ -19,6 +19,11 @@ import static project.BaekjoonStatus.api.dto.AuthDto.*;
 public class AuthController {
     private final AuthService authService;
 
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "ok";
+    }
+
     @GetMapping("/me")
     public CommonResponse validMe(@Auth String userId) {
         return CommonResponse.builder()
