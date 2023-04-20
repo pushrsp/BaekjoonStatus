@@ -1,10 +1,6 @@
 package project.BaekjoonStatus.shared.domain.solvedhistory.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
@@ -21,7 +17,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class SolvedHistoryService {
-    private static final int PAGE_SIZE = 10;
 
     private final SolvedHistoryJpaRepository solvedHistoryJpaRepository;
     private final SolvedHistoryRepository solvedHistoryRepository;
@@ -41,10 +36,6 @@ public class SolvedHistoryService {
         return bulkInsert(SolvedHistory.create(user, problems, isBefore));
     }
 
-    public List<SolvedHistory> findAllByUserId(String userId) {
-        return solvedHistoryJpaRepository.findAllByUserId(UUID.fromString(userId));
-    }
-
     public List<SolvedHistory> findAllByUserId(UUID userId) {
         return solvedHistoryJpaRepository.findAllByUserId(userId);
     }
@@ -61,8 +52,7 @@ public class SolvedHistoryService {
         return solvedHistoryRepository.findSolvedCountGroupByTag(UUID.fromString(userId));
     }
 
-    public Slice<SolvedHistory> findSolvedHistoriesByUserId(String userId, Integer offset) {
-        Pageable pageable = PageRequest.of(offset, PAGE_SIZE, Sort.by(Sort.Order.desc("problem_level"), Sort.Order.asc("problem_id")));
-        return solvedHistoryJpaRepository.findByUserId(UUID.fromString(userId), pageable);
+    public List<SolvedHistory> findSolvedHistoriesByUserId(String userId, Integer offset, Integer limit) {
+        return solvedHistoryRepository.findAllByUserId(UUID.fromString(userId), offset, limit);
     }
 }

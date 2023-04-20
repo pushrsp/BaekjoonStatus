@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.*;
 
 import javax.persistence.EntityManager;
@@ -60,6 +61,18 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .where(solvedHistory.user.id.eq(userId))
                 .groupBy(tag.tagName)
                 .having(tag.tagName.in(TAG_IN))
+                .fetch();
+    }
+
+    @Override
+    public List<SolvedHistory> findAllByUserId(UUID userId, int offset, int limit) {
+        return queryFactory.select(solvedHistory)
+                .from(solvedHistory)
+                .join(solvedHistory.problem, problem).fetchJoin()
+                .where(solvedHistory.user.id.eq(userId))
+                .offset(offset)
+                .limit(limit + 1)
+                .orderBy(solvedHistory.problemLevel.desc(), solvedHistory.problem.id.asc())
                 .fetch();
     }
 

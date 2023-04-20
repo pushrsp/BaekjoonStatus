@@ -1,7 +1,6 @@
 package project.BaekjoonStatus.api.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
@@ -10,6 +9,8 @@ import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
 import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
+import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
+import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
@@ -21,8 +22,11 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class StatService {
+    private static final int PAGE_SIZE = 10;
+
     private final SolvedHistoryService solvedHistoryService;
     private final DailyProblemService dailyProblemService;
+    private final TagService tagService;
 
     @Transactional
     public List<Problem> getDailyProblems() {
@@ -58,7 +62,12 @@ public class StatService {
 
     @Transactional
     public SolvedHistoriesByUserId getSolvedHistoriesByUserId(String userId, Integer offset) {
-        Slice<SolvedHistory> solvedHistories = solvedHistoryService.findSolvedHistoriesByUserId(userId, offset);
-        return SolvedHistoriesByUserId.of(solvedHistories);
+        if(offset > 0)
+            offset *= PAGE_SIZE;
+
+        List<SolvedHistory> histories = solvedHistoryService.findSolvedHistoriesByUserId(userId, offset, PAGE_SIZE);
+        List<Tag> tags = tagService.findByProblemIds(histories.stream().map(h -> h.getProblem().getId()).toList());
+
+        return SolvedHistoriesByUserId.of(histories, tags, PAGE_SIZE);
     }
 }
