@@ -20,7 +20,7 @@ public class Tag {
     @Type(type = "uuid-char")
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id")
     private Problem problem;
 
