@@ -24,6 +24,10 @@ public class TagService {
         return tagJpaRepository.saveAllAndFlush(tags);
     }
 
+    public List<Tag> findByProblemIds(List<Long> problemIds) {
+        return tagJpaRepository.findAllByProblemIdIn(problemIds);
+    }
+
     public List<Tag> saveAll(List<SolvedAcProblemResp> infos, List<Problem> problems) {
         Map<Long, Problem> map = new HashMap<>();
         for (Problem problem : problems)
