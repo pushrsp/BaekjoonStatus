@@ -20,7 +20,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "SOLVED_HISTORY", indexes = {
         @Index(name = "idx__user_id__problem_level", columnList = "user_id, problem_level"),
-        @Index(name = "idx__user_id__created_date", columnList = "user_id, created_date")
+        @Index(name = "idx__user_id__created_date", columnList = "user_id, created_date"),
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,7 +32,7 @@ public class SolvedHistory {
     @Type(type = "uuid-char")
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @Type(type = "uuid-char")
     private User user;
