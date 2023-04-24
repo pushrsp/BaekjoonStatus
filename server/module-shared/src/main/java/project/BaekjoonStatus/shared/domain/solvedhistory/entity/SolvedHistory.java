@@ -54,7 +54,16 @@ public class SolvedHistory {
     @CreatedDate
     private LocalDateTime createdTime;
 
-    private SolvedHistory(User user, Problem problem, Boolean isBefore) {
+    public SolvedHistory(User user, Problem problem, Boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
+        this.user = user;
+        this.problem = problem;
+        this.isBefore = isBefore;
+        this.problemLevel = problem.getLevel();
+        this.createdDate = createdDate;
+        this.createdTime = createdTime;
+    }
+
+    public SolvedHistory(User user, Problem problem, Boolean isBefore) {
         this.user = user;
         this.problem = problem;
         this.isBefore = isBefore;

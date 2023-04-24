@@ -9,7 +9,11 @@ import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHisto
 import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryRepository;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.*;
+import project.BaekjoonStatus.shared.util.DateProvider;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,14 +25,25 @@ public class SolvedHistoryService {
     private final SolvedHistoryJpaRepository solvedHistoryJpaRepository;
     private final SolvedHistoryRepository solvedHistoryRepository;
 
-    @Transactional
-    public List<SolvedHistory> bulkInsert(List<SolvedHistory> solvedHistories) {
-        return solvedHistoryJpaRepository.saveAll(solvedHistories);
+    public SolvedHistory create(User user, Problem problem, boolean isBefore) {
+        return new SolvedHistory(user, problem, isBefore, DateProvider.getDate(), DateProvider.getDateTime());
+    }
+
+    public SolvedHistory create(User user, Problem problem, boolean isBefore, LocalDate createDate, LocalDateTime createdTime) {
+        return new SolvedHistory(user, problem, isBefore, createDate, createdTime);
+    }
+
+    public List<SolvedHistory> createWithProblems(User user, List<Problem> problems, boolean isBefore) {
+        List<SolvedHistory> ret = new ArrayList<>();
+        for (Problem problem : problems)
+            ret.add(create(user, problem, isBefore));
+
+        return ret;
     }
 
     @Transactional
-    public List<SolvedHistory> bulkInsertAndFlush(List<SolvedHistory> solvedHistories) {
-        return solvedHistoryJpaRepository.saveAllAndFlush(solvedHistories);
+    public List<SolvedHistory> bulkInsert(List<SolvedHistory> solvedHistories) {
+        return solvedHistoryJpaRepository.saveAll(solvedHistories);
     }
 
     @Transactional
