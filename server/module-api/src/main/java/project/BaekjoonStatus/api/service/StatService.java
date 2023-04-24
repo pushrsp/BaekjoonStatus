@@ -6,14 +6,17 @@ import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
 import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
+import project.BaekjoonStatus.shared.domain.dailyproblem.repository.DailyProblemRepository;
 import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
+import project.BaekjoonStatus.shared.domain.tag.repository.TagRepository;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
+import project.BaekjoonStatus.shared.util.DateProvider;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +31,12 @@ public class StatService {
     private final DailyProblemService dailyProblemService;
     private final TagService tagService;
 
+    private final TagRepository tagRepository;
+    private final DailyProblemRepository dailyProblemRepository;
+
     @Transactional
     public List<Problem> getDailyProblems() {
-        return dailyProblemService.findDailyProblems().stream()
+        return dailyProblemRepository.findTodayProblems(DateProvider.getDate().minusDays(1)).stream()
                 .map(DailyProblem::getProblem)
                 .map(Problem::of)
                 .toList();
@@ -66,7 +72,7 @@ public class StatService {
             offset *= PAGE_SIZE;
 
         List<SolvedHistory> histories = solvedHistoryService.findSolvedHistoriesByUserId(userId, offset, PAGE_SIZE);
-        List<Tag> tags = tagService.findByProblemIds(histories.stream().map(h -> h.getProblem().getId()).toList());
+        List<Tag> tags = tagRepository.findAllByProblemIdIn(histories.stream().map(h -> h.getProblem().getId()).toList());
 
         return SolvedHistoriesByUserId.of(histories, tags, PAGE_SIZE);
     }

@@ -9,10 +9,14 @@ import project.BaekjoonStatus.api.dto.AuthDto.LoginReq;
 import project.BaekjoonStatus.api.dto.AuthDto.SignupReq;
 import project.BaekjoonStatus.api.template.divider.ListDividerTemplate;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
+import project.BaekjoonStatus.shared.domain.problem.repository.ProblemRepository;
 import project.BaekjoonStatus.shared.domain.problem.service.ProblemService;
+import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryRepository;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
+import project.BaekjoonStatus.shared.domain.tag.repository.TagRepository;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
+import project.BaekjoonStatus.shared.domain.user.repository.UserRepository;
 import project.BaekjoonStatus.shared.domain.user.service.UserService;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
@@ -20,7 +24,6 @@ import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.util.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static project.BaekjoonStatus.api.dto.AuthDto.*;
 
@@ -41,8 +44,13 @@ public class AuthService {
     private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
 
-    public LoginResp validMe(String userId) {
-        Optional<User> findUser = userService.findById(userId);
+    private final UserRepository userRepository;
+    private final ProblemRepository problemRepository;
+    private final TagRepository tagRepository;
+    private final SolvedHistoryRepository solvedHistoryRepository;
+
+    public LoginResp validateMe(String userId) {
+        Optional<User> findUser = userRepository.findById(userId);
         if(findUser.isEmpty())
             throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
 
@@ -52,7 +60,7 @@ public class AuthService {
                 .build();
     }
 
-    public ValidBaekjoonUsernameResp validBaekjoonUsername(String username) {
+    public ValidBaekjoonUsernameResp validateBaekjoonUsername(String username) {
         List<Long> problemIds = getProblemIds(username);
         return ValidBaekjoonUsernameResp.builder()
                 .solvedCount(problemIds.size())
@@ -67,13 +75,13 @@ public class AuthService {
         ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
 
         listDivider.execute((List<Long> ids) -> {
-            List<Long> saveIds = problemService.findProblemIdsByNotInWithLock(ids);
-            if(saveIds.isEmpty())
+            List<Long> notSavedIds = problemRepository.findNotSavedProblemIds(ids);
+            if(notSavedIds.isEmpty())
                 return null;
 
-            List<SolvedAcProblemResp> infos = SOLVED_AC_HTTP.getProblemsByProblemIds(saveIds);
-            List<Problem> problems = problemService.saveAll(infos);
-            tagService.saveAll(infos, problems);
+            List<SolvedAcProblemResp> infos = SOLVED_AC_HTTP.getProblemsByProblemIds(notSavedIds);
+            List<Problem> problems = problemRepository.saveAll(problemService.create(infos));
+            tagRepository.saveAll(tagService.createWithInfosAndProblems(infos, problems));
 
             return null;
         });
@@ -83,10 +91,10 @@ public class AuthService {
         if(!registerTokenStore.exist(data.getRegisterToken()))
             throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
 
-        if(userService.exist(data.getUsername()))
+        if(userRepository.existByUsername(data.getUsername()))
             throw new MyException(CodeEnum.MY_SERVER_DUPLICATE);
 
-        User saveUser = userService.save(data.getUsername(), data.getBaekjoonUsername(), BcryptProvider.hashPassword(data.getPassword()));
+        User saveUser = userRepository.save(userService.create(data.getUsername(), data.getBaekjoonUsername(), BcryptProvider.hashPassword(data.getPassword())));
         return CreateUserDto.builder()
                 .user(saveUser)
                 .registerTokenKey(data.getRegisterToken())
@@ -100,7 +108,7 @@ public class AuthService {
         ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
 
         listDivider.execute((List<Long> ids) -> {
-            solvedHistoryService.saveAll(data.getUser(), problemService.findAllByIdsWithLock(ids), true);
+            solvedHistoryRepository.saveAll(solvedHistoryService.createWithProblems(data.getUser(), problemRepository.findAllByIdsWithLock(ids), true));
             return null;
         });
 
@@ -108,17 +116,12 @@ public class AuthService {
     }
 
     public LoginResp login(LoginReq data) {
-        Optional<User> findUser = userService.findByUsername(data.getUsername());
-        if(findUser.isEmpty())
-            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
-
-        if(!BcryptProvider.validPassword(data.getPassword(), findUser.get().getPassword()))
-            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+        User findUser = userService.validate(userRepository.findByUsername(data.getUsername()), data.getPassword());
 
         return LoginResp.builder()
-                .id(findUser.get().getId().toString())
-                .username(findUser.get().getUsername())
-                .token(JWTProvider.generateToken(findUser.get().getId().toString(), tokenSecret, EXPIRE_TIME))
+                .id(findUser.getId().toString())
+                .username(findUser.getUsername())
+                .token(JWTProvider.generateToken(findUser.getId().toString(), tokenSecret, EXPIRE_TIME))
                 .build();
     }
 

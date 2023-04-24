@@ -20,17 +20,17 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/me")
-    public CommonResponse validMe(@Auth String userId) {
+    public CommonResponse validateMe(@Auth String userId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(authService.validMe(userId))
+                .data(authService.validateMe(userId))
                 .build();
     }
 
     @GetMapping("/baekjoon")
-    public CommonResponse validBaekjoonUsername(@Valid ValidParams validParams) {
-        ValidBaekjoonUsernameResp info = authService.validBaekjoonUsername(validParams.getUsername());
+    public CommonResponse validateBaekjoonUsername(@Valid ValidParams validParams) {
+        ValidBaekjoonUsernameResp info = authService.validateBaekjoonUsername(validParams.getUsername());
         if(info.getSolvedCount() > 0)
             authService.createProblems(info.getRegisterToken());
 
