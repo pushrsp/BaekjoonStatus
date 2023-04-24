@@ -2,38 +2,29 @@ package project.BaekjoonStatus.shared.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
-import project.BaekjoonStatus.shared.domain.user.repository.UserJpaRepository;
+import project.BaekjoonStatus.shared.enums.CodeEnum;
+import project.BaekjoonStatus.shared.exception.MyException;
+import project.BaekjoonStatus.shared.util.BcryptProvider;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
-    private final UserJpaRepository userJpaRepository;
-
-    public List<User> findAll() {
-        return userJpaRepository.findAll();
+    public User create(String username, String baekjoonUsername, String password) {
+        //TODO: validation
+        return new User(username, baekjoonUsername, password);
     }
 
-    public Optional<User> findById(String userId) {
-        return userJpaRepository.findById(UUID.fromString(userId));
-    }
+    public User validate(Optional<User> user, String hashedPassword) {
+        if(user.isEmpty())
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
 
-    public boolean exist(String username) {
-        return userJpaRepository.existsByUsername(username);
-    }
+        User savedUser = user.get();
+        if(!BcryptProvider.validatePassword(hashedPassword, savedUser.getPassword()))
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
 
-    public Optional<User> findByUsername(String username) {
-        return userJpaRepository.findByUsername(username);
-    }
-
-    @Transactional
-    public User save(String username, String baekjoonUsername, String password) {
-        return userJpaRepository.save(User.create(username, baekjoonUsername, password));
+        return savedUser;
     }
 }
