@@ -27,7 +27,11 @@ public class Tag {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
-    private Tag(Problem problem, String tagName) {
+    public Tag(String tagName) {
+        this.tagName = tagName;
+    }
+
+    public Tag(Problem problem, String tagName) {
         this.problem = problem;
         this.tagName = tagName;
     }

@@ -44,7 +44,7 @@ public class User {
     @LastModifiedDate
     private LocalDateTime modifiedTime;
 
-    private User(String username,  String baekjoonUsername, String password) {
+    public User(String username,  String baekjoonUsername, String password) {
         this.username = username;
         this.password = password;
         this.baekjoonUsername = baekjoonUsername;
@@ -52,9 +52,5 @@ public class User {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         this.createdTime = now;
         this.modifiedTime = now;
-    }
-
-    public static User create(String username, String baekjoonUsername, String password) {
-        return new User(username, baekjoonUsername, password);
     }
 }

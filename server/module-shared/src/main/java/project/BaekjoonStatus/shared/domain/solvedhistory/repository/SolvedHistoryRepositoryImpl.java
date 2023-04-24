@@ -3,7 +3,9 @@ package project.BaekjoonStatus.shared.domain.solvedhistory.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.*;
 
@@ -16,6 +18,7 @@ import static project.BaekjoonStatus.shared.domain.solvedhistory.entity.QSolvedH
 import static project.BaekjoonStatus.shared.domain.tag.entity.QTag.tag;
 
 @Repository
+@Transactional(readOnly = true)
 public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     private static final String DATE_FORMAT_EXPRESSION = "DATE_FORMAT({0}, {1})";
     private static final String DATE_FORMAT = "%Y-%m-%d";
@@ -23,9 +26,18 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     private static final String[] TAG_IN = {"dp", "implementation", "graphs", "greedy", "data_structures"};
 
     private final JPAQueryFactory queryFactory;
+    private final SolvedHistoryJpaRepository solvedHistoryJpaRepository;
 
-    public SolvedHistoryRepositoryImpl(EntityManager em) {
+    @Autowired
+    public SolvedHistoryRepositoryImpl(EntityManager em, SolvedHistoryJpaRepository solvedHistoryJpaRepository) {
         this.queryFactory = new JPAQueryFactory(em);
+        this.solvedHistoryJpaRepository = solvedHistoryJpaRepository;
+    }
+
+    @Override
+    @Transactional
+    public List<SolvedHistory> saveAll(List<SolvedHistory> solvedHistories) {
+        return solvedHistoryJpaRepository.saveAll(solvedHistories);
     }
 
     @Override
@@ -74,6 +86,11 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .limit(limit + 1)
                 .orderBy(solvedHistory.problemLevel.desc(), solvedHistory.problem.id.asc())
                 .fetch();
+    }
+
+    @Override
+    public List<SolvedHistory> findAllByUserId(String userId) {
+        return solvedHistoryJpaRepository.findAllByUserId(UUID.fromString(userId));
     }
 
     private StringExpression caseBuilder() {
