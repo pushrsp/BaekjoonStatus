@@ -7,7 +7,7 @@ public class BcryptProvider {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
     }
 
-    public static boolean validPassword(String plainPassword, String hashedPassword) {
+    public static boolean validatePassword(String plainPassword, String hashedPassword) {
         return BCrypt.checkpw(plainPassword, hashedPassword);
     }
 }
