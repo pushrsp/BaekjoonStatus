@@ -34,12 +34,8 @@ public class DailyProblem {
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 
-    private DailyProblem(Problem problem) {
+    public DailyProblem(Problem problem, LocalDate createdDate) {
         this.problem = problem;
-        this.createdDate = DateProvider.getDate();
-    }
-
-    public static DailyProblem create(Problem problem) {
-        return new DailyProblem(problem);
+        this.createdDate = createdDate;
     }
 }
