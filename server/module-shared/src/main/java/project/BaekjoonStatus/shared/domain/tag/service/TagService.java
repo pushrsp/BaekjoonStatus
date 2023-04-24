@@ -2,45 +2,36 @@ package project.BaekjoonStatus.shared.domain.tag.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
-import project.BaekjoonStatus.shared.domain.tag.repository.TagJpaRepository;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class TagService {
-    private final TagJpaRepository tagJpaRepository;
-
-    public List<Tag> bulkInsert(List<Tag> tags) {
-        return tagJpaRepository.saveAll(tags);
+    public Tag create(String tagName) {
+        return new Tag(tagName);
     }
 
-    public List<Tag> bulkInsertAndFlush(List<Tag> tags) {
-        return tagJpaRepository.saveAllAndFlush(tags);
+    public Tag createWithProblem(Problem problem, String tagName) {
+        return new Tag(problem, tagName);
     }
 
-    public List<Tag> findByProblemIds(List<Long> problemIds) {
-        return tagJpaRepository.findAllByProblemIdIn(problemIds);
-    }
-
-    public List<Tag> saveAll(List<SolvedAcProblemResp> infos, List<Problem> problems) {
+    public List<Tag> createWithInfosAndProblems(List<SolvedAcProblemResp> infos, List<Problem> problems) {
         Map<Long, Problem> map = new HashMap<>();
         for (Problem problem : problems)
             map.put(problem.getId(), problem);
 
-        List<Tag> tags = new ArrayList<>();
+        List<Tag> ret = new ArrayList<>();
         for (SolvedAcProblemResp info : infos) {
-            Problem problem = map.get(info.getProblemId());
+            Problem p = map.get(info.getProblemId());
 
             for (SolvedAcProblemResp.Tag tag : info.getTags())
-                tags.add(Tag.create(problem, tag.getKey()));
+                ret.add(createWithProblem(p, tag.getKey()));
         }
 
-        return bulkInsert(tags);
+        return ret;
     }
 }
