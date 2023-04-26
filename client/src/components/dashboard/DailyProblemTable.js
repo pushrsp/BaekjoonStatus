@@ -23,10 +23,10 @@ const dailyProblemHeads = [
         name: '제목',
         width: 200,
     },
-    {
-        name: '태그',
-        width: 230,
-    },
+    // {
+    //     name: '태그',
+    //     width: 230,
+    // },
 ]
 
 const DailyProblemTable = () => {
@@ -87,16 +87,16 @@ const DailyProblemTable = () => {
                                 />
                             </TableCell>
                             <TableCell align="center">{problem.title}</TableCell>
-                            <TableCell align="center">
-                                {problem.tags.map((tag) => (
-                                    <Chip
-                                        color="info"
-                                        key={tag.tag}
-                                        label={tag.tag}
-                                        sx={{ mr: 1 }}
-                                    />
-                                ))}
-                            </TableCell>
+                            {/*<TableCell align="center">*/}
+                            {/*    {problem.tags.map((tag) => (*/}
+                            {/*        <Chip*/}
+                            {/*            color="info"*/}
+                            {/*            key={tag.tag}*/}
+                            {/*            label={tag.tag}*/}
+                            {/*            sx={{ mr: 1 }}*/}
+                            {/*        />*/}
+                            {/*    ))}*/}
+                            {/*</TableCell>*/}
                         </TableRow>
                     ))}
                 </TableBody>

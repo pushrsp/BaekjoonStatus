@@ -2,17 +2,14 @@ package project.BaekjoonStatus.api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
 import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
 import project.BaekjoonStatus.shared.domain.dailyproblem.repository.DailyProblemRepository;
-import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
-import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
+import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryRepository;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.domain.tag.repository.TagRepository;
-import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
@@ -27,14 +24,10 @@ import java.util.Map;
 public class StatService {
     private static final int PAGE_SIZE = 10;
 
-    private final SolvedHistoryService solvedHistoryService;
-    private final DailyProblemService dailyProblemService;
-    private final TagService tagService;
-
     private final TagRepository tagRepository;
     private final DailyProblemRepository dailyProblemRepository;
+    private final SolvedHistoryRepository solvedHistoryRepository;
 
-    @Transactional
     public List<Problem> getDailyProblems() {
         return dailyProblemRepository.findTodayProblems(DateProvider.getDate().minusDays(1)).stream()
                 .map(DailyProblem::getProblem)
@@ -43,11 +36,11 @@ public class StatService {
     }
 
     public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
-       return solvedHistoryService.getSolvedCountGroupByDate(userId, year);
+        return solvedHistoryRepository.findSolvedCountGroupByDate(userId, year);
     }
 
     public List<CountByLevel> getSolvedCountGroupByLevel(String userId) {
-        List<CountByLevel> solvedCountGroupByLevel = solvedHistoryService.getSolvedCountGroupByLevel(userId);
+        List<CountByLevel> solvedCountGroupByLevel = solvedHistoryRepository.findSolvedCountGroupByLevel(userId);
         Map<String, Long> map = new HashMap<>();
 
         for (CountByLevel countByLevel : solvedCountGroupByLevel) {
@@ -63,15 +56,14 @@ public class StatService {
     }
 
     public List<CountByTag> getSolvedCountGroupByTag(String userId) {
-        return solvedHistoryService.getSolvedCountGroupByTag(userId);
+        return solvedHistoryRepository.findSolvedCountGroupByTag(userId);
     }
 
-    @Transactional
     public SolvedHistoriesByUserId getSolvedHistoriesByUserId(String userId, Integer offset) {
         if(offset > 0)
             offset *= PAGE_SIZE;
 
-        List<SolvedHistory> histories = solvedHistoryService.findSolvedHistoriesByUserId(userId, offset, PAGE_SIZE);
+        List<SolvedHistory> histories = solvedHistoryRepository.findAllByUserId(userId, offset, PAGE_SIZE);
         List<Tag> tags = tagRepository.findAllByProblemIdIn(histories.stream().map(h -> h.getProblem().getId()).toList());
 
         return SolvedHistoriesByUserId.of(histories, tags, PAGE_SIZE);

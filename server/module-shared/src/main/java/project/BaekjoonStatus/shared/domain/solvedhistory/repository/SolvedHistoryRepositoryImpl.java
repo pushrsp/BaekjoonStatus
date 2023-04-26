@@ -41,47 +41,48 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     }
 
     @Override
-    public List<CountByDate> findSolvedCountGroupByDate(UUID userId, String year) {
+    @Transactional
+    public List<CountByDate> findSolvedCountGroupByDate(String userId, String year) {
         StringTemplate dateFormat = getDateFormat(solvedHistory.createdDate, DATE_FORMAT);
         StringTemplate yearFormat = getDateFormat(solvedHistory.createdDate, YEAR_FORMAT);
 
         return queryFactory
                 .select(Projections.bean(CountByDate.class, dateFormat.as("day"), solvedHistory.user.id.count().as("value")))
                 .from(solvedHistory)
-                .where(solvedHistory.user.id.eq(userId).and(yearFormat.eq(year).and(solvedHistory.isBefore.eq(false))))
+                .where(solvedHistory.user.id.eq(UUID.fromString(userId)).and(yearFormat.eq(year).and(solvedHistory.isBefore.eq(false))))
                 .groupBy(solvedHistory.createdDate)
                 .fetch();
     }
 
     @Override
-    public List<CountByLevel> findSolvedCountGroupByLevel(UUID userId) {
+    public List<CountByLevel> findSolvedCountGroupByLevel(String userId) {
         return queryFactory
                 .select(Projections.bean(CountByLevel.class, caseBuilder(), solvedHistory.user.id.count().as("count")))
                 .from(solvedHistory)
-                .where(solvedHistory.user.id.eq(userId))
+                .where(solvedHistory.user.id.eq(UUID.fromString(userId)))
                 .groupBy(solvedHistory.problemLevel)
                 .fetch();
     }
 
     @Override
-    public List<CountByTag> findSolvedCountGroupByTag(UUID userId) {
+    public List<CountByTag> findSolvedCountGroupByTag(String userId) {
         return queryFactory
                 .select(Projections.bean(CountByTag.class, tag.tagName.as("tag"), solvedHistory.user.id.count().as("count")))
                 .from(solvedHistory)
                 .join(problem).on(problem.id.eq(solvedHistory.problem.id))
                 .join(tag).on(tag.problem.id.eq(problem.id))
-                .where(solvedHistory.user.id.eq(userId))
+                .where(solvedHistory.user.id.eq(UUID.fromString(userId)))
                 .groupBy(tag.tagName)
                 .having(tag.tagName.in(TAG_IN))
                 .fetch();
     }
 
     @Override
-    public List<SolvedHistory> findAllByUserId(UUID userId, int offset, int limit) {
+    public List<SolvedHistory> findAllByUserId(String userId, int offset, int limit) {
         return queryFactory.select(solvedHistory)
                 .from(solvedHistory)
                 .join(solvedHistory.problem, problem).fetchJoin()
-                .where(solvedHistory.user.id.eq(userId))
+                .where(solvedHistory.user.id.eq(UUID.fromString(userId)))
                 .offset(offset)
                 .limit(limit + 1)
                 .orderBy(solvedHistory.problemLevel.desc(), solvedHistory.problem.id.asc())
