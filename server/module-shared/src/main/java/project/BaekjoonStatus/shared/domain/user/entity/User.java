@@ -44,6 +44,17 @@ public class User {
     @LastModifiedDate
     private LocalDateTime modifiedTime;
 
+    public User(UUID id, String username, String baekjoonUsername, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.baekjoonUsername = baekjoonUsername;
+
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
+        this.createdTime = now;
+        this.modifiedTime = now;
+    }
+
     public User(String username,  String baekjoonUsername, String password) {
         this.username = username;
         this.password = password;
