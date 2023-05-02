@@ -19,6 +19,17 @@ public class JWTProvider {
                 .sign(Algorithm.HMAC256(secret));
     }
 
+    public static String findToken(String authorization) {
+        if(authorization.isEmpty())
+            throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+
+        String[] tokens = authorization.split(" ");
+        if(tokens.length != 2)
+            throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+
+        return tokens[1];
+    }
+
     public static String validateToken(String token, String secret) {
         try {
             DecodedJWT info = JWT.require(Algorithm.HMAC256(secret)).build().verify(token);

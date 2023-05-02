@@ -27,7 +27,8 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        String token = JWTProvider.findToken(request.getHeader("Authorization"));
 
-        return JWTProvider.validateToken(request.getHeader("Authorization"), tokenSecret);
+        return JWTProvider.validateToken(token, tokenSecret);
     }
 }
