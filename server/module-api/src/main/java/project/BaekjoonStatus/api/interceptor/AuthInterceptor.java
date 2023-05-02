@@ -2,6 +2,8 @@ package project.BaekjoonStatus.api.interceptor;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.HandlerInterceptor;
+import project.BaekjoonStatus.shared.enums.CodeEnum;
+import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.util.JWTProvider;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +19,14 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
 
         String authorization = request.getHeader("Authorization");
-        String userId = JWTProvider.validateToken(authorization, tokenSecret);
+        if(authorization.isEmpty())
+            throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+
+        String[] tokens = authorization.split(" ");
+        if(tokens.length != 2)
+            throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+
+        String userId = JWTProvider.validateToken(tokens[1], tokenSecret);
 
         return !userId.isEmpty();
     }
