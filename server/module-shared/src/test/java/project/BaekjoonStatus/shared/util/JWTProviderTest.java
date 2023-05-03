@@ -61,6 +61,27 @@ class JWTProviderTest {
         Assertions.assertThrows(MyException.class, () -> JWTProvider.validateToken(invalidToken, "invalidSecret"));
     }
 
+    @Test
+    public void authorization_없을_때() throws Exception {
+        Assertions.assertThrows(MyException.class, () -> JWTProvider.findToken(""));
+        Assertions.assertThrows(NullPointerException.class, () -> JWTProvider.findToken(null));
+    }
+
+    @Test
+    public void 옳바르지_않은_authorization_형식() throws Exception {
+        //given
+        String validAuthorization = "abc test";
+        String[] tokens = validAuthorization.split(" ");
+
+        //when
+        String token = JWTProvider.findToken(validAuthorization);
+
+        //then
+        Assertions.assertEquals(tokens[1], token);
+        Assertions.assertThrows(MyException.class, () -> JWTProvider.findToken("abc"));
+        Assertions.assertThrows(MyException.class, () -> JWTProvider.findToken("abc abc test"));
+    }
+
     public void sleep(long ms) {
         try {
             Thread.sleep(ms);
