@@ -19,7 +19,7 @@ public class JWTProvider {
                 .sign(Algorithm.HMAC256(secret));
     }
 
-    public static String findToken(String authorization) {
+    public static String extractToken(String authorization) {
         if(authorization.isEmpty())
             throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
 

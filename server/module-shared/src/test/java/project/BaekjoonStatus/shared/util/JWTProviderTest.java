@@ -63,8 +63,8 @@ class JWTProviderTest {
 
     @Test
     public void authorization_없을_때() throws Exception {
-        Assertions.assertThrows(MyException.class, () -> JWTProvider.findToken(""));
-        Assertions.assertThrows(NullPointerException.class, () -> JWTProvider.findToken(null));
+        Assertions.assertThrows(MyException.class, () -> JWTProvider.extractToken(""));
+        Assertions.assertThrows(NullPointerException.class, () -> JWTProvider.extractToken(null));
     }
 
     @Test
@@ -74,7 +74,7 @@ class JWTProviderTest {
         String[] tokens = validAuthorization.split(" ");
 
         //when
-        String token = JWTProvider.findToken(validAuthorization);
+        String token = JWTProvider.extractToken(validAuthorization);
 
         //then
         Assertions.assertEquals(tokens[1], token);
