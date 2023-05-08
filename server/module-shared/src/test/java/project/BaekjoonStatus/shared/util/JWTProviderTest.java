@@ -7,6 +7,8 @@ import project.BaekjoonStatus.shared.exception.MyException;
 
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.*;
+
 class JWTProviderTest {
 
     @Test
@@ -19,7 +21,8 @@ class JWTProviderTest {
         sleep(2500L);
 
         //then
-        Assertions.assertThrows(MyException.class, () -> JWTProvider.validateToken(token, "test"));
+        assertThatThrownBy(() -> JWTProvider.validateToken(token, "test"))
+                        .isInstanceOf(MyException.class);
     }
 
     @Test
@@ -32,13 +35,16 @@ class JWTProviderTest {
         String token2 = JWTProvider.generateToken(user2.getId().toString(), "test", 2000L);
 
         //when
-        Assertions.assertNotEquals(token1, token2);
+        assertThat(token1)
+                        .isNotEqualTo(token2);
 
         String userId1 = JWTProvider.validateToken(token1, "test");
-        Assertions.assertEquals(user1.getId().toString(), userId1);
+        assertThat(user1.getId().toString())
+                        .isEqualTo(userId1);
 
         String userId2 = JWTProvider.validateToken(token2, "test");
-        Assertions.assertEquals(user2.getId().toString(), userId2);
+        assertThat(user2.getId().toString())
+                .isEqualTo(userId2);
     }
 
     @Test
@@ -57,14 +63,18 @@ class JWTProviderTest {
         String invalidToken = "fdjsalkfdsaufdsalfa";
 
         //when
-        Assertions.assertThrows(MyException.class, () -> JWTProvider.validateToken(invalidToken, "test"));
-        Assertions.assertThrows(MyException.class, () -> JWTProvider.validateToken(invalidToken, "invalidSecret"));
+        assertThatThrownBy(() -> JWTProvider.validateToken(invalidToken, "test"))
+                        .isInstanceOf(MyException.class);
+        assertThatThrownBy(() -> JWTProvider.validateToken(invalidToken, "invalidSecret"))
+                        .isInstanceOf(MyException.class);
     }
 
     @Test
     public void authorization_없을_때() throws Exception {
-        Assertions.assertThrows(MyException.class, () -> JWTProvider.extractToken(""));
-        Assertions.assertThrows(NullPointerException.class, () -> JWTProvider.extractToken(null));
+        assertThatThrownBy(() -> JWTProvider.extractToken(""))
+                        .isInstanceOf(MyException.class);
+        assertThatThrownBy(() -> JWTProvider.extractToken(null))
+                        .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -77,9 +87,12 @@ class JWTProviderTest {
         String token = JWTProvider.extractToken(validAuthorization);
 
         //then
-        Assertions.assertEquals(tokens[1], token);
-        Assertions.assertThrows(MyException.class, () -> JWTProvider.findToken("abc"));
-        Assertions.assertThrows(MyException.class, () -> JWTProvider.findToken("abc abc test"));
+        assertThat(tokens[1])
+                        .isEqualTo(token);
+        assertThatThrownBy(() -> JWTProvider.extractToken("abc"))
+                        .isInstanceOf(MyException.class);
+        assertThatThrownBy(() -> JWTProvider.extractToken("abc abc test"))
+                        .isInstanceOf(MyException.class);
     }
 
     public void sleep(long ms) {
