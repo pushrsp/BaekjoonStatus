@@ -6,8 +6,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import project.BaekjoonStatus.shared.enums.CodeEnum;
-import project.BaekjoonStatus.shared.exception.MyException;
 import project.BaekjoonStatus.shared.util.JWTProvider;
 
 import javax.servlet.http.HttpServletRequest;
