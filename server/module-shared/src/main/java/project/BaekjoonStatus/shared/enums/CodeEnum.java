@@ -13,6 +13,7 @@ public enum CodeEnum {
     MY_SERVER_TOKEN_EXPIRED("0401", "토큰이 만료되었습니다."),
     MY_SERVER_NOT_VALID_TOKEN("0400", "올바르지 않은 토큰 형식입니다."),
     MY_SERVER_UNAUTHORIZED("0401", "접근할 수 없는 페이지입니다."),
+    MY_SERVER_UNKNOWN_HOST("0400", "존재하지 않은 URL 입니다."),
 
     BAEKJOON_NOT_FOUND("2404", "해당 유저가 존재하지 않습니다."),
     BAEKJOON_SERVER_ERROR("2999", "백준 서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요."),
