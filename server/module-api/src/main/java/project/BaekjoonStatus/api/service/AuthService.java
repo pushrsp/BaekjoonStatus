@@ -127,6 +127,6 @@ public class AuthService {
 
     private List<Long> getProblemIds(String username) {
         return new BaekjoonCrawling(username)
-                .getMySolvedHistories();
+                .get();
     }
 }
