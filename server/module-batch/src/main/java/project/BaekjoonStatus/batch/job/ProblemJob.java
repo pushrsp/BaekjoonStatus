@@ -106,7 +106,7 @@ public class ProblemJob {
     private ItemProcessor<User, List<SolvedHistory>> saveUserSolvedProblemItemJpaPagingProcessor() {
         return user -> {
             BaekjoonCrawling crawling = new BaekjoonCrawling(user.getBaekjoonUsername());
-            List<Long> newSolvedHistories = crawling.getMySolvedHistories();
+            List<Long> newSolvedHistories = crawling.get();
             List<SolvedHistory> oldSolvedHistories = solvedHistoryRepository.findAllByUserId(user.getId().toString());
 
             if(newSolvedHistories.size() == oldSolvedHistories.size())
@@ -150,7 +150,7 @@ public class ProblemJob {
     }
 
     private ItemReader<Long> saveDailyProblemItemReader() {
-        return new ListItemReader<>(new DailyProblemCrawling().start());
+        return new ListItemReader<>(new DailyProblemCrawling().get());
     }
 
     private ItemProcessor<Long, Problem> saveDailyProblemItemProcessor() {

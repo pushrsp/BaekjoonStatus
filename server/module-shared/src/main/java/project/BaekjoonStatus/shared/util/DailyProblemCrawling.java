@@ -1,37 +1,59 @@
 package project.BaekjoonStatus.shared.util;
 
 import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import project.BaekjoonStatus.shared.enums.CodeEnum;
+import project.BaekjoonStatus.shared.exception.MyException;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DailyProblemCrawling {
-    public static final String URL = "https://github.com/tony9402/baekjoon/blob/main/picked.md";
-    private final Connection conn;
+    public static final String GITHUB_URL = "https://github.com/tony9402/baekjoon/blob/main/picked.md";
+    private Connection conn;
 
     public DailyProblemCrawling() {
-        this.conn = Jsoup.connect(URL);
+        initConnect();
     }
 
-    public List<Long> start() {
+    public DailyProblemCrawling(String url) {
+        initConnect(url);
+    }
+
+    private void initConnect() {
+        this.conn = Jsoup.connect(GITHUB_URL);
+    }
+
+    private void initConnect(String url) {
+        this.conn = Jsoup.connect(url);
+    }
+
+    public List<Long> get() {
         try {
-            Document document = conn.get();
-            Elements elements = document.select("article.markdown-body");
-
-            Elements body = elements.get(0).getElementsByTag("table")
-                    .get(0)
-                    .getElementsByTag("tbody")
-                    .get(0)
-                    .getElementsByTag("tr");
-
-            return body.stream()
+            return getElements().stream()
                     .map((data) -> Long.parseLong(data.getElementsByTag("td").get(1).text()))
                     .collect(Collectors.toList());
+        } catch (UnknownHostException | HttpStatusException e) {
+            throw new MyException(CodeEnum.MY_SERVER_UNKNOWN_HOST);
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
+            throw new MyException(CodeEnum.UNKNOWN_EXCEPTION);
         }
+    }
+
+    private Elements getElements() throws IOException {
+        Document document = conn.get();
+        Elements elements = document.select("article.markdown-body");
+
+        return elements.get(0).getElementsByTag("table")
+                .get(0)
+                .getElementsByTag("tbody")
+                .get(0)
+                .getElementsByTag("tr");
     }
 }
