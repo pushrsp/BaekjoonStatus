@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.shared.util;
 
 import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -37,9 +38,10 @@ public class DailyProblemCrawling {
             return getElements().stream()
                     .map((data) -> Long.parseLong(data.getElementsByTag("td").get(1).text()))
                     .collect(Collectors.toList());
-        } catch (UnknownHostException e) {
+        } catch (UnknownHostException | HttpStatusException e) {
             throw new MyException(CodeEnum.MY_SERVER_UNKNOWN_HOST);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new MyException(CodeEnum.UNKNOWN_EXCEPTION);
         }
     }
