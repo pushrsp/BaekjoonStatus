@@ -35,9 +35,9 @@ public class BaekjoonCrawling {
         this.conn = Jsoup.connect(url + "/" + username);
     }
 
-    public List<Long> getMySolvedHistories() {
+    public List<Long> get() {
         try {
-            Elements elements = connect();
+            Elements elements = getElements();
             return Arrays.stream(elements.get(0).text().split(" "))
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
@@ -50,7 +50,7 @@ public class BaekjoonCrawling {
         }
     }
 
-    public Elements connect() throws IOException {
+    private Elements getElements() throws IOException {
         Document document = conn.get();
         return document.select("div.problem-list");
     }
