@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import project.BaekjoonStatus.api.cache.Cache;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
-import project.BaekjoonStatus.api.service.StatService;
+import project.BaekjoonStatus.api.facade.StatService;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;

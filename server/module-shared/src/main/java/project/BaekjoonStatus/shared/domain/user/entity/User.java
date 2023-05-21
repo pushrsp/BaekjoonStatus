@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -55,7 +56,11 @@ public class User {
         this.modifiedTime = now;
     }
 
-    public User(String username,  String baekjoonUsername, String password) {
+    private User(String username,  String baekjoonUsername, String password) {
+        validateUsername(username);
+        validateBaekjoonUsername(baekjoonUsername);
+        validatePassword(password);
+
         this.username = username;
         this.password = password;
         this.baekjoonUsername = baekjoonUsername;
@@ -63,5 +68,19 @@ public class User {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
         this.createdTime = now;
         this.modifiedTime = now;
+    }
+
+    public static User of(String username, String baekjoonUsername, String password) {
+        return new User(username, baekjoonUsername, password);
+    }
+
+    private void validateUsername(String username) {
+        Assert.notNull(username, "아이디를 입력해주세요.");
+    }
+    private void validateBaekjoonUsername(String baekjoonUsername) {
+        Assert.notNull(baekjoonUsername, "백준 아이디를 입력해주세요.");
+    }
+    private void validatePassword(String password) {
+        Assert.notNull(password, "비밀번호를 입력해주세요.");
     }
 }

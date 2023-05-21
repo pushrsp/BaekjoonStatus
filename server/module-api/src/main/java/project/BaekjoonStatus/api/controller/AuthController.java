@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.argumentresolver.Auth;
-import project.BaekjoonStatus.api.service.AuthService;
+import project.BaekjoonStatus.api.facade.AuthFacadeService;
 import project.BaekjoonStatus.shared.dto.response.CommonResponse;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 
@@ -17,22 +17,22 @@ import static project.BaekjoonStatus.api.dto.AuthDto.*;
 @RequestMapping("/auth")
 @Slf4j
 public class AuthController {
-    private final AuthService authService;
+    private final AuthFacadeService authFacadeService;
 
     @GetMapping("/me")
     public CommonResponse validateMe(@Auth String userId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(authService.validateMe(userId))
+                .data(authFacadeService.validateMe(userId))
                 .build();
     }
 
     @GetMapping("/baekjoon")
     public CommonResponse validateBaekjoonUsername(@Valid ValidParams validParams) {
-        ValidBaekjoonUsernameResp info = authService.validateBaekjoonUsername(validParams.getUsername());
+        ValidBaekjoonUsernameResp info = authFacadeService.validateBaekjoonUsername(validParams.getUsername());
         if(info.getSolvedCount() > 0)
-            authService.createProblems(info.getRegisterToken());
+            authFacadeService.createProblems(info.getRegisterToken());
 
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
@@ -43,8 +43,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     public CommonResponse signup(@RequestBody @Valid SignupReq body) {
-        CreateUserDto info = authService.createUser(body);
-        authService.createSolvedHistories(info);
+        CreateUserDto info = authFacadeService.createUser(body.getRegisterToken(), body.getUsername(), body.getBaekjoonUsername(), body.getPassword());
+        authFacadeService.createSolvedHistories(info);
 
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
@@ -57,7 +57,7 @@ public class AuthController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(authService.login(body))
+                .data(authFacadeService.login(body.getUsername(), body.getPassword()))
                 .build();
     }
 }

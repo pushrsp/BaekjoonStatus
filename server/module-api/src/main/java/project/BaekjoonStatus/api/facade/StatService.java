@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.api.service;
+package project.BaekjoonStatus.api.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
