@@ -56,7 +56,6 @@ public class ProblemJob {
     private final DailyProblemService dailyProblemService;
     private final SolvedHistoryService solvedHistoryService;
 
-    private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
     private final TagRepository tagRepository;
     private final SolvedHistoryRepository solvedHistoryRepository;

@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.api.service;
+package project.BaekjoonStatus.api.facade;
 
 import project.BaekjoonStatus.shared.util.DateProvider;
 

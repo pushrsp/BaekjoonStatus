@@ -1,12 +1,10 @@
-package project.BaekjoonStatus.api.service;
+package project.BaekjoonStatus.api.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.BaekjoonStatus.api.dto.AuthDto.LoginReq;
-import project.BaekjoonStatus.api.dto.AuthDto.SignupReq;
 import project.BaekjoonStatus.api.template.divider.ListDividerTemplate;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.problem.repository.ProblemRepository;
@@ -16,7 +14,6 @@ import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryS
 import project.BaekjoonStatus.shared.domain.tag.repository.TagRepository;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
-import project.BaekjoonStatus.shared.domain.user.repository.UserRepository;
 import project.BaekjoonStatus.shared.domain.user.service.UserService;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
@@ -29,7 +26,7 @@ import static project.BaekjoonStatus.api.dto.AuthDto.*;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthFacadeService {
     private static final int OFFSET = 100;
     private static final Long EXPIRE_TIME = 1000L * 60 * 60 * 24; //하루
     private static final SolvedAcHttp SOLVED_AC_HTTP = new SolvedAcHttp();
@@ -44,19 +41,16 @@ public class AuthService {
     private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
 
-    private final UserRepository userRepository;
     private final ProblemRepository problemRepository;
     private final TagRepository tagRepository;
     private final SolvedHistoryRepository solvedHistoryRepository;
 
     public LoginResp validateMe(String userId) {
-        Optional<User> findUser = userRepository.findById(userId);
-        if(findUser.isEmpty())
-            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+        User user = getUser(userService.findById(userId));
 
         return LoginResp.builder()
-                .username(findUser.get().getUsername())
-                .id(findUser.get().getId().toString())
+                .username(user.getUsername())
+                .id(user.getId().toString())
                 .build();
     }
 
@@ -87,17 +81,14 @@ public class AuthService {
         });
     }
 
-    public CreateUserDto createUser(SignupReq data) {
-        if(!registerTokenStore.exist(data.getRegisterToken()))
-            throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+    public CreateUserDto createUser(String registerToken, String username, String baekjoonUsername, String password) {
+        validateExistedRegisterToken(registerToken);
+        validateDuplicateUsername(username);
 
-        if(userRepository.existByUsername(data.getUsername()))
-            throw new MyException(CodeEnum.MY_SERVER_DUPLICATE);
-
-        User saveUser = userRepository.save(userService.create(data.getUsername(), data.getBaekjoonUsername(), BcryptProvider.hashPassword(data.getPassword())));
+        User saveUser = userService.save(username, baekjoonUsername, password);
         return CreateUserDto.builder()
                 .user(saveUser)
-                .registerTokenKey(data.getRegisterToken())
+                .registerTokenKey(registerToken)
                 .build();
     }
 
@@ -115,14 +106,40 @@ public class AuthService {
         registerTokenStore.remove(data.getRegisterTokenKey());
     }
 
-    public LoginResp login(LoginReq data) {
-        User findUser = userService.validate(userRepository.findByUsername(data.getUsername()), data.getPassword());
+    public LoginResp login(String username, String password) {
+        Optional<User> optionalUser = userService.findByUsername(username);
+        User findUser = getUser(optionalUser);
+
+        if(!BcryptProvider.validatePassword(password, findUser.getPassword())) {
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+        }
 
         return LoginResp.builder()
                 .id(findUser.getId().toString())
                 .username(findUser.getUsername())
                 .token(JWTProvider.generateToken(findUser.getId().toString(), tokenSecret, EXPIRE_TIME))
                 .build();
+    }
+
+    private User getUser(Optional<User> optionalUser) {
+        if(optionalUser.isEmpty()) {
+            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+        }
+
+        return optionalUser.get();
+    }
+
+    private void validateExistedRegisterToken(String registerToken) {
+        if(!registerTokenStore.exist(registerToken)) {
+            throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+        }
+    }
+
+    private void validateDuplicateUsername(String username) {
+        Optional<User> optionalUser = userService.findByUsername(username);
+        if(optionalUser.isPresent()) {
+            throw new MyException(CodeEnum.MY_SERVER_DUPLICATE);
+        }
     }
 
     private List<Long> getProblemIds(String username) {
