@@ -3,9 +3,11 @@ package project.BaekjoonStatus.shared.domain.dailyproblem.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.eclipse.jdt.internal.compiler.codegen.FloatCache;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.util.Assert;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.util.DateProvider;
 
@@ -35,7 +37,22 @@ public class DailyProblem {
     private LocalDate createdDate;
 
     public DailyProblem(Problem problem, LocalDate createdDate) {
+        validateProblem(problem);
+        validateCreatedDate(createdDate);
+
         this.problem = problem;
         this.createdDate = createdDate;
+    }
+
+    private void validateProblem(Problem problem) {
+        Assert.notNull(problem, "문제를 입력해주세요.");
+    }
+
+    private void validateCreatedDate(LocalDate createdDate) {
+        Assert.notNull(createdDate, "생성 날짜를 입력해주세요.");
+    }
+
+    public static DailyProblem ofWithProblem(Problem problem) {
+        return new DailyProblem(problem, DateProvider.getDate());
     }
 }
