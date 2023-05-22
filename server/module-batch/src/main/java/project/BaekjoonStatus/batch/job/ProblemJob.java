@@ -18,19 +18,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import project.BaekjoonStatus.batch.listener.JobListener;
 import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
-import project.BaekjoonStatus.shared.domain.dailyproblem.repository.DailyProblemRepository;
 import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
-import project.BaekjoonStatus.shared.domain.problem.repository.ProblemRepository;
 import project.BaekjoonStatus.shared.domain.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
-import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryRepository;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
-import project.BaekjoonStatus.shared.domain.tag.repository.TagRepository;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
-import project.BaekjoonStatus.shared.domain.user.repository.UserRepository;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.util.BaekjoonCrawling;
 import project.BaekjoonStatus.shared.util.DailyProblemCrawling;
@@ -55,11 +50,6 @@ public class ProblemJob {
     private final TagService tagService;
     private final DailyProblemService dailyProblemService;
     private final SolvedHistoryService solvedHistoryService;
-
-    private final ProblemRepository problemRepository;
-    private final TagRepository tagRepository;
-    private final SolvedHistoryRepository solvedHistoryRepository;
-    private final DailyProblemRepository dailyProblemRepository;
 
     @Bean
     public Job saveProblemJob() {
@@ -106,7 +96,7 @@ public class ProblemJob {
         return user -> {
             BaekjoonCrawling crawling = new BaekjoonCrawling(user.getBaekjoonUsername());
             List<Long> newSolvedHistories = crawling.get();
-            List<SolvedHistory> oldSolvedHistories = solvedHistoryRepository.findAllByUserId(user.getId().toString());
+            List<SolvedHistory> oldSolvedHistories = solvedHistoryService.findByUserId(user.getId().toString());
 
             if(newSolvedHistories.size() == oldSolvedHistories.size())
                 return null;
@@ -123,19 +113,20 @@ public class ProblemJob {
                 List<Long> problemIds = ids.subList(startIndex, Math.min(startIndex + PROBLEM_ID_OFFSET, ids.size()));
                 startIndex += PROBLEM_ID_OFFSET;
 
-                List<Long> notSavedIds = problemRepository.findNotSavedProblemIds(problemIds);
+                List<Long> notSavedIds = problemService.findAllByNotExistedIds(problemIds);
                 if(!notSavedIds.isEmpty()) {
                     List<SolvedAcProblemResp> infos = SOLVED_AC_HTTP.getProblemsByProblemIds(notSavedIds);
-                    List<Problem> newProblems = problemRepository.saveAll(problemService.create(infos));
-                    tagRepository.saveAll(tagService.createWithInfosAndProblems(infos, newProblems));
+                    List<Problem> newProblems = problemService.saveAll(Problem.ofWithInfos(infos));
+                    tagService.saveAll(Tag.ofWithInfosAndProblems(infos, problems));
                 }
 
-                problems.addAll(problemRepository.findAllByIds(problemIds));
+                problems.addAll(problemService.findAllByIdsIn(problemIds));
             }
 
             List<SolvedHistory> ret = new ArrayList<>();
-            for (Problem problem : problems)
-                ret.add(solvedHistoryService.create(user, problem, false, DateProvider.getDate().minusDays(1), DateProvider.getDateTime().minusDays(1)));
+            for (Problem problem : problems) {
+                ret.add(SolvedHistory.ofWithUserAndProblem(user, problem, false, DateProvider.getDate().minusDays(1), DateProvider.getDateTime().minusDays(1)));
+            }
 
             return ret;
         };
@@ -144,7 +135,7 @@ public class ProblemJob {
     private ItemWriter<List<SolvedHistory>> saveUserSolvedProblemJpaPagingItemWriter() {
         return items -> {
             for (List<SolvedHistory> item : items)
-                solvedHistoryRepository.saveAll(item);
+                solvedHistoryService.saveAll(item);
         };
     }
 
@@ -154,17 +145,17 @@ public class ProblemJob {
 
     private ItemProcessor<Long, Problem> saveDailyProblemItemProcessor() {
         return problemId -> {
-            Optional<Problem> findProblem = problemRepository.findById(problemId);
+            Optional<Problem> findProblem = problemService.findById(problemId);
             if(findProblem.isPresent())
                 return findProblem.get();
 
             SolvedAcProblemResp problemInfo = SOLVED_AC_HTTP.getProblemByProblemId(problemId);
-            Problem problem = problemRepository.save(problemService.create(problemInfo));
+            Problem problem = problemService.save(Problem.ofWithInfo(problemInfo));
             List<Tag> tags =  problemInfo.getTags().stream()
-                    .map((tagInfo) -> tagService.createWithProblem(problem, tagInfo.getKey()))
+                    .map((tagInfo) -> Tag.ofWithProblem(problem, tagInfo.getKey()))
                     .toList();
 
-            tagRepository.saveAll(tags);
+            tagService.saveAll(tags);
 
             return problem;
         };
@@ -174,9 +165,9 @@ public class ProblemJob {
         return items -> {
             List<DailyProblem> dailyProblems = new ArrayList<>();
             for (Problem problem : items)
-                dailyProblems.add(dailyProblemService.create(problem));
+                dailyProblems.add(DailyProblem.ofWithProblem(problem));
 
-            dailyProblemRepository.saveAll(dailyProblems);
+            dailyProblemService.saveAll(dailyProblems);
         };
     }
 }

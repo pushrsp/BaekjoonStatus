@@ -7,11 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.api.template.divider.ListDividerTemplate;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
-import project.BaekjoonStatus.shared.domain.problem.repository.ProblemRepository;
 import project.BaekjoonStatus.shared.domain.problem.service.ProblemService;
-import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryRepository;
+import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
-import project.BaekjoonStatus.shared.domain.tag.repository.TagRepository;
+import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.domain.user.service.UserService;
@@ -41,10 +40,6 @@ public class AuthFacadeService {
     private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
 
-    private final ProblemRepository problemRepository;
-    private final TagRepository tagRepository;
-    private final SolvedHistoryRepository solvedHistoryRepository;
-
     public LoginResp validateMe(String userId) {
         User user = getUser(userService.findById(userId));
 
@@ -63,19 +58,19 @@ public class AuthFacadeService {
     }
 
     @Async
-    @Transactional
     public void createProblems(String registerTokenKey) {
         RegisterToken token = registerTokenStore.get(registerTokenKey);
         ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
 
         listDivider.execute((List<Long> ids) -> {
-            List<Long> notSavedIds = problemRepository.findNotSavedProblemIds(ids);
-            if(notSavedIds.isEmpty())
+            List<Long> notSavedIds = problemService.findAllByNotExistedIds(ids);
+            if(notSavedIds.isEmpty()) {
                 return null;
+            }
 
             List<SolvedAcProblemResp> infos = SOLVED_AC_HTTP.getProblemsByProblemIds(notSavedIds);
-            List<Problem> problems = problemRepository.saveAll(problemService.create(infos));
-            tagRepository.saveAll(tagService.createWithInfosAndProblems(infos, problems));
+            List<Problem> problems = problemService.saveAll(Problem.ofWithInfos(infos));
+            tagService.saveAll(Tag.ofWithInfosAndProblems(infos, problems));
 
             return null;
         });
@@ -85,7 +80,7 @@ public class AuthFacadeService {
         validateExistedRegisterToken(registerToken);
         validateDuplicateUsername(username);
 
-        User saveUser = userService.save(username, baekjoonUsername, password);
+        User saveUser = userService.save(username, baekjoonUsername, BcryptProvider.hashPassword(password));
         return CreateUserDto.builder()
                 .user(saveUser)
                 .registerTokenKey(registerToken)
@@ -93,13 +88,12 @@ public class AuthFacadeService {
     }
 
     @Async
-    @Transactional
     public void createSolvedHistories(CreateUserDto data) {
         RegisterToken token = registerTokenStore.get(data.getRegisterTokenKey());
         ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
 
         listDivider.execute((List<Long> ids) -> {
-            solvedHistoryRepository.saveAll(solvedHistoryService.createWithProblems(data.getUser(), problemRepository.findAllByIdsWithLock(ids), true));
+            solvedHistoryService.saveAll(SolvedHistory.ofWithUserAndProblems(data.getUser(), problemService.findAllByIdsIn(ids), true));
             return null;
         });
 

@@ -6,6 +6,7 @@ import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
 import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
 import project.BaekjoonStatus.shared.domain.dailyproblem.repository.DailyProblemRepository;
+import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryRepository;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
@@ -24,12 +25,14 @@ import java.util.Map;
 public class StatService {
     private static final int PAGE_SIZE = 10;
 
+    private final DailyProblemService dailyProblemService;
+
     private final TagRepository tagRepository;
     private final DailyProblemRepository dailyProblemRepository;
     private final SolvedHistoryRepository solvedHistoryRepository;
 
     public List<Problem> getDailyProblems() {
-        return dailyProblemRepository.findTodayProblems(DateProvider.getDate().minusDays(1)).stream()
+        return dailyProblemService.findTodayProblems(DateProvider.getDate().minusDays(1)).stream()
                 .map(DailyProblem::getProblem)
                 .map(Problem::of)
                 .toList();
