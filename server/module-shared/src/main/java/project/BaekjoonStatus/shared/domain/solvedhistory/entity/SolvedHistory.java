@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "SOLVED_HISTORY", indexes = {
@@ -54,7 +55,7 @@ public class SolvedHistory {
     @CreatedDate
     private LocalDateTime createdTime;
 
-    public SolvedHistory(User user, Problem problem, Boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
+    private SolvedHistory(User user, Problem problem, Boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
         this.user = user;
         this.problem = problem;
         this.isBefore = isBefore;
@@ -63,7 +64,7 @@ public class SolvedHistory {
         this.createdTime = createdTime;
     }
 
-    public SolvedHistory(User user, Problem problem, Boolean isBefore) {
+    private SolvedHistory(User user, Problem problem, Boolean isBefore) {
         this.user = user;
         this.problem = problem;
         this.isBefore = isBefore;
@@ -81,29 +82,42 @@ public class SolvedHistory {
         this.createdTime = DateProvider.getDateTime();
     }
 
-    /* 생성 메서드 */
-    public static SolvedHistory create(User user, Problem problem, boolean isBefore) {
-        return new SolvedHistory(user, problem, isBefore);
+    public static SolvedHistory ofWithUserAndProblem(User user, Problem problem, boolean isBefore) {
+        return new SolvedHistory(user, problem, isBefore, DateProvider.getDate());
     }
 
-    public static SolvedHistory create(User user, Problem problem, boolean isBefore, LocalDate createdDate) {
-        return new SolvedHistory(user, problem, isBefore, createdDate);
+    public static SolvedHistory ofWithUserAndProblem(User user, Problem problem, boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
+        return new SolvedHistory(user, problem, isBefore, createdDate, createdTime);
     }
 
-    public static List<SolvedHistory> create(User user, List<Problem> problems, boolean isBefore) {
-        List<SolvedHistory> solvedHistories = new ArrayList<>();
-        for (Problem problem : problems)
-            solvedHistories.add(SolvedHistory.create(user, problem, isBefore));
-
-        return solvedHistories;
+    public static List<SolvedHistory> ofWithUserAndProblems(User user, List<Problem> problems, boolean isBefore) {
+        return problems.stream()
+                .map(p -> SolvedHistory.ofWithUserAndProblem(user, p, isBefore))
+                .collect(Collectors.toList());
     }
 
-    public static List<SolvedHistory> create(User user, List<Problem> problems, boolean isBefore, LocalDate createdDate) {
-        List<SolvedHistory> solvedHistories = new ArrayList<>();
-        for (Problem problem : problems)
-            solvedHistories.add(SolvedHistory.create(user, problem, isBefore, createdDate));
-
-        return solvedHistories;
-    }
+//    public static SolvedHistory create(User user, Problem problem, boolean isBefore) {
+//        return new SolvedHistory(user, problem, isBefore);
+//    }
+//
+//    public static SolvedHistory create(User user, Problem problem, boolean isBefore, LocalDate createdDate) {
+//        return new SolvedHistory(user, problem, isBefore, createdDate);
+//    }
+//
+//    public static List<SolvedHistory> create(User user, List<Problem> problems, boolean isBefore) {
+//        List<SolvedHistory> solvedHistories = new ArrayList<>();
+//        for (Problem problem : problems)
+//            solvedHistories.add(SolvedHistory.create(user, problem, isBefore));
+//
+//        return solvedHistories;
+//    }
+//
+//    public static List<SolvedHistory> create(User user, List<Problem> problems, boolean isBefore, LocalDate createdDate) {
+//        List<SolvedHistory> solvedHistories = new ArrayList<>();
+//        for (Problem problem : problems)
+//            solvedHistories.add(SolvedHistory.create(user, problem, isBefore, createdDate));
+//
+//        return solvedHistories;
+//    }
 
 }
