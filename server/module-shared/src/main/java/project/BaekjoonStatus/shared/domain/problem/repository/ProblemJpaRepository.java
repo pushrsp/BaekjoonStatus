@@ -11,8 +11,4 @@ import java.util.List;
 
 public interface ProblemJpaRepository extends JpaRepository<Problem, Long> {
     List<Problem> findAllByIdIn(List<Long> ids);
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select p from Problem p where p.id in :ids")
-    List<Problem> findAllByIdInWithLock(@Param("ids") List<Long> ids);
 }

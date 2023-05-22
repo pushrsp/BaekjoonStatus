@@ -17,17 +17,6 @@ public class ProblemRepositoryImpl implements ProblemRepository {
     private final ProblemJpaRepository problemJpaRepository;
 
     @Override
-    public List<Long> findNotSavedProblemIds(List<Long> ids) {
-        Set<Long> set = new HashSet<>(ids);
-        List<Problem> existedProblems = problemJpaRepository.findAllByIdIn(ids);
-
-        for (Problem p : existedProblems)
-            set.remove(p.getId());
-
-        return set.stream().toList();
-    }
-
-    @Override
     @Transactional
     public List<Problem> saveAll(List<Problem> problems) {
         return problemJpaRepository.saveAll(problems);
@@ -40,13 +29,7 @@ public class ProblemRepositoryImpl implements ProblemRepository {
     }
 
     @Override
-    @Transactional
-    public List<Problem> findAllByIdsWithLock(List<Long> ids) {
-        return problemJpaRepository.findAllByIdInWithLock(ids);
-    }
-
-    @Override
-    public List<Problem> findAllByIds(List<Long> ids) {
+    public List<Problem> findAllByIdsIn(List<Long> ids) {
         return problemJpaRepository.findAllByIdIn(ids);
     }
 
