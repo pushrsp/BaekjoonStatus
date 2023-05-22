@@ -14,6 +14,11 @@ public class TagRepositoryImpl implements TagRepository {
     private final TagJpaRepository tagJpaRepository;
 
     @Override
+    public Tag save(Tag tag) {
+        return tagJpaRepository.save(tag);
+    }
+
+    @Override
     @Transactional
     public List<Tag> saveAll(List<Tag> tags) {
         return tagJpaRepository.saveAll(tags);
