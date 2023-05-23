@@ -7,6 +7,10 @@ import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
 import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
 import project.BaekjoonStatus.shared.domain.solvedhistory.repository.SolvedHistoryRepository;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
+import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
 import project.BaekjoonStatus.shared.util.DateProvider;
 
 import java.time.LocalDate;
@@ -27,5 +31,25 @@ public class SolvedHistoryService {
     @Transactional(readOnly = true)
     public List<SolvedHistory> findByUserId(String userId) {
         return solvedHistoryRepository.findAllByUserId(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CountByDate> findSolvedCountGroupByDate(String userId, String year) {
+        return solvedHistoryRepository.findSolvedCountGroupByDate(userId, year);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CountByLevel> findSolvedCountGroupByLevel(String userId) {
+        return solvedHistoryRepository.findSolvedCountGroupByLevel(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CountByTag> findSolvedCountGroupByTag(String userId) {
+        return solvedHistoryRepository.findSolvedCountGroupByTag(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SolvedHistory> findAllByUserId(String userId, Integer offset, Integer pageSize) {
+        return solvedHistoryRepository.findAllByUserId(userId, offset, pageSize);
     }
 }
