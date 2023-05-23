@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.api.facade;
+package project.BaekjoonStatus.api.token;
 
 import project.BaekjoonStatus.shared.util.DateProvider;
 

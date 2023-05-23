@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.api.exceptionhandler;
+package project.BaekjoonStatus.api;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
