@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import project.BaekjoonStatus.api.cache.Cache;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
-import project.BaekjoonStatus.api.facade.StatService;
+import project.BaekjoonStatus.api.facade.StatFacadeService;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
 import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
@@ -23,7 +23,7 @@ public class StatServiceProxy {
     private static final Cache<List<CountByTag>> SOLVED_COUNT_GROUP_BY_TAG = new Cache<>();
 
 
-    private final StatService target;
+    private final StatFacadeService target;
 
     public List<Problem> getDailyProblems(String userId) {
         return DAILY_PROBLEMS.get(userId, target::getDailyProblems);

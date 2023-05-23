@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.api.facade;
+package project.BaekjoonStatus.api.token;
 
 import lombok.Builder;
 import lombok.Getter;
