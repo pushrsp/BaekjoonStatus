@@ -1,6 +1,5 @@
 package project.BaekjoonStatus.shared.util;
 
-import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,10 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BaekjoonCrawling {
+public class BaekjoonCrawling extends MyCrawling {
 
     public static final String BAEKJOON_URL = "https://www.acmicpc.net/user";
-    private Connection conn;
 
     public BaekjoonCrawling(String username) {
         initConnect(username);
@@ -28,13 +26,14 @@ public class BaekjoonCrawling {
     }
 
     private void initConnect(String username) {
-        this.conn = Jsoup.connect(BAEKJOON_URL + "/" + username);
+        setConn(Jsoup.connect(BAEKJOON_URL + "/" + username));
     }
 
     private void initConnect(String url, String username) {
-        this.conn = Jsoup.connect(url + "/" + username);
+        setConn(Jsoup.connect(url + "/" + username));
     }
 
+    @Override
     public List<Long> get() {
         try {
             Elements elements = getElements();
@@ -50,7 +49,8 @@ public class BaekjoonCrawling {
         }
     }
 
-    private Elements getElements() throws IOException {
+    @Override
+    protected Elements getElements() throws IOException {
         Document document = conn.get();
         return document.select("div.problem-list");
     }
