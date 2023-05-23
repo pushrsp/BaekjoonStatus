@@ -13,9 +13,8 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DailyProblemCrawling {
+public class DailyProblemCrawling extends MyCrawling {
     public static final String GITHUB_URL = "https://github.com/tony9402/baekjoon/blob/main/picked.md";
-    private Connection conn;
 
     public DailyProblemCrawling() {
         initConnect();
@@ -26,11 +25,11 @@ public class DailyProblemCrawling {
     }
 
     private void initConnect() {
-        this.conn = Jsoup.connect(GITHUB_URL);
+        setConn(Jsoup.connect(GITHUB_URL));
     }
 
     private void initConnect(String url) {
-        this.conn = Jsoup.connect(url);
+        setConn(Jsoup.connect(url));
     }
 
     public List<Long> get() {
@@ -41,12 +40,12 @@ public class DailyProblemCrawling {
         } catch (UnknownHostException | HttpStatusException e) {
             throw new MyException(CodeEnum.MY_SERVER_UNKNOWN_HOST);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new MyException(CodeEnum.UNKNOWN_EXCEPTION);
         }
     }
 
-    private Elements getElements() throws IOException {
+    @Override
+    protected Elements getElements() throws IOException {
         Document document = conn.get();
         Elements elements = document.select("article.markdown-body");
 
