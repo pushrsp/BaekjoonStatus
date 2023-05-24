@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.api.template.divider.ListDividerTemplate;
+import project.BaekjoonStatus.shared.template.ListDividerTemplate;
 import project.BaekjoonStatus.api.token.RegisterToken;
 import project.BaekjoonStatus.api.token.RegisterTokenStore;
 import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
