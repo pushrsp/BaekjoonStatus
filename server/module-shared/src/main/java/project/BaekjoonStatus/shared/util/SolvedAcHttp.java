@@ -4,7 +4,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
-import project.BaekjoonStatus.shared.dto.response.SolvedAcUserResp;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
@@ -37,7 +36,7 @@ public class SolvedAcHttp {
         }
     }
 
-    public List<SolvedAcProblemResp> getProblemsByProblemIds(String ids) {
+    private List<SolvedAcProblemResp> getProblemsByProblemIds(String ids) {
         URI uri = UriComponentsBuilder
                 .fromHttpUrl(SOLVED_AC_URL)
                 .path(SOLVED_AC_GET_PROBLEMS_PATH)
