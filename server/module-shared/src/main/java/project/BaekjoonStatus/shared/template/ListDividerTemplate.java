@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.api.template.divider;
+package project.BaekjoonStatus.shared.template;
 
 import java.util.List;
 import java.util.function.Function;
