@@ -4,7 +4,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
-import project.BaekjoonStatus.shared.dto.response.SolvedAcUserResp;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
@@ -17,26 +16,8 @@ import java.util.stream.Collectors;
 
 public class SolvedAcHttp {
     private static final String SOLVED_AC_URL = "https://solved.ac/api/v3";
-    private static final String SOLVED_AC_GET_USER_PATH = "/user/show";
     private static final String SOLVED_AC_GET_PROBLEM_PATH = "/problem/show";
     private static final String SOLVED_AC_GET_PROBLEMS_PATH = "/problem/lookup";
-
-    public SolvedAcUserResp getBaekjoonUser(String baekjoonUsername) {
-        URI uri = UriComponentsBuilder
-                .fromHttpUrl(SOLVED_AC_URL)
-                .path(SOLVED_AC_GET_USER_PATH)
-                .queryParam("handle", baekjoonUsername)
-                .encode(Charset.defaultCharset())
-                .build()
-                .toUri();
-        RestTemplate restTemplate = new RestTemplate();
-
-        try {
-            return restTemplate.getForObject(uri, SolvedAcUserResp.class);
-        } catch (HttpClientErrorException e) {
-            throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
-        }
-    }
 
     public SolvedAcProblemResp getProblemByProblemId(Long problemId) {
         URI uri = UriComponentsBuilder
@@ -55,7 +36,7 @@ public class SolvedAcHttp {
         }
     }
 
-    public List<SolvedAcProblemResp> getProblemsByProblemIds(String ids) {
+    private List<SolvedAcProblemResp> getProblemsByProblemIds(String ids) {
         URI uri = UriComponentsBuilder
                 .fromHttpUrl(SOLVED_AC_URL)
                 .path(SOLVED_AC_GET_PROBLEMS_PATH)
