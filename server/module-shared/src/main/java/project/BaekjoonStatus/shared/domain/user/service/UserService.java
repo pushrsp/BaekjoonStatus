@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.domain.user.repository.UserRepository;
+import project.BaekjoonStatus.shared.dto.UserDto;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,5 +32,10 @@ public class UserService {
         }
 
         return userRepository.findByUsername(username);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDto> findAllByGreaterThanUserId(Long userId, int limit) {
+        return userRepository.findAllByGreaterThanUserId(userId, limit);
     }
 }
