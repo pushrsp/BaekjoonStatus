@@ -34,18 +34,18 @@ public class StatServiceProxy {
             year = String.valueOf(DateProvider.getDate().getYear());
 
         String finalYear = year;
-        return SOLVED_COUNT_GROUP_BY_DATE.get(userId, () -> target.getSolvedCountGroupByDate(userId, finalYear));
+        return SOLVED_COUNT_GROUP_BY_DATE.get(userId, () -> target.getSolvedCountGroupByDate(Long.parseLong(userId), finalYear));
     }
 
     public List<CountByLevel> getSolvedCountGroupByLevel(String userId) {
-        return SOLVED_COUNT_GROUP_BY_LEVEL.get(userId, () -> target.getSolvedCountGroupByLevel(userId));
+        return SOLVED_COUNT_GROUP_BY_LEVEL.get(userId, () -> target.getSolvedCountGroupByLevel(Long.parseLong(userId)));
     }
 
     public List<CountByTag> getSolvedCountGroupByTag(String userId) {
-        return SOLVED_COUNT_GROUP_BY_TAG.get(userId, () -> target.getSolvedCountGroupByTag(userId));
+        return SOLVED_COUNT_GROUP_BY_TAG.get(userId, () -> target.getSolvedCountGroupByTag(Long.parseLong(userId)));
     }
 
-    public SolvedHistoriesByUserId getSolvedHistoriesByUserId(String userId, Integer offset) {
-        return SOLVED_HISTORIES.get(userId + "," + offset, () -> target.getSolvedHistoriesByUserId(userId, offset));
+    public SolvedHistoriesByUserId getSolvedHistoriesByUserId(String userId, int offset) {
+        return SOLVED_HISTORIES.get(userId + "," + offset, () -> target.getSolvedHistoriesByUserId(Long.parseLong(userId), offset));
     }
 }

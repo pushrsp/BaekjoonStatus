@@ -1,16 +1,15 @@
 package project.BaekjoonStatus.shared.domain.user.entity;
 
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.util.Assert;
+import project.BaekjoonStatus.shared.dto.UserDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.UUID;
 
 @Entity
 @Table(name = "USER")
@@ -19,11 +18,9 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    @Type(type = "uuid-char")
-    private UUID id;
+    private Long id;
 
     @Column(name = "username", length = 20, nullable = false)
     private String username;
@@ -45,15 +42,13 @@ public class User {
     @LastModifiedDate
     private LocalDateTime modifiedTime;
 
-    public User(UUID id, String username, String baekjoonUsername, String password) {
+    private User(Long id, String username, String baekjoonUsername) {
+        validateUsername(username);
+        validateBaekjoonUsername(baekjoonUsername);
+
         this.id = id;
         this.username = username;
-        this.password = password;
         this.baekjoonUsername = baekjoonUsername;
-
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("UTC"));
-        this.createdTime = now;
-        this.modifiedTime = now;
     }
 
     private User(String username,  String baekjoonUsername, String password) {
@@ -72,6 +67,10 @@ public class User {
 
     public static User of(String username, String baekjoonUsername, String password) {
         return new User(username, baekjoonUsername, password);
+    }
+
+    public static User from(UserDto userDto) {
+        return new User(userDto.getUserId(), userDto.getUsername(), userDto.getBaekjoonUsername());
     }
 
     private void validateUsername(String username) {

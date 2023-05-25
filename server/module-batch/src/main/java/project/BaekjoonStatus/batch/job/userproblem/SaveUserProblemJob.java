@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.batch.job.userproblem;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -22,6 +23,7 @@ import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.domain.user.service.UserService;
+import project.BaekjoonStatus.shared.dto.UserDto;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
 import project.BaekjoonStatus.shared.template.ListDividerTemplate;
 import project.BaekjoonStatus.shared.util.BaekjoonCrawling;
@@ -29,24 +31,22 @@ import project.BaekjoonStatus.shared.util.DateProvider;
 import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 
 import javax.persistence.EntityManagerFactory;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class SaveUserProblemJob {
     private static final int CHUNK_SIZE = 5;
     private static final int OFFSET = 100;
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final EntityManagerFactory entityManagerFactory;
 
     private final SolvedAcHttp solvedAcHttp;
 
+    private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
     private final ProblemService problemService;
     private final TagService tagService;
@@ -63,25 +63,16 @@ public class SaveUserProblemJob {
     @JobScope
     public Step userProblemStep(@Value("#{jobParameters[date]}") String date) {
         return this.stepBuilderFactory.get(date + "_userProblemJob")
-                .<User, List<SolvedHistory>>chunk(CHUNK_SIZE)
-                .reader(this.userProblemItemReader())
+                .<UserDto, List<SolvedHistory>>chunk(CHUNK_SIZE)
+                .reader(new UserJpaPagingItemReader(userService, CHUNK_SIZE))
                 .processor(this.userProblemItemProcessor())
                 .writer(this.userProblemItemWriter())
                 .build();
     }
 
-    private JpaPagingItemReader<User> userProblemItemReader() {
-        return new JpaPagingItemReaderBuilder<User>()
-                .name("userProblemItemReader")
-                .entityManagerFactory(entityManagerFactory)
-                .pageSize(CHUNK_SIZE)
-                .queryString("SELECT u FROM User u")
-                .build();
-    }
-
-    private ItemProcessor<User, List<SolvedHistory>> userProblemItemProcessor() {
-        return user -> {
-            List<Long> newIds = findNewIds(user);
+    private ItemProcessor<UserDto, List<SolvedHistory>> userProblemItemProcessor() {
+        return userDto -> {
+            List<Long> newIds = findNewIds(userDto);
             if(newIds.isEmpty()) {
                 return null;
             }
@@ -97,7 +88,7 @@ public class SaveUserProblemJob {
             });
 
             return problems.stream()
-                    .map(p -> SolvedHistory.ofWithUserAndProblem(user, p, false, DateProvider.getDate().minusDays(1), DateProvider.getDateTime().minusDays(1)))
+                    .map(p -> SolvedHistory.ofWithUserAndProblem(User.from(userDto), p, false, DateProvider.getDate().minusDays(1), DateProvider.getDateTime().minusDays(1)))
                     .collect(Collectors.toList());
         };
     }
@@ -120,9 +111,9 @@ public class SaveUserProblemJob {
         tagService.saveAll(Tag.ofWithInfosAndProblems(infos, problems));
     }
 
-    private List<Long> findNewIds(User user) {
+    private List<Long> findNewIds(UserDto user) {
         List<Long> newHistories = new BaekjoonCrawling(user.getBaekjoonUsername()).get();
-        List<SolvedHistory> oldHistories = solvedHistoryService.findByUserId(user.getId().toString());
+        List<SolvedHistory> oldHistories = solvedHistoryService.findAllByUserId(user.getUserId());
 
         Set<Long> newIds = new HashSet<>(newHistories);
         for (SolvedHistory oldHistory : oldHistories) {

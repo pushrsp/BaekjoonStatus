@@ -38,7 +38,7 @@ public class SolvedHistory {
     @Type(type = "uuid-char")
     private User user;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id", columnDefinition = "BIGINT")
     private Problem problem;
 
@@ -64,15 +64,6 @@ public class SolvedHistory {
         this.createdTime = createdTime;
     }
 
-    private SolvedHistory(User user, Problem problem, Boolean isBefore) {
-        this.user = user;
-        this.problem = problem;
-        this.isBefore = isBefore;
-        this.problemLevel = problem.getLevel();
-        this.createdDate = DateProvider.getDate();;
-        this.createdTime = DateProvider.getDateTime();
-    }
-
     private SolvedHistory(User user, Problem problem, Boolean isBefore, LocalDate createdDate) {
         this.user = user;
         this.problem = problem;
@@ -95,29 +86,5 @@ public class SolvedHistory {
                 .map(p -> SolvedHistory.ofWithUserAndProblem(user, p, isBefore))
                 .collect(Collectors.toList());
     }
-
-//    public static SolvedHistory create(User user, Problem problem, boolean isBefore) {
-//        return new SolvedHistory(user, problem, isBefore);
-//    }
-//
-//    public static SolvedHistory create(User user, Problem problem, boolean isBefore, LocalDate createdDate) {
-//        return new SolvedHistory(user, problem, isBefore, createdDate);
-//    }
-//
-//    public static List<SolvedHistory> create(User user, List<Problem> problems, boolean isBefore) {
-//        List<SolvedHistory> solvedHistories = new ArrayList<>();
-//        for (Problem problem : problems)
-//            solvedHistories.add(SolvedHistory.create(user, problem, isBefore));
-//
-//        return solvedHistories;
-//    }
-//
-//    public static List<SolvedHistory> create(User user, List<Problem> problems, boolean isBefore, LocalDate createdDate) {
-//        List<SolvedHistory> solvedHistories = new ArrayList<>();
-//        for (Problem problem : problems)
-//            solvedHistories.add(SolvedHistory.create(user, problem, isBefore, createdDate));
-//
-//        return solvedHistories;
-//    }
 
 }
