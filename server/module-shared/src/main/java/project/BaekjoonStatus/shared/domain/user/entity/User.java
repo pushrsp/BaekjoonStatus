@@ -5,6 +5,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.util.Assert;
+import project.BaekjoonStatus.shared.dto.UserDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -41,6 +42,15 @@ public class User {
     @LastModifiedDate
     private LocalDateTime modifiedTime;
 
+    private User(Long id, String username, String baekjoonUsername) {
+        validateUsername(username);
+        validateBaekjoonUsername(baekjoonUsername);
+
+        this.id = id;
+        this.username = username;
+        this.baekjoonUsername = baekjoonUsername;
+    }
+
     private User(String username,  String baekjoonUsername, String password) {
         validateUsername(username);
         validateBaekjoonUsername(baekjoonUsername);
@@ -57,6 +67,10 @@ public class User {
 
     public static User of(String username, String baekjoonUsername, String password) {
         return new User(username, baekjoonUsername, password);
+    }
+
+    public static User from(UserDto userDto) {
+        return new User(userDto.getUserId(), userDto.getUsername(), userDto.getBaekjoonUsername());
     }
 
     private void validateUsername(String username) {
