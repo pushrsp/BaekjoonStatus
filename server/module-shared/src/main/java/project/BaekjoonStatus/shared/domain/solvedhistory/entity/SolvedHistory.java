@@ -38,7 +38,7 @@ public class SolvedHistory {
     @Type(type = "uuid-char")
     private User user;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id", columnDefinition = "BIGINT")
     private Problem problem;
 

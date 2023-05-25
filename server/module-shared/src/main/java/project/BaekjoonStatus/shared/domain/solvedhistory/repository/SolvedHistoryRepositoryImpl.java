@@ -11,7 +11,6 @@ import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.*;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.UUID;
 
 import static project.BaekjoonStatus.shared.domain.problem.entity.QProblem.problem;
 import static project.BaekjoonStatus.shared.domain.solvedhistory.entity.QSolvedHistory.solvedHistory;

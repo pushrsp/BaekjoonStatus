@@ -29,7 +29,7 @@ public class SolvedHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<SolvedHistory> findByUserId(Long userId) {
+    public List<SolvedHistory> findAllByUserId(Long userId) {
         return solvedHistoryRepository.findAllByUserId(userId);
     }
 
