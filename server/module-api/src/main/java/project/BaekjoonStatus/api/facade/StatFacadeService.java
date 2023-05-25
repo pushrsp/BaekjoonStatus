@@ -35,11 +35,11 @@ public class StatFacadeService {
                 .toList();
     }
 
-    public List<CountByDate> getSolvedCountGroupByDate(String userId, String year) {
+    public List<CountByDate> getSolvedCountGroupByDate(Long userId, String year) {
         return solvedHistoryService.findSolvedCountGroupByDate(userId, year);
     }
 
-    public List<CountByLevel> getSolvedCountGroupByLevel(String userId) {
+    public List<CountByLevel> getSolvedCountGroupByLevel(Long userId) {
         List<CountByLevel> solvedCountGroupByLevel = solvedHistoryService.findSolvedCountGroupByLevel(userId);
         Map<String, Long> map = new HashMap<>();
 
@@ -55,11 +55,11 @@ public class StatFacadeService {
                 .toList();
     }
 
-    public List<CountByTag> getSolvedCountGroupByTag(String userId) {
+    public List<CountByTag> getSolvedCountGroupByTag(Long userId) {
         return solvedHistoryService.findSolvedCountGroupByTag(userId);
     }
 
-    public SolvedHistoriesByUserId getSolvedHistoriesByUserId(String userId, Integer offset) {
+    public SolvedHistoriesByUserId getSolvedHistoriesByUserId(Long userId, int offset) {
         if(offset > 0)
             offset *= PAGE_SIZE;
 

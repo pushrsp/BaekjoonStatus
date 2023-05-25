@@ -19,7 +19,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> findById(String userId) {
+    public Optional<User> findById(Long userId) {
         return userRepository.findById(userId);
     }
 

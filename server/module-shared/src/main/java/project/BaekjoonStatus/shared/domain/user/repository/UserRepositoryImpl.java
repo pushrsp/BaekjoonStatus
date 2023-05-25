@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,8 +17,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(String userId) {
-        return userJpaRepository.findById(UUID.fromString(userId));
+    public Optional<User> findById(Long userId) {
+        return userJpaRepository.findById(userId);
     }
 
     @Override
