@@ -42,7 +42,8 @@ public class AuthFacadeService {
     private final SolvedHistoryService solvedHistoryService;
 
     public LoginResp validateMe(String userId) {
-        User user = getUser(userService.findById(userId));
+        User user = userService.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
 
         return LoginResp.builder()
                 .username(user.getUsername())
@@ -102,8 +103,8 @@ public class AuthFacadeService {
     }
 
     public LoginResp login(String username, String password) {
-        Optional<User> optionalUser = userService.findByUsername(username);
-        User findUser = getUser(optionalUser);
+        User findUser = userService.findByUsername(username)
+                .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
 
         if(!BcryptProvider.validatePassword(password, findUser.getPassword())) {
             throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
@@ -116,14 +117,6 @@ public class AuthFacadeService {
                 .build();
     }
 
-    private User getUser(Optional<User> optionalUser) {
-        if(optionalUser.isEmpty()) {
-            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
-        }
-
-        return optionalUser.get();
-    }
-
     private void validateExistedRegisterToken(String registerToken) {
         if(!registerTokenStore.exist(registerToken)) {
             throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
@@ -131,10 +124,10 @@ public class AuthFacadeService {
     }
 
     private void validateDuplicateUsername(String username) {
-        Optional<User> optionalUser = userService.findByUsername(username);
-        if(optionalUser.isPresent()) {
-            throw new MyException(CodeEnum.MY_SERVER_DUPLICATE);
-        }
+        userService.findByUsername(username)
+                .ifPresent((u) -> {
+                    throw new MyException(CodeEnum.MY_SERVER_DUPLICATE);
+                });
     }
 
     private List<Long> getProblemIds(String username) {
