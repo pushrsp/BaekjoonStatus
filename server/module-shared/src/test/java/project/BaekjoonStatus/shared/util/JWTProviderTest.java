@@ -3,6 +3,7 @@ package project.BaekjoonStatus.shared.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
+import project.BaekjoonStatus.shared.dto.UserDto;
 import project.BaekjoonStatus.shared.exception.MyException;
 
 import java.util.UUID;
@@ -14,10 +15,11 @@ class JWTProviderTest {
     @Test
     public void 유효기간() throws Exception {
         //given
-        User user = new User(UUID.randomUUID(),"test1", "test1", "test1");
+        Long userId = 1L;
+        User user = User.of("test1", "test1", "test1");
 
         //when
-        String token = JWTProvider.generateToken(user.getId().toString(), "test", 20L);
+        String token = JWTProvider.generateToken(String.valueOf(userId), "test", 20L);
         sleep(2500L);
 
         //then
@@ -28,30 +30,34 @@ class JWTProviderTest {
     @Test
     public void 인코딩_디코딩() throws Exception {
         //given
-        User user1 = new User(UUID.randomUUID(),"test1", "test1", "test1");
-        User user2 = new User(UUID.randomUUID(),"test1", "test1", "test1");
+        Long userId1 = 1L;
+        Long userId2 = 2L;
 
-        String token1 = JWTProvider.generateToken(user1.getId().toString(), "test", 2000L);
-        String token2 = JWTProvider.generateToken(user2.getId().toString(), "test", 2000L);
+        User user1 =  User.of("test1", "test1", "test1");
+        User user2 =  User.of("test1", "test1", "test1");
+
+        String token1 = JWTProvider.generateToken(String.valueOf(userId1), "test", 2000L);
+        String token2 = JWTProvider.generateToken(String.valueOf(userId2), "test", 2000L);
 
         //when
         assertThat(token1)
                         .isNotEqualTo(token2);
 
-        String userId1 = JWTProvider.validateToken(token1, "test");
-        assertThat(user1.getId().toString())
-                        .isEqualTo(userId1);
+        String extractedUserId1 = JWTProvider.validateToken(token1, "test");
+        assertThat(extractedUserId1)
+                        .isEqualTo(String.valueOf(userId1));
 
-        String userId2 = JWTProvider.validateToken(token2, "test");
-        assertThat(user2.getId().toString())
-                .isEqualTo(userId2);
+        String extractedUserId2 = JWTProvider.validateToken(token2, "test");
+        assertThat(extractedUserId2)
+                .isEqualTo(String.valueOf(userId2));
     }
 
     @Test
     public void 유효하지_않은_시크릿_키값() throws Exception {
         //given
-        User user = new User(UUID.randomUUID(),"test1", "test1", "test1");
-        String token = JWTProvider.generateToken(user.getId().toString(), "test", 2000L);
+        Long userId = 1L;
+        User user = User.of("test1", "test1", "test1");
+        String token = JWTProvider.generateToken(String.valueOf(userId), "test", 2000L);
 
         //when
         Assertions.assertThrows(MyException.class, () -> JWTProvider.validateToken(token, "invalid secret"));

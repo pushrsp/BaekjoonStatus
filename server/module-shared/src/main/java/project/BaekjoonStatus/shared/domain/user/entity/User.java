@@ -43,6 +43,7 @@ public class User {
     private LocalDateTime modifiedTime;
 
     private User(Long id, String username, String baekjoonUsername) {
+        validateId(id);
         validateUsername(username);
         validateBaekjoonUsername(baekjoonUsername);
 
@@ -73,13 +74,22 @@ public class User {
         return new User(userDto.getUserId(), userDto.getUsername(), userDto.getBaekjoonUsername());
     }
 
+    private void validateId(Long id) {
+        Assert.notNull(id, "ID값을 입력해주세요.");
+    }
+
     private void validateUsername(String username) {
         Assert.notNull(username, "아이디를 입력해주세요.");
+        Assert.hasText(username, "아이디를 입력해주세요.");
     }
+
     private void validateBaekjoonUsername(String baekjoonUsername) {
         Assert.notNull(baekjoonUsername, "백준 아이디를 입력해주세요.");
+        Assert.hasText(baekjoonUsername, "백준 아이디를 입력해주세요.");
     }
+
     private void validatePassword(String password) {
         Assert.notNull(password, "비밀번호를 입력해주세요.");
+        Assert.hasText(password, "비밀번호를 입력해주세요.");
     }
 }

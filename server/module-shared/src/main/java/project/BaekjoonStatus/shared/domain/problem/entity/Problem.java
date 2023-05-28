@@ -37,12 +37,6 @@ public class Problem implements Persistable<Long> {
     @Transient
     private boolean updated;
 
-    private Problem(Long id) {
-        validateId(id);
-
-        this.id = id;
-    }
-
     private Problem(Long id, Integer level, String title, LocalDateTime createdTime) {
         validateId(id);
         validateLevel(level);
