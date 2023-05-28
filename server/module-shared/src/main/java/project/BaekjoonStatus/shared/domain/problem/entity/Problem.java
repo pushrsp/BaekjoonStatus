@@ -70,10 +70,12 @@ public class Problem implements Persistable<Long> {
 
     private void validateLevel(Integer level) {
         Assert.notNull(level, "레벨을 입력해주세요.");
+        Assert.isTrue(0 <= level && level <= 30, "레벨은 0이상 30이하의 값만 설정할 수 있습니다.");
     }
 
     private void validateTitle(String title) {
         Assert.notNull(title, "제목을 입력해주세요.");
+        Assert.hasText(title, "제목을 입력해주세요.");
     }
 
     private void validateCreatedTime(LocalDateTime createdTime) {
