@@ -14,5 +14,4 @@ public abstract class MyCrawling {
     }
 
     public abstract List<Long> get();
-    protected abstract Elements getElements() throws IOException;
 }
