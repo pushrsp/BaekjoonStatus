@@ -49,7 +49,6 @@ public class BaekjoonCrawling extends MyCrawling {
         }
     }
 
-    @Override
     protected Elements getElements() throws IOException {
         Document document = conn.get();
         return document.select("div.problem-list");
