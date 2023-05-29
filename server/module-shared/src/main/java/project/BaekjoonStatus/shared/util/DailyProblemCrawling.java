@@ -1,58 +1,65 @@
 package project.BaekjoonStatus.shared.util;
 
-import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DailyProblemCrawling extends MyCrawling {
-    public static final String GITHUB_URL = "https://github.com/tony9402/baekjoon/blob/main/picked.md";
+    public static final String GITHUB_URL = "https://raw.githubusercontent.com/tony9402/baekjoon/main/";
+    public static final String FILE = "picked.md";
 
-    public DailyProblemCrawling() {
-        initConnect();
-    }
-
-    public DailyProblemCrawling(String url) {
-        initConnect(url);
-    }
-
-    private void initConnect() {
-        setConn(Jsoup.connect(GITHUB_URL));
-    }
-
-    private void initConnect(String url) {
-        setConn(Jsoup.connect(url));
-    }
-
+    @Override
     public List<Long> get() {
         try {
-            return getElements().stream()
-                    .map((data) -> Long.parseLong(data.getElementsByTag("td").get(1).text()))
-                    .collect(Collectors.toList());
-        } catch (UnknownHostException | HttpStatusException e) {
-            throw new MyException(CodeEnum.MY_SERVER_UNKNOWN_HOST);
+            URI uri = getURI();
+            RestTemplate restTemplate = new RestTemplate();
+
+            String result = restTemplate.getForObject(uri, String.class);
+            validateResult(result);
+
+            return parseResult(result);
         } catch (Exception e) {
             throw new MyException(CodeEnum.UNKNOWN_EXCEPTION);
         }
     }
 
-    @Override
-    protected Elements getElements() throws IOException {
-        Document document = conn.get();
-        Elements elements = document.select("article.markdown-body");
+    private void validateResult(String result) {
+        Assert.hasText(result, "응답값이 비어있습니다.");
+        Assert.notNull(result, "응답값이 비어있습니다.");
+    }
 
-        return elements.get(0).getElementsByTag("table")
-                .get(0)
-                .getElementsByTag("tbody")
-                .get(0)
-                .getElementsByTag("tr");
+    private List<Long> parseResult(String result) {
+        List<Long> ret = new ArrayList<>();
+
+        Pattern pattern = Pattern.compile("\\[[0-9]+\\]");
+        Matcher matcher = pattern.matcher(result);
+
+        int count = 0;
+        while (matcher.find() && count < 4) {
+            String group = matcher.group();
+            ret.add(Long.parseLong(group.substring(1, group.length() -1)));
+            count++;
+        }
+
+        return ret;
+    }
+
+    private URI getURI() {
+        return UriComponentsBuilder
+                .fromHttpUrl(GITHUB_URL)
+                .path(FILE)
+                .encode(Charset.defaultCharset())
+                .build()
+                .toUri();
     }
 }
