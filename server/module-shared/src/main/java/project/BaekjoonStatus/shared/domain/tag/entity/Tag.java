@@ -29,12 +29,6 @@ public class Tag {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
-    private Tag(String tagName) {
-        validateTagName(tagName);
-
-        this.tagName = tagName;
-    }
-
     private Tag(Problem problem, String tagName) {
         validateProblem(problem);
         validateTagName(tagName);
@@ -45,14 +39,11 @@ public class Tag {
 
     private void validateTagName(String tagName) {
         Assert.notNull(tagName, "태그 이름을 입력해주세요.");
+        Assert.hasText(tagName, "태그 이름을 입력해주세요.");
     }
 
     private void validateProblem(Problem problem) {
-        Assert.notNull(problem.getId(), "문제를 입력해주세요.");
-    }
-
-    public static Tag of(String tagName) {
-        return new Tag(tagName);
+        Assert.notNull(problem, "문제를 입력해주세요.");
     }
 
     public static Tag ofWithProblem(Problem problem, String tagName) {
@@ -60,12 +51,16 @@ public class Tag {
     }
 
     public static List<Tag> ofWithInfosAndProblems(List<SolvedAcProblemResp> infos, List<Problem> problems) {
+        List<Tag> ret = new ArrayList<>();
+        if(Objects.isNull(infos) || Objects.isNull(problems)) {
+            return ret;
+        }
+
         Map<Long, Problem> map = new HashMap<>();
         for (Problem problem : problems) {
             map.put(problem.getId(), problem);
         }
 
-        List<Tag> ret = new ArrayList<>();
         for (SolvedAcProblemResp info : infos) {
             Problem p = map.get(info.getProblemId());
 
