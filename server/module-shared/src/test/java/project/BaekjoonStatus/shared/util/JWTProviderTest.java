@@ -40,6 +40,19 @@ class JWTProviderTest {
         assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_NOT_VALID_TOKEN.getMessage());
     }
 
+    @ParameterizedTest
+    @MethodSource("provideWrongTokenFormat")
+    public void decode_with_wrong_token_format_is_invalid(String wrongTokenFormat) throws Exception {
+        //given
+
+        //when
+        MyException myException = catchThrowableOfType(() -> JWTProvider.validateToken(wrongTokenFormat, "key"), MyException.class);
+
+        //then
+        assertThat(myException.getCode()).isEqualTo(CodeEnum.MY_SERVER_NOT_VALID_TOKEN.getCode());
+        assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_NOT_VALID_TOKEN.getMessage());
+    }
+
     @Test
     public void token_with_expired_date_is_not_allowed() throws Exception {
         //given
@@ -67,18 +80,6 @@ class JWTProviderTest {
 
         //then
         assertThat(illegalArgumentException.getMessage()).isEqualTo("expiredOffset 0보다 커야 됩니다.");
-    }
-
-    @Test
-    public void 유효하지_않은_토큰() throws Exception {
-        //given
-        String invalidToken = "fdjsalkfdsaufdsalfa";
-
-        //when
-        assertThatThrownBy(() -> JWTProvider.validateToken(invalidToken, "test"))
-                        .isInstanceOf(MyException.class);
-        assertThatThrownBy(() -> JWTProvider.validateToken(invalidToken, "invalidSecret"))
-                        .isInstanceOf(MyException.class);
     }
 
     @Test
@@ -119,6 +120,14 @@ class JWTProviderTest {
         return Stream.of(
                 Arguments.of(-1L),
                 Arguments.of(0L)
+        );
+    }
+
+    private static Stream<Arguments> provideWrongTokenFormat() {
+        return Stream.of(
+                Arguments.of("fdsafsa"),
+                Arguments.of("1"),
+                Arguments.of("vcxzcvxz.fdsafdsa")
         );
     }
 }
