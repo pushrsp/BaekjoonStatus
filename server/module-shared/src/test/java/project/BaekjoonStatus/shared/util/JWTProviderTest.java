@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
+import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
 import java.util.stream.Stream;
@@ -15,28 +16,29 @@ import static org.assertj.core.api.Assertions.*;
 class JWTProviderTest {
 
     @Test
-    public void 유효기간() throws Exception {
+    public void token_with_expired_date_cant_be_used() throws Exception {
         //given
         Long userId = 1L;
-        User user = User.of("test1", "test1", "test1");
+        long expiredOffset = 2000L;
 
         //when
-        String token = JWTProvider.generateToken(String.valueOf(userId), "test", 20L);
-        sleep(2500L);
+        String token = JWTProvider.generateToken(String.valueOf(userId), "test", expiredOffset);
+        sleep(expiredOffset + 1000L);
+        MyException myException = catchThrowableOfType(() -> JWTProvider.validateToken(token, "test"), MyException.class);
 
         //then
-        assertThatThrownBy(() -> JWTProvider.validateToken(token, "test"))
-                        .isInstanceOf(MyException.class);
+        assertThat(myException.getCode()).isEqualTo(CodeEnum.MY_SERVER_TOKEN_EXPIRED.getCode());
+        assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_TOKEN_EXPIRED.getMessage());
     }
 
     @ParameterizedTest
     @MethodSource("provideInvalidExpiredOffset")
     public void can_detect_negative_number_and_zero_are_invalid(Long expiredOffset) throws Exception {
         //given
-        User user = User.of("test1", "test1", "test1");
+        Long userId = 1L;
 
         //when
-        IllegalArgumentException illegalArgumentException = catchThrowableOfType(() -> JWTProvider.generateToken(String.valueOf(1L), "test", expiredOffset), IllegalArgumentException.class);
+        IllegalArgumentException illegalArgumentException = catchThrowableOfType(() -> JWTProvider.generateToken(String.valueOf(userId), "test", expiredOffset), IllegalArgumentException.class);
 
         //then
         assertThat(illegalArgumentException.getMessage()).isEqualTo("expiredOffset 0보다 커야 됩니다.");
