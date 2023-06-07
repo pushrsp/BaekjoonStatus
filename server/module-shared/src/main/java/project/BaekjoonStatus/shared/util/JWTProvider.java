@@ -6,26 +6,33 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.util.StringUtils;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
 import java.util.Date;
 
 public class JWTProvider {
-    public static String generateToken(String userId, String secret, Long expireTime) {
+    public static String generateToken(String userId, String secret, Long expiredOffset) {
+        if(expiredOffset <= 0) {
+            throw new IllegalArgumentException("expiredOffset 0보다 커야 됩니다.");
+        }
+
         return JWT.create()
                 .withClaim("id", userId)
-                .withExpiresAt(new Date(System.currentTimeMillis() + expireTime))
+                .withExpiresAt(new Date(System.currentTimeMillis() + expiredOffset))
                 .sign(Algorithm.HMAC256(secret));
     }
 
     public static String extractToken(String authorization) {
-        if(authorization.isEmpty())
+        if(authorization.isEmpty() || !StringUtils.hasText(authorization)) {
             throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+        }
 
         String[] tokens = authorization.split(" ");
-        if(tokens.length != 2)
+        if(tokens.length != 2) {
             throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+        }
 
         return tokens[1];
     }
