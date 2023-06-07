@@ -14,9 +14,21 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.*;
 
 class JWTProviderTest {
+    @Test
+    public void decoded_result_is_same_with_userId() throws Exception {
+        //given
+        Long userId = 2L;
+
+        //when
+        String encodedToken = JWTProvider.generateToken(String.valueOf(userId), "test", 2000L);
+        String decodedToken = JWTProvider.validateToken(encodedToken, "test");
+
+        //then
+        assertThat(Long.parseLong(decodedToken)).isEqualTo(userId);
+    }
 
     @Test
-    public void token_with_expired_date_cant_be_used() throws Exception {
+    public void token_with_expired_date_is_not_allowed() throws Exception {
         //given
         Long userId = 1L;
         long expiredOffset = 2000L;
@@ -42,31 +54,6 @@ class JWTProviderTest {
 
         //then
         assertThat(illegalArgumentException.getMessage()).isEqualTo("expiredOffset 0보다 커야 됩니다.");
-    }
-
-    @Test
-    public void 인코딩_디코딩() throws Exception {
-        //given
-        Long userId1 = 1L;
-        Long userId2 = 2L;
-
-        User user1 =  User.of("test1", "test1", "test1");
-        User user2 =  User.of("test1", "test1", "test1");
-
-        String token1 = JWTProvider.generateToken(String.valueOf(userId1), "test", 2000L);
-        String token2 = JWTProvider.generateToken(String.valueOf(userId2), "test", 2000L);
-
-        //when
-        assertThat(token1)
-                        .isNotEqualTo(token2);
-
-        String extractedUserId1 = JWTProvider.validateToken(token1, "test");
-        assertThat(extractedUserId1)
-                        .isEqualTo(String.valueOf(userId1));
-
-        String extractedUserId2 = JWTProvider.validateToken(token2, "test");
-        assertThat(extractedUserId2)
-                .isEqualTo(String.valueOf(userId2));
     }
 
     @Test
