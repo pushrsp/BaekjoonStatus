@@ -28,6 +28,19 @@ class JWTProviderTest {
     }
 
     @Test
+    public void decode_with_different_key_is_invalid() throws Exception {
+        //given
+        String encodedToken = JWTProvider.generateToken(String.valueOf(1L), "key", 2000L);
+
+        //when
+        MyException myException = catchThrowableOfType(() -> JWTProvider.validateToken(encodedToken, "different key"), MyException.class);
+
+        //then
+        assertThat(myException.getCode()).isEqualTo(CodeEnum.MY_SERVER_NOT_VALID_TOKEN.getCode());
+        assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_NOT_VALID_TOKEN.getMessage());
+    }
+
+    @Test
     public void token_with_expired_date_is_not_allowed() throws Exception {
         //given
         Long userId = 1L;
@@ -54,17 +67,6 @@ class JWTProviderTest {
 
         //then
         assertThat(illegalArgumentException.getMessage()).isEqualTo("expiredOffset 0보다 커야 됩니다.");
-    }
-
-    @Test
-    public void 유효하지_않은_시크릿_키값() throws Exception {
-        //given
-        Long userId = 1L;
-        User user = User.of("test1", "test1", "test1");
-        String token = JWTProvider.generateToken(String.valueOf(userId), "test", 2000L);
-
-        //when
-        Assertions.assertThrows(MyException.class, () -> JWTProvider.validateToken(token, "invalid secret"));
     }
 
     @Test
