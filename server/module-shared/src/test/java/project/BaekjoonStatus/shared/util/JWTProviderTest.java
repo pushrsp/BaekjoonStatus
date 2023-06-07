@@ -2,11 +2,13 @@ package project.BaekjoonStatus.shared.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import project.BaekjoonStatus.shared.domain.user.entity.User;
-import project.BaekjoonStatus.shared.dto.UserDto;
 import project.BaekjoonStatus.shared.exception.MyException;
 
-import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,6 +27,19 @@ class JWTProviderTest {
         //then
         assertThatThrownBy(() -> JWTProvider.validateToken(token, "test"))
                         .isInstanceOf(MyException.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidExpiredOffset")
+    public void can_detect_negative_number_and_zero_are_invalid(Long expiredOffset) throws Exception {
+        //given
+        User user = User.of("test1", "test1", "test1");
+
+        //when
+        IllegalArgumentException illegalArgumentException = catchThrowableOfType(() -> JWTProvider.generateToken(String.valueOf(1L), "test", expiredOffset), IllegalArgumentException.class);
+
+        //then
+        assertThat(illegalArgumentException.getMessage()).isEqualTo("expiredOffset 0보다 커야 됩니다.");
     }
 
     @Test
@@ -107,5 +122,12 @@ class JWTProviderTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Stream<Arguments> provideInvalidExpiredOffset() {
+        return Stream.of(
+                Arguments.of(-1L),
+                Arguments.of(0L)
+        );
     }
 }
