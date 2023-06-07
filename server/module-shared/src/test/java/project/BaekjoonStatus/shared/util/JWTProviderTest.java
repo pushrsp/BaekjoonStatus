@@ -1,11 +1,9 @@
 package project.BaekjoonStatus.shared.util;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import project.BaekjoonStatus.shared.domain.user.entity.User;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
@@ -82,30 +80,17 @@ class JWTProviderTest {
         assertThat(illegalArgumentException.getMessage()).isEqualTo("expiredOffset 0보다 커야 됩니다.");
     }
 
-    @Test
-    public void authorization_없을_때() throws Exception {
-        assertThatThrownBy(() -> JWTProvider.extractToken(""))
-                        .isInstanceOf(MyException.class);
-        assertThatThrownBy(() -> JWTProvider.extractToken(null))
-                        .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
-    public void 옳바르지_않은_authorization_형식() throws Exception {
+    @ParameterizedTest
+    @MethodSource("providerWrongAuthorizationHeader")
+    public void can_detect_wrong_authorization_header_is_invalid(String authorizationHeader) throws Exception {
         //given
-        String validAuthorization = "abc test";
-        String[] tokens = validAuthorization.split(" ");
 
         //when
-        String token = JWTProvider.extractToken(validAuthorization);
+        MyException myException = catchThrowableOfType(() -> JWTProvider.extractToken(authorizationHeader), MyException.class);
 
         //then
-        assertThat(tokens[1])
-                        .isEqualTo(token);
-        assertThatThrownBy(() -> JWTProvider.extractToken("abc"))
-                        .isInstanceOf(MyException.class);
-        assertThatThrownBy(() -> JWTProvider.extractToken("abc abc test"))
-                        .isInstanceOf(MyException.class);
+        assertThat(myException.getCode()).isEqualTo(CodeEnum.MY_SERVER_UNAUTHORIZED.getCode());
+        assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_UNAUTHORIZED.getMessage());
     }
 
     public void sleep(long ms) {
@@ -128,6 +113,15 @@ class JWTProviderTest {
                 Arguments.of("fdsafsa"),
                 Arguments.of("1"),
                 Arguments.of("vcxzcvxz.fdsafdsa")
+        );
+    }
+
+    private static Stream<Arguments> providerWrongAuthorizationHeader() {
+        return Stream.of(
+                Arguments.of(""),
+                Arguments.of("-1"),
+                Arguments.of("abc"),
+                Arguments.of("abc abc abc")
         );
     }
 }

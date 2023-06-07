@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.util.StringUtils;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
@@ -24,12 +25,14 @@ public class JWTProvider {
     }
 
     public static String extractToken(String authorization) {
-        if(authorization.isEmpty())
+        if(authorization.isEmpty() || !StringUtils.hasText(authorization)) {
             throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+        }
 
         String[] tokens = authorization.split(" ");
-        if(tokens.length != 2)
+        if(tokens.length != 2) {
             throw new MyException(CodeEnum.MY_SERVER_UNAUTHORIZED);
+        }
 
         return tokens[1];
     }
