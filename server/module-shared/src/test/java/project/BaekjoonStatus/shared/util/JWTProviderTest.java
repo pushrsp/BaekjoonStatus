@@ -81,7 +81,7 @@ class JWTProviderTest {
     }
 
     @ParameterizedTest
-    @MethodSource("providerWrongAuthorizationHeader")
+    @MethodSource("provideWrongAuthorizationHeader")
     public void can_detect_wrong_authorization_header_is_invalid(String authorizationHeader) throws Exception {
         //given
 
@@ -116,7 +116,7 @@ class JWTProviderTest {
         );
     }
 
-    private static Stream<Arguments> providerWrongAuthorizationHeader() {
+    private static Stream<Arguments> provideWrongAuthorizationHeader() {
         return Stream.of(
                 Arguments.of(""),
                 Arguments.of("-1"),
