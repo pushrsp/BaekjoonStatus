@@ -20,7 +20,7 @@ import project.BaekjoonStatus.shared.domain.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
 import project.BaekjoonStatus.shared.domain.tag.service.TagService;
 import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
-import project.BaekjoonStatus.shared.util.MyCrawling;
+import project.BaekjoonStatus.shared.util.DailyProblemCrawling;
 import project.BaekjoonStatus.shared.util.SolvedAcHttp;
 import org.springframework.batch.item.ItemReader;
 
@@ -35,7 +35,7 @@ public class SaveDailyProblemJob {
     private final StepBuilderFactory stepBuilderFactory;
 
     private final SolvedAcHttp solvedAcHttp;
-    private final MyCrawling dailyProblemCrawling;
+    private final DailyProblemCrawling dailyProblemCrawling;
 
     private final ProblemService problemService;
     private final TagService tagService;

@@ -1,6 +1,5 @@
 package project.BaekjoonStatus.shared.util;
 
-import org.jsoup.Jsoup;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -14,11 +13,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DailyProblemCrawling extends MyCrawling {
+public class DailyProblemCrawling {
     public static final String GITHUB_URL = "https://raw.githubusercontent.com/tony9402/baekjoon/main/";
     public static final String FILE = "picked.md";
 
-    @Override
     public List<Long> get() {
         try {
             URI uri = getURI();
