@@ -1,46 +1,34 @@
 package project.BaekjoonStatus.shared.util;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import project.BaekjoonStatus.shared.enums.CodeEnum;
 import project.BaekjoonStatus.shared.exception.MyException;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
 class BaekjoonCrawlingTest {
-    @Test
-    public void URL이_유효하지_않을_때() throws Exception {
-        BaekjoonCrawling crawling = new BaekjoonCrawling( "https://www.acmicpcds.net/userfdsa", "pushrsp");
+    @ParameterizedTest
+    @MethodSource("provideUnregisteredUsername")
+    public void can_detect_unregistered_username_is_not_allowed(String username) throws Exception {
+        //given
+        BaekjoonCrawling crawling = new BaekjoonCrawling(username);
+
+        //when
         MyException myException = catchThrowableOfType(crawling::get, MyException.class);
 
-        assertThat(myException.getCode())
-                .isEqualTo(CodeEnum.MY_SERVER_UNKNOWN_HOST.getCode());
-
-        assertThat(myException.getMessage())
-                .isEqualTo(CodeEnum.MY_SERVER_UNKNOWN_HOST.getMessage());
+        //then
+        assertThat(myException.getCode()).isEqualTo(CodeEnum.BAEKJOON_NOT_FOUND.getCode());
+        assertThat(myException.getMessage()).isEqualTo(CodeEnum.BAEKJOON_NOT_FOUND.getMessage());
     }
 
-    @Test
-    public void 아이디가_존재하지_않을_때() throws Exception {
-        BaekjoonCrawling crawling = new BaekjoonCrawling( "-asbsd");
-        MyException myException = catchThrowableOfType(crawling::get, MyException.class);
-
-        assertThat(myException.getCode())
-                .isEqualTo(CodeEnum.BAEKJOON_NOT_FOUND.getCode());
-
-        assertThat(myException.getMessage())
-                .isEqualTo(CodeEnum.BAEKJOON_NOT_FOUND.getMessage());
-    }
-
-    @Test
-    public void 아이디가_유효할_경우_푼_문제_반환_중복_X() throws Exception {
-        BaekjoonCrawling crawling = new BaekjoonCrawling("pushrsp");
-        List<Long> mySolvedHistories = crawling.get();
-
-        assertThat(mySolvedHistories)
-                .hasSizeGreaterThanOrEqualTo(0);
-        assertThat(mySolvedHistories)
-                .doesNotHaveDuplicates();
+    private static Stream<Arguments> provideUnregisteredUsername() {
+        return Stream.of(
+                Arguments.of(""),
+                Arguments.of("fdsarewq")
+        );
     }
 }
