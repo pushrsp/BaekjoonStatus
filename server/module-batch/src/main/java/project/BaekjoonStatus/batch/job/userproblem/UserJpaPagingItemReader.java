@@ -1,9 +1,8 @@
 package project.BaekjoonStatus.batch.job.userproblem;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.database.AbstractPagingItemReader;
-import project.BaekjoonStatus.shared.domain.user.service.UserService;
-import project.BaekjoonStatus.shared.dto.UserDto;
+import project.BaekjoonStatus.shared.user.service.UserService;
+import project.BaekjoonStatus.shared.common.domain.dto.UserDto;
 
 import java.util.ArrayList;
 

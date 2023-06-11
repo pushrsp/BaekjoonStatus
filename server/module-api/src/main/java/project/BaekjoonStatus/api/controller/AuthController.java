@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.argumentresolver.Auth;
 import project.BaekjoonStatus.api.facade.AuthFacadeService;
-import project.BaekjoonStatus.shared.dto.response.CommonResponse;
-import project.BaekjoonStatus.shared.enums.CodeEnum;
+import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
+import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
 
 import javax.validation.Valid;
 

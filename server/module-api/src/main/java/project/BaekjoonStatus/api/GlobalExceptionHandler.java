@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import project.BaekjoonStatus.shared.dto.response.CommonResponse;
-import project.BaekjoonStatus.shared.enums.CodeEnum;
-import project.BaekjoonStatus.shared.exception.MyException;
+import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
+import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.domain.exception.MyException;
 
 @RestControllerAdvice
 @Slf4j

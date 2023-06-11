@@ -2,9 +2,10 @@ package project.BaekjoonStatus.shared.util;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
-import project.BaekjoonStatus.shared.enums.CodeEnum;
-import project.BaekjoonStatus.shared.exception.MyException;
+import project.BaekjoonStatus.shared.common.service.solvedac.SolvedAcHttp;
+import project.BaekjoonStatus.shared.common.service.solvedac.response.SolvedAcProblemResponse;
+import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.domain.exception.MyException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ class SolvedAcHttpTest {
 
     @Test
     public void 문제_정보_가져오기() throws Exception {
-        SolvedAcProblemResp info = solvedAcHttp.getProblemByProblemId(1000L);
+        SolvedAcProblemResponse info = solvedAcHttp.getProblemByProblemId(1000L);
 
         assertThat(info.getTitleKo())
                 .isEqualTo("A+B");
@@ -41,13 +42,13 @@ class SolvedAcHttpTest {
     @Test
     public void 청크_단위_문제_정보_가져오기() throws Exception {
         List<Long> problemIds = getProblemIds(1099L);
-        List<SolvedAcProblemResp> infos = solvedAcHttp.getProblemsByProblemIds(problemIds);
+        List<SolvedAcProblemResponse> infos = solvedAcHttp.getProblemsByProblemIds(problemIds);
 
         assertThat(infos)
                 .hasSize(problemIds.size());
 
         List<Long> infoIds = infos.stream()
-                .map(SolvedAcProblemResp::getProblemId)
+                .map(SolvedAcProblemResponse::getProblemId)
                 .collect(Collectors.toList());
 
         assertThat(infoIds)
@@ -79,7 +80,7 @@ class SolvedAcHttpTest {
         List<Long> problemIds = getProblemIds(1010L);
         problemIds.add(-1L);
 
-        List<SolvedAcProblemResp> infos = solvedAcHttp.getProblemsByProblemIds(problemIds);
+        List<SolvedAcProblemResponse> infos = solvedAcHttp.getProblemsByProblemIds(problemIds);
 
         assertThat(infos)
                 .doesNotHaveDuplicates();
@@ -87,7 +88,7 @@ class SolvedAcHttpTest {
                 .hasSize(problemIds.size() - 1);
 
         List<Long> infoIds = infos.stream()
-                .map(SolvedAcProblemResp::getProblemId)
+                .map(SolvedAcProblemResponse::getProblemId)
                 .collect(Collectors.toList());
 
         assertThat(infoIds)
@@ -100,7 +101,7 @@ class SolvedAcHttpTest {
                 .hasSize(problemIds.size() - 1);
 
         infoIds = infos.stream()
-                .map(SolvedAcProblemResp::getProblemId)
+                .map(SolvedAcProblemResponse::getProblemId)
                 .collect(Collectors.toList());
 
         assertThat(infoIds)

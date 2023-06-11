@@ -6,10 +6,10 @@ import project.BaekjoonStatus.api.cache.Cache;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
 import project.BaekjoonStatus.api.facade.StatFacadeService;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
-import project.BaekjoonStatus.shared.util.DateProvider;
+import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByDate;
+import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByLevel;
+import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByTag;
+import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
 import java.util.List;
 
