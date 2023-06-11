@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
 import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
 import project.BaekjoonStatus.shared.common.service.solvedac.response.SolvedAcProblemResponse;
+import project.BaekjoonStatus.shared.tag.domain.Tag;
 
 import javax.persistence.*;
 import java.util.*;
@@ -48,6 +49,21 @@ public class TagEntity {
 
     public static TagEntity ofWithProblem(ProblemEntity problem, String tagName) {
         return new TagEntity(problem, tagName);
+    }
+
+    public static TagEntity from(Tag tag) {
+        TagEntity tagEntity = new TagEntity();
+        tagEntity.problem = ProblemEntity.from(tag.getProblem());
+        tagEntity.tagName = tag.getTagName();
+
+        return tagEntity;
+    }
+
+    public Tag to() {
+        return Tag.builder()
+                .id(this.id.toString())
+                .tagName(this.tagName)
+                .build();
     }
 
     public static List<TagEntity> ofWithInfosAndProblems(List<SolvedAcProblemResponse> infos, List<ProblemEntity> problems) {
