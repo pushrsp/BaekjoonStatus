@@ -1,6 +1,6 @@
 package project.BaekjoonStatus.api.token;
 
-import project.BaekjoonStatus.shared.util.DateProvider;
+import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.shared.util;
 
 import org.junit.jupiter.api.Test;
+import project.BaekjoonStatus.shared.common.service.github.DailyProblemCrawling;
 
 import java.util.List;
 

@@ -4,16 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.dto.StatDto.SolvedHistoriesByUserId.Problem;
-import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
-import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
-import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
-import project.BaekjoonStatus.shared.domain.solvedhistory.service.SolvedHistoryService;
-import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
-import project.BaekjoonStatus.shared.domain.tag.service.TagService;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByDate;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByLevel;
-import project.BaekjoonStatus.shared.dto.SolvedHistoryDto.CountByTag;
-import project.BaekjoonStatus.shared.util.DateProvider;
+import project.BaekjoonStatus.shared.dailyproblem.infra.DailyProblemEntity;
+import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
+import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
+import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
+import project.BaekjoonStatus.shared.tag.infra.TagEntity;
+import project.BaekjoonStatus.shared.tag.service.TagService;
+import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByDate;
+import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByLevel;
+import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByTag;
+import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +30,7 @@ public class StatFacadeService {
 
     public List<Problem> getDailyProblems() {
         return dailyProblemService.findTodayProblems(DateProvider.getDate().minusDays(1)).stream()
-                .map(DailyProblem::getProblem)
+                .map(DailyProblemEntity::getProblem)
                 .map(Problem::of)
                 .toList();
     }
@@ -63,8 +63,8 @@ public class StatFacadeService {
         if(offset > 0)
             offset *= PAGE_SIZE;
 
-        List<SolvedHistory> histories = solvedHistoryService.findAllByUserId(userId, offset, PAGE_SIZE);
-        List<Tag> tags = tagService.findAllByProblemIdIn(histories.stream().map(h -> h.getProblem().getId()).toList());
+        List<SolvedHistoryEntity> histories = solvedHistoryService.findAllByUserId(userId, offset, PAGE_SIZE);
+        List<TagEntity> tags = tagService.findAllByProblemIdIn(histories.stream().map(h -> h.getProblem().getId()).toList());
 
         return SolvedHistoriesByUserId.of(histories, tags, PAGE_SIZE);
     }

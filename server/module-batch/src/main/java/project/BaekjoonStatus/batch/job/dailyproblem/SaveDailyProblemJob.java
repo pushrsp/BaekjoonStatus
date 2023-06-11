@@ -13,15 +13,15 @@ import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import project.BaekjoonStatus.shared.domain.dailyproblem.entity.DailyProblem;
-import project.BaekjoonStatus.shared.domain.dailyproblem.service.DailyProblemService;
-import project.BaekjoonStatus.shared.domain.problem.entity.Problem;
-import project.BaekjoonStatus.shared.domain.problem.service.ProblemService;
-import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
-import project.BaekjoonStatus.shared.domain.tag.service.TagService;
-import project.BaekjoonStatus.shared.dto.response.SolvedAcProblemResp;
-import project.BaekjoonStatus.shared.util.DailyProblemCrawling;
-import project.BaekjoonStatus.shared.util.SolvedAcHttp;
+import project.BaekjoonStatus.shared.dailyproblem.infra.DailyProblemEntity;
+import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
+import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
+import project.BaekjoonStatus.shared.problem.service.ProblemService;
+import project.BaekjoonStatus.shared.tag.infra.TagEntity;
+import project.BaekjoonStatus.shared.tag.service.TagService;
+import project.BaekjoonStatus.shared.common.service.solvedac.response.SolvedAcProblemResponse;
+import project.BaekjoonStatus.shared.common.service.github.DailyProblemCrawling;
+import project.BaekjoonStatus.shared.common.service.solvedac.SolvedAcHttp;
 import org.springframework.batch.item.ItemReader;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class SaveDailyProblemJob {
     @JobScope
     public Step dailyProblemStep(@Value("#{jobParameters[date]}") String date) {
         return this.stepBuilderFactory.get(date + "_dailyProblemStep")
-                .<Long, Problem>chunk(4)
+                .<Long, ProblemEntity>chunk(4)
                 .reader(this.dailyProblemItemReader())
                 .processor(this.dailyProblemItemProcessor())
                 .writer(this.dailyProblemItemWriter())
@@ -64,35 +64,35 @@ public class SaveDailyProblemJob {
         return new ListItemReader<>(dailyProblemCrawling.get());
     }
 
-    private ItemProcessor<Long, Problem> dailyProblemItemProcessor() {
+    private ItemProcessor<Long, ProblemEntity> dailyProblemItemProcessor() {
         return problemId -> {
-            Optional<Problem> optionalProblem = problemService.findById(problemId);
+            Optional<ProblemEntity> optionalProblem = problemService.findById(problemId);
             return optionalProblem.orElseGet(() -> saveProblem(problemId));
         };
     }
 
-    private ItemWriter<Problem> dailyProblemItemWriter() {
+    private ItemWriter<ProblemEntity> dailyProblemItemWriter() {
         return problems -> {
-            List<DailyProblem> dailyProblems = problems.stream()
-                    .map(DailyProblem::ofWithProblem)
+            List<DailyProblemEntity> dailyProblems = problems.stream()
+                    .map(DailyProblemEntity::ofWithProblem)
                     .collect(Collectors.toList());
 
             dailyProblemService.saveAll(dailyProblems);
         };
     }
 
-    private Problem saveProblem(Long problemId) {
-        SolvedAcProblemResp info = solvedAcHttp.getProblemByProblemId(problemId);
-        Problem problem = problemService.save(Problem.ofWithInfo(info));
+    private ProblemEntity saveProblem(Long problemId) {
+        SolvedAcProblemResponse info = solvedAcHttp.getProblemByProblemId(problemId);
+        ProblemEntity problem = problemService.save(ProblemEntity.ofWithInfo(info));
 
         saveTags(problem, info);
 
         return problem;
     }
 
-    private void saveTags(Problem problem, SolvedAcProblemResp info) {
-        List<Tag> tags = info.getTags().stream()
-                .map((tagInfo) -> Tag.ofWithProblem(problem, tagInfo.getKey()))
+    private void saveTags(ProblemEntity problem, SolvedAcProblemResponse info) {
+        List<TagEntity> tags = info.getTags().stream()
+                .map((tagInfo) -> TagEntity.ofWithProblem(problem, tagInfo.getKey()))
                 .collect(Collectors.toList());
 
         tagService.saveAll(tags);

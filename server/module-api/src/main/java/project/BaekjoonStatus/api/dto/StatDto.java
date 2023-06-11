@@ -1,8 +1,9 @@
 package project.BaekjoonStatus.api.dto;
 
 import lombok.*;
-import project.BaekjoonStatus.shared.domain.solvedhistory.entity.SolvedHistory;
-import project.BaekjoonStatus.shared.domain.tag.entity.Tag;
+import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
+import project.BaekjoonStatus.shared.tag.infra.TagEntity;
+import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.*;
@@ -40,7 +41,7 @@ public class StatDto {
             this.hasNext = hasNext;
         }
 
-        public static SolvedHistoriesByUserId of(List<SolvedHistory> histories, List<Tag> tags, int limit) {
+        public static SolvedHistoriesByUserId of(List<SolvedHistoryEntity> histories, List<TagEntity> tags, int limit) {
             SolvedHistoriesByUserId ret = new SolvedHistoriesByUserId(histories.size() > limit);
             Map<Long, Problem> map = new HashMap<>();
 
@@ -50,7 +51,7 @@ public class StatDto {
                 index++;
             }
 
-            for (Tag tag : tags) {
+            for (TagEntity tag : tags) {
                 if(map.containsKey(tag.getProblem().getId()))
                     map.get(tag.getProblem().getId()).addTag(tag.getTagName());
             }
@@ -77,7 +78,7 @@ public class StatDto {
                 this.problemLevel = problemLevel;
             }
 
-            public static Problem of(project.BaekjoonStatus.shared.domain.problem.entity.Problem problem) {
+            public static Problem of(ProblemEntity problem) {
                 return new Problem(problem.getId(), problem.getTitle(), problem.getLevel());
             }
 

@@ -4,11 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.argumentresolver.Auth;
 import project.BaekjoonStatus.api.proxy.StatServiceProxy;
-import project.BaekjoonStatus.shared.dto.response.CommonResponse;
-import project.BaekjoonStatus.shared.enums.CodeEnum;
-import project.BaekjoonStatus.shared.util.DateProvider;
-
-import java.time.LocalDateTime;
+import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
+import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
 
 @RestController
 @RequiredArgsConstructor

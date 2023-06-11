@@ -3,7 +3,7 @@ package project.BaekjoonStatus.api.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import project.BaekjoonStatus.shared.domain.user.entity.User;
+import project.BaekjoonStatus.shared.user.infra.UserEntity;
 
 import javax.validation.constraints.*;
 
@@ -29,7 +29,7 @@ public class AuthDto {
     @Getter
     @Builder
     public static class CreateUserDto {
-        private User user;
+        private UserEntity user;
         private String registerTokenKey;
     }
 

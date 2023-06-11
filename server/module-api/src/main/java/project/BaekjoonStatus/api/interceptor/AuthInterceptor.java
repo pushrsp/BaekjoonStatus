@@ -2,7 +2,7 @@ package project.BaekjoonStatus.api.interceptor;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.HandlerInterceptor;
-import project.BaekjoonStatus.shared.util.JWTProvider;
+import project.BaekjoonStatus.shared.common.utils.JWTProvider;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
