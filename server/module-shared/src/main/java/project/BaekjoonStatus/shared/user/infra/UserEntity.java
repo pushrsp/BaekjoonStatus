@@ -5,6 +5,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.util.Assert;
 import project.BaekjoonStatus.shared.common.domain.dto.UserDto;
+import project.BaekjoonStatus.shared.user.domain.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -67,6 +68,31 @@ public class UserEntity {
 
     public static UserEntity of(String username, String baekjoonUsername, String password) {
         return new UserEntity(username, baekjoonUsername, password);
+    }
+
+    public static UserEntity from(User user) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.username = user.getUsername();
+        userEntity.baekjoonUsername = user.getBaekjoonUsername();
+        userEntity.password = user.getPassword();
+        userEntity.isPrivate = user.getIsPrivate();
+        userEntity.createdTime = user.getCreatedTime();
+        userEntity.modifiedTime = user.getModifiedTime();
+
+        return userEntity;
+    }
+
+    public User to() {
+        return User.builder()
+                .id(this.id)
+                .username(this.username)
+                .password(this.password)
+                .baekjoonUsername(this.baekjoonUsername)
+                .isPrivate(this.isPrivate)
+                .createdTime(this.createdTime)
+                .modifiedTime(this.modifiedTime)
+                .build();
+
     }
 
     public static UserEntity from(UserDto userDto) {
