@@ -1,11 +1,11 @@
 package project.BaekjoonStatus.shared.tag.service.port;
 
-import project.BaekjoonStatus.shared.tag.infra.TagEntity;
+import project.BaekjoonStatus.shared.tag.domain.Tag;
 
 import java.util.List;
 
 public interface TagRepository {
-    TagEntity save(TagEntity tag);
-    List<TagEntity> saveAll(List<TagEntity> tags);
-    List<TagEntity> findAllByProblemIdIn(List<Long> problemIds);
+    Tag save(Tag tag);
+    List<Tag> saveAll(List<Tag> tags);
+    List<Tag> findAllByProblemIdIn(List<Long> problemIds);
 }

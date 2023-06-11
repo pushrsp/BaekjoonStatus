@@ -1,13 +1,13 @@
 package project.BaekjoonStatus.shared.problem.service.port;
 
-import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
+import project.BaekjoonStatus.shared.problem.domain.Problem;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ProblemRepository {
-    List<ProblemEntity> saveAll(List<ProblemEntity> problems);
-    ProblemEntity save(ProblemEntity problem);
-    List<ProblemEntity> findAllByIdsIn(List<Long> ids);
-    Optional<ProblemEntity> findById(Long id);
+    List<Problem> saveAll(List<Problem> problems);
+    Problem save(Problem problem);
+    List<Problem> findAllByIdsIn(List<Long> ids);
+    Optional<Problem> findById(Long id);
 }

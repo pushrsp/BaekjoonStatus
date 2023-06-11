@@ -3,6 +3,7 @@ package project.BaekjoonStatus.shared.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.infra.UserEntity;
 import project.BaekjoonStatus.shared.user.service.port.UserRepository;
 import project.BaekjoonStatus.shared.common.domain.dto.UserDto;
@@ -16,17 +17,17 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserEntity save(String username, String baekjoonUsername, String password) {
-        return userRepository.save(UserEntity.of(username, baekjoonUsername, password));
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserEntity> findById(Long userId) {
+    public Optional<User> findById(Long userId) {
         return userRepository.findById(userId);
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserEntity> findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         if(username.isEmpty()) {
             return Optional.empty();
         }

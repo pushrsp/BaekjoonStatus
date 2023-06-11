@@ -21,7 +21,7 @@ import project.BaekjoonStatus.shared.tag.infra.TagEntity;
 import project.BaekjoonStatus.shared.tag.service.TagService;
 import project.BaekjoonStatus.shared.common.service.solvedac.response.SolvedAcProblemResponse;
 import project.BaekjoonStatus.shared.common.service.github.DailyProblemCrawling;
-import project.BaekjoonStatus.shared.common.service.solvedac.SolvedAcHttp;
+import project.BaekjoonStatus.shared.solvedac.service.SolvedAcHttp;
 import org.springframework.batch.item.ItemReader;
 
 import java.util.List;

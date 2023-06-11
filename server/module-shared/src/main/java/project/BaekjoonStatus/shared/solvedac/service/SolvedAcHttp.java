@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.common.service.solvedac;
+package project.BaekjoonStatus.shared.solvedac.service;
 
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;

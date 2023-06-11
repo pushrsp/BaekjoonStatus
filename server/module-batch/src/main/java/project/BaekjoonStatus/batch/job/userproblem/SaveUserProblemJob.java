@@ -24,9 +24,9 @@ import project.BaekjoonStatus.shared.user.service.UserService;
 import project.BaekjoonStatus.shared.common.domain.dto.UserDto;
 import project.BaekjoonStatus.shared.common.service.solvedac.response.SolvedAcProblemResponse;
 import project.BaekjoonStatus.shared.common.template.ListDividerTemplate;
-import project.BaekjoonStatus.shared.common.service.baekjoon.BaekjoonCrawling;
+import project.BaekjoonStatus.shared.baekjoon.BaekjoonCrawling;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
-import project.BaekjoonStatus.shared.common.service.solvedac.SolvedAcHttp;
+import project.BaekjoonStatus.shared.solvedac.service.SolvedAcHttp;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,10 +1,11 @@
-package project.BaekjoonStatus.shared.common.service.baekjoon;
+package project.BaekjoonStatus.shared.baekjoon;
 
 import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.domain.exception.MyException;
 
@@ -14,31 +15,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BaekjoonCrawling {
-
+@Service
+public class BaekjoonService {
     public static final String BAEKJOON_URL = "https://www.acmicpc.net/user";
-    private Connection conn;
 
-    public BaekjoonCrawling(String username) {
-        initConnect(username);
-    }
-
-    private void initConnect(String username) {
-        setConn(Jsoup.connect(BAEKJOON_URL + "/" + username));
-    }
-
-    private void setConn(Connection conn) {
-        this.conn = conn;
-    }
-
-    public List<Long> get() {
+    public List<Long> findByUsername(String username) {
+        Connection conn = Jsoup.connect(BAEKJOON_URL + "/" + username);
         try {
-            Elements elements = getElements();
+            Elements elements = findElements(conn);
             return Arrays.stream(elements.get(0).text().split(" "))
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
         } catch (HttpStatusException e) {
-          throw new MyException(CodeEnum.BAEKJOON_NOT_FOUND);
+            throw new MyException(CodeEnum.BAEKJOON_NOT_FOUND);
         } catch (UnknownHostException e) {
             throw new MyException(CodeEnum.MY_SERVER_UNKNOWN_HOST);
         } catch (Exception e) {
@@ -46,7 +35,7 @@ public class BaekjoonCrawling {
         }
     }
 
-    private Elements getElements() throws IOException {
+    private Elements findElements(Connection conn) throws IOException {
         Document document = conn.get();
         return document.select("div.problem-list");
     }

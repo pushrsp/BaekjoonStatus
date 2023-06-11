@@ -3,6 +3,7 @@ package project.BaekjoonStatus.shared.problem.infra;
 import lombok.*;
 import org.springframework.data.domain.Persistable;
 import org.springframework.util.Assert;
+import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.tag.infra.TagEntity;
 import project.BaekjoonStatus.shared.common.service.solvedac.response.SolvedAcProblemResponse;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
@@ -52,6 +53,27 @@ public class ProblemEntity implements Persistable<Long> {
 
     public static ProblemEntity of(Long id, Integer level, String title, LocalDateTime createdTime) {
         return new ProblemEntity(id, level, title, createdTime);
+    }
+
+    public static ProblemEntity from(Problem problem) {
+        ProblemEntity problemEntity = new ProblemEntity();
+        problemEntity.id = problem.getId();
+        problemEntity.level = problem.getLevel();
+        problemEntity.title = problem.getTitle();
+        problemEntity.createdTime = DateProvider.getDateTime();
+        problemEntity.updated = false;
+
+        return problemEntity;
+    }
+
+    public Problem to() {
+        return Problem.builder()
+                .id(this.id)
+                .level(this.level)
+                .title(this.title)
+                .tags(this.tags.stream().map(TagEntity::to).collect(Collectors.toList()))
+                .createdTime(this.createdTime)
+                .build();
     }
 
     public static ProblemEntity ofWithInfo(SolvedAcProblemResponse info) {
