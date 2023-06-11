@@ -8,6 +8,7 @@ import project.BaekjoonStatus.shared.dailyproblem.infra.DailyProblemEntity;
 import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
+import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.infra.TagEntity;
 import project.BaekjoonStatus.shared.tag.service.TagService;
 import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByDate;
@@ -64,7 +65,7 @@ public class StatService {
             offset *= PAGE_SIZE;
 
         List<SolvedHistoryEntity> histories = solvedHistoryService.findAllByUserId(userId, offset, PAGE_SIZE);
-        List<TagEntity> tags = tagService.findAllByProblemIdIn(histories.stream().map(h -> h.getProblem().getId()).toList());
+        List<Tag> tags = tagService.findAllByProblemIdIn(histories.stream().map(h -> h.getProblem().getId()).toList());
 
         return SolvedHistoriesByUserId.of(histories, tags, PAGE_SIZE);
     }

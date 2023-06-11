@@ -3,7 +3,7 @@ package project.BaekjoonStatus.batch.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import project.BaekjoonStatus.shared.common.service.github.DailyProblemCrawling;
-import project.BaekjoonStatus.shared.common.service.solvedac.SolvedAcHttp;
+import project.BaekjoonStatus.shared.solvedac.service.SolvedAcHttp;
 
 @Configuration
 public class Config {
