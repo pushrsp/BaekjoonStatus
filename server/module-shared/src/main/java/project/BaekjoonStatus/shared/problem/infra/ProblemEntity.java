@@ -71,7 +71,6 @@ public class ProblemEntity implements Persistable<Long> {
                 .id(this.id)
                 .level(this.level)
                 .title(this.title)
-                .tags(this.tags.stream().map(TagEntity::to).collect(Collectors.toList()))
                 .createdTime(this.createdTime)
                 .build();
     }

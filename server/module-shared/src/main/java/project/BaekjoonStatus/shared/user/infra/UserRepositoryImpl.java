@@ -12,7 +12,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-import static project.BaekjoonStatus.shared.domain.user.entity.QUser.*;
+import static project.BaekjoonStatus.shared.user.infra.QUserEntity.userEntity;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -43,9 +43,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override //FIXME
     public List<UserDto> findAllByGreaterThanUserId(Long userId, int limit) {
         return queryFactory
-                .select(Projections.bean(UserDto.class, user.id.as("userId"), user.username, user.baekjoonUsername))
-                .from(user)
-                .where(user.id.gt(userId))
+                .select(Projections.bean(UserDto.class, userEntity.id.as("userId"), userEntity.username, userEntity.baekjoonUsername))
+                .from(userEntity)
+                .where(userEntity.id.gt(userId))
                 .limit(limit)
                 .fetch();
     }

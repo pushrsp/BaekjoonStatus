@@ -63,6 +63,6 @@ public class StatService {
         List<SolvedHistoryEntity> histories = solvedHistoryService.findAllByUserId(userId, offset, PAGE_SIZE);
         List<Tag> tags = tagService.findAllByProblemIdIn(histories.stream().map(h -> h.getProblem().getId()).toList());
 
-        return SolvedHistoriesByUserId.of(histories, tags, PAGE_SIZE);
+        return SolvedHistoriesByUserId.of(histories, null, PAGE_SIZE);
     }
 }

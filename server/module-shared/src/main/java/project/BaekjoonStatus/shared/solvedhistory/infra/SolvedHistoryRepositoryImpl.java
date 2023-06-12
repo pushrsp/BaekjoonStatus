@@ -4,6 +4,9 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.*;
@@ -12,11 +15,12 @@ import project.BaekjoonStatus.shared.solvedhistory.service.port.SolvedHistoryRep
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static project.BaekjoonStatus.shared.domain.problem.entity.QProblem.problem;
-import static project.BaekjoonStatus.shared.domain.solvedhistory.entity.QSolvedHistory.solvedHistory;
-import static project.BaekjoonStatus.shared.domain.tag.entity.QTag.tag;
+import static project.BaekjoonStatus.shared.problem.infra.QProblemEntity.problemEntity;
+import static project.BaekjoonStatus.shared.solvedhistory.infra.QSolvedHistoryEntity.solvedHistoryEntity;
+import static project.BaekjoonStatus.shared.tag.infra.QTagEntity.tagEntity;
 
 @Repository
 @Transactional(readOnly = true)
@@ -27,69 +31,88 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     private static final String[] TAG_IN = {"dp", "implementation", "graphs", "greedy", "data_structures"};
 
     private final JPAQueryFactory queryFactory;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final SolvedHistoryJpaRepository solvedHistoryJpaRepository;
 
     @Autowired
-    public SolvedHistoryRepositoryImpl(EntityManager em, SolvedHistoryJpaRepository solvedHistoryJpaRepository) {
+    public SolvedHistoryRepositoryImpl(EntityManager em, SolvedHistoryJpaRepository solvedHistoryJpaRepository, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.queryFactory = new JPAQueryFactory(em);
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.solvedHistoryJpaRepository = solvedHistoryJpaRepository;
     }
 
     @Override
     @Transactional
-    public List<SolvedHistory> saveAll(List<SolvedHistory> solvedHistories) {
-        return solvedHistoryJpaRepository.saveAll(solvedHistories.stream().map(SolvedHistoryEntity::from).collect(Collectors.toList()))
-                .stream()
-                .map(SolvedHistoryEntity::to)
-                .collect(Collectors.toList());
+    public void saveAll(List<SolvedHistory> solvedHistories) {
+        String sql = """
+                INSERT INTO SOLVED_HISTORY (solved_history_id, created_date, created_time, is_before, problem_level, problem_id, user_id)
+                VALUES (:solved_history_id, :created_date, :created_time, :is_before, :problem_level, :problem_id, :user_id)
+                """;
+
+        SqlParameterSource[] params = solvedHistories.stream()
+                .map(this::generateParams)
+                .toArray(SqlParameterSource[]::new);
+
+        namedParameterJdbcTemplate.batchUpdate(sql, params);
+    }
+
+    private SqlParameterSource generateParams(SolvedHistory solvedHistory) {
+        return new MapSqlParameterSource()
+                .addValue("solved_history_id", UUID.randomUUID().toString())
+                .addValue("created_date", solvedHistory.getCreatedDate())
+                .addValue("created_time", solvedHistory.getCreatedTime())
+                .addValue("is_before", solvedHistory.getIsBefore())
+                .addValue("problem_level", solvedHistory.getProblemLevel())
+                .addValue("problem_id", solvedHistory.getProblem().getId())
+                .addValue("user_id", solvedHistory.getUser().getId());
     }
 
     @Override
     @Transactional
     public List<CountByDate> findSolvedCountGroupByDate(Long userId, String year) {
-        StringTemplate dateFormat = getDateFormat(solvedHistory.createdDate, DATE_FORMAT);
-        StringTemplate yearFormat = getDateFormat(solvedHistory.createdDate, YEAR_FORMAT);
+        StringTemplate dateFormat = getDateFormat(solvedHistoryEntity.createdDate, DATE_FORMAT);
+        StringTemplate yearFormat = getDateFormat(solvedHistoryEntity.createdDate, YEAR_FORMAT);
 
         return queryFactory
-                .select(Projections.bean(CountByDate.class, dateFormat.as("day"), solvedHistory.user.id.count().as("value")))
-                .from(solvedHistory)
-                .where(solvedHistory.user.id.eq(userId).and(yearFormat.eq(year).and(solvedHistory.isBefore.eq(false))))
-                .groupBy(solvedHistory.createdDate)
+                .select(Projections.bean(CountByDate.class, dateFormat.as("day"), solvedHistoryEntity.user.id.count().as("value")))
+                .from(solvedHistoryEntity)
+                .where(solvedHistoryEntity.user.id.eq(userId).and(yearFormat.eq(year).and(solvedHistoryEntity.isBefore.eq(false))))
+                .groupBy(solvedHistoryEntity.createdDate)
                 .fetch();
     }
 
     @Override
     public List<CountByLevel> findSolvedCountGroupByLevel(Long userId) {
         return queryFactory
-                .select(Projections.bean(CountByLevel.class, caseBuilder(), solvedHistory.user.id.count().as("count")))
-                .from(solvedHistory)
-                .where(solvedHistory.user.id.eq(userId))
-                .groupBy(solvedHistory.problemLevel)
+                .select(Projections.bean(CountByLevel.class, caseBuilder(), solvedHistoryEntity.user.id.count().as("count")))
+                .from(solvedHistoryEntity)
+                .where(solvedHistoryEntity.user.id.eq(userId))
+                .groupBy(solvedHistoryEntity.problemLevel)
                 .fetch();
     }
 
     @Override
     public List<CountByTag> findSolvedCountGroupByTag(Long userId) {
         return queryFactory
-                .select(Projections.bean(CountByTag.class, tag.tagName.as("tag"), solvedHistory.user.id.count().as("count")))
-                .from(solvedHistory)
-                .join(problem).on(problem.id.eq(solvedHistory.problem.id))
-                .join(tag).on(tag.problem.id.eq(problem.id))
-                .where(solvedHistory.user.id.eq(userId))
-                .groupBy(tag.tagName)
-                .having(tag.tagName.in(TAG_IN))
+                .select(Projections.bean(CountByTag.class, tagEntity.tagName.as("tag"), solvedHistoryEntity.user.id.count().as("count")))
+                .from(solvedHistoryEntity)
+                .join(problemEntity).on(problemEntity.id.eq(solvedHistoryEntity.problem.id))
+                .join(tagEntity).on(tagEntity.problem.id.eq(problemEntity.id))
+                .where(solvedHistoryEntity.user.id.eq(userId))
+                .groupBy(tagEntity.tagName)
+                .having(tagEntity.tagName.in(TAG_IN))
                 .fetch();
     }
 
     @Override //FIXME
     public List<SolvedHistoryEntity> findAllByUserId(Long userId, int offset, int limit) {
-        return queryFactory.select(solvedHistory)
-                .from(solvedHistory)
-                .join(solvedHistory.problem, problem).fetchJoin()
-                .where(solvedHistory.user.id.eq(userId))
+        return queryFactory.select(solvedHistoryEntity)
+                .from(solvedHistoryEntity)
+                .join(solvedHistoryEntity.problem, problemEntity).fetchJoin()
+                .where(solvedHistoryEntity.user.id.eq(userId))
                 .offset(offset)
                 .limit(limit + 1)
-                .orderBy(solvedHistory.problemLevel.desc(), solvedHistory.problem.id.asc())
+                .orderBy(solvedHistoryEntity.problemLevel.desc(), solvedHistoryEntity.problem.id.asc())
                 .fetch();
     }
 
@@ -103,17 +126,17 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
 
     private StringExpression caseBuilder() {
         return new CaseBuilder()
-                .when(solvedHistory.problemLevel.between(1, 5))
+                .when(solvedHistoryEntity.problemLevel.between(1, 5))
                 .then("bronze")
-                .when(solvedHistory.problemLevel.between(6, 10))
+                .when(solvedHistoryEntity.problemLevel.between(6, 10))
                 .then("silver")
-                .when(solvedHistory.problemLevel.between(11, 15))
+                .when(solvedHistoryEntity.problemLevel.between(11, 15))
                 .then("gold")
-                .when(solvedHistory.problemLevel.between(16, 20))
+                .when(solvedHistoryEntity.problemLevel.between(16, 20))
                 .then("platinum")
-                .when(solvedHistory.problemLevel.between(21, 25))
+                .when(solvedHistoryEntity.problemLevel.between(21, 25))
                 .then("diamond")
-                .when(solvedHistory.problemLevel.between(25, 30))
+                .when(solvedHistoryEntity.problemLevel.between(25, 30))
                 .then("ruby")
                 .otherwise("unrated")
                 .as("level");

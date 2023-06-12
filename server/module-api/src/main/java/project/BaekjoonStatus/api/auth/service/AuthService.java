@@ -82,7 +82,6 @@ public class AuthService {
         RegisterToken token = registerTokenStore.get(registerToken);
         ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
 
-        //FIXME
         listDivider.execute((List<Long> ids) -> {
             List<Problem> problems = problemService.findAllByIdsIn(ids);
             solvedHistoryService.saveAll(SolvedHistory.from(user, problems,true));

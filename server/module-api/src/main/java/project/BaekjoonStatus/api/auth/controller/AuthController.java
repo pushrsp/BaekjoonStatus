@@ -1,7 +1,6 @@
 package project.BaekjoonStatus.api.auth.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.auth.controller.request.BaekjoonVerifyRequest;
@@ -23,7 +22,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-@Slf4j
 public class AuthController {
     private static final Long EXPIRE_TIME = 1000L * 60 * 60 * 24; //하루
 
@@ -46,7 +44,7 @@ public class AuthController {
         List<Long> problemIds = authService.getByBaekjoonUsername(request.getUsername());
         String registerToken = authService.getRegisterToken(problemIds);
 
-        if(problemIds.size() > 0) {
+        if(!problemIds.isEmpty()) {
             authService.createProblems(registerToken);
         }
 

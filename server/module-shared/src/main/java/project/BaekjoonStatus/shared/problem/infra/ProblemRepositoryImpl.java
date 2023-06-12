@@ -1,6 +1,10 @@
 package project.BaekjoonStatus.shared.problem.infra;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
@@ -15,13 +19,30 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ProblemRepositoryImpl implements ProblemRepository {
     private final ProblemJpaRepository problemJpaRepository;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     @Transactional
-    public List<Problem> saveAll(List<Problem> problems) {
-        return problemJpaRepository.saveAll(problems.stream().map(ProblemEntity::from).collect(Collectors.toList()))
-                .stream()
-                .map(ProblemEntity::to).collect(Collectors.toList());
+    public void saveAll(List<Problem> problems) {
+        String sql =
+                """
+                INSERT INTO PROBLEM (problem_id, level, title, created_time)
+                VALUES (:problem_id, :level, :title, :created_time)
+                """;
+
+        SqlParameterSource[] params = problems.stream()
+                .map(this::generateParams)
+                .toArray(SqlParameterSource[]::new);
+
+        namedParameterJdbcTemplate.batchUpdate(sql, params);
+    }
+
+    private SqlParameterSource generateParams(Problem problem) {
+        return new MapSqlParameterSource()
+                .addValue("problem_id", problem.getId())
+                .addValue("level", problem.getLevel())
+                .addValue("title", problem.getTitle())
+                .addValue("created_time", problem.getCreatedTime());
     }
 
     @Override
