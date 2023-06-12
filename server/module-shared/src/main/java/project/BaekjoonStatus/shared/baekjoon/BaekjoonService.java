@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class BaekjoonService {
     public static final String BAEKJOON_URL = "https://www.acmicpc.net/user";
 
-    public List<Long> findByUsername(String username) {
+    public List<Long> getByUsername(String username) {
         Connection conn = Jsoup.connect(BAEKJOON_URL + "/" + username);
         try {
             Elements elements = findElements(conn);

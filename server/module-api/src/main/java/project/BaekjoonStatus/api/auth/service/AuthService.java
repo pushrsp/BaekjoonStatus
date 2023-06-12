@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
+import project.BaekjoonStatus.shared.problem.domain.Problem;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
+import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
 import project.BaekjoonStatus.shared.user.controller.request.UserCreateRequest;
 import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
@@ -41,8 +44,8 @@ public class AuthService {
                 .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
     }
 
-    public List<Long> findByBaekjoonUsername(String baekjoonUsername) {
-        return baekjoonService.findByUsername(baekjoonUsername);
+    public List<Long> getByBaekjoonUsername(String baekjoonUsername) {
+        return baekjoonService.getByUsername(baekjoonUsername);
     }
 
     public String getRegisterToken(List<Long> problemIds) {
@@ -80,10 +83,11 @@ public class AuthService {
         ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
 
         //FIXME
-//        listDivider.execute((List<Long> ids) -> {
-//            solvedHistoryService.saveAll(SolvedHistoryEntity.ofWithUserAndProblems(user, problemService.findAllByIdsIn(ids), true));
-//            return null;
-//        });
+        listDivider.execute((List<Long> ids) -> {
+            List<Problem> problems = problemService.findAllByIdsIn(ids);
+            solvedHistoryService.saveAll(SolvedHistory.from(user, problems,true));
+            return null;
+        });
 
         registerTokenStore.remove(registerToken);
     }

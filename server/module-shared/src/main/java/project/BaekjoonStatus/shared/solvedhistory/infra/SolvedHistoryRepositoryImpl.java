@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.*;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.solvedhistory.service.port.SolvedHistoryRepository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static project.BaekjoonStatus.shared.domain.problem.entity.QProblem.problem;
 import static project.BaekjoonStatus.shared.domain.solvedhistory.entity.QSolvedHistory.solvedHistory;
@@ -35,8 +37,11 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
 
     @Override
     @Transactional
-    public List<SolvedHistoryEntity> saveAll(List<SolvedHistoryEntity> solvedHistories) {
-        return solvedHistoryJpaRepository.saveAll(solvedHistories);
+    public List<SolvedHistory> saveAll(List<SolvedHistory> solvedHistories) {
+        return solvedHistoryJpaRepository.saveAll(solvedHistories.stream().map(SolvedHistoryEntity::from).collect(Collectors.toList()))
+                .stream()
+                .map(SolvedHistoryEntity::to)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -76,7 +81,7 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .fetch();
     }
 
-    @Override
+    @Override //FIXME
     public List<SolvedHistoryEntity> findAllByUserId(Long userId, int offset, int limit) {
         return queryFactory.select(solvedHistory)
                 .from(solvedHistory)
@@ -89,8 +94,11 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     }
 
     @Override
-    public List<SolvedHistoryEntity> findAllByUserId(Long userId) {
-        return solvedHistoryJpaRepository.findAllByUserId(userId);
+    public List<SolvedHistory> findAllByUserId(Long userId) {
+        return solvedHistoryJpaRepository.findAllByUserId(userId)
+                .stream()
+                .map(SolvedHistoryEntity::to)
+                .collect(Collectors.toList());
     }
 
     private StringExpression caseBuilder() {

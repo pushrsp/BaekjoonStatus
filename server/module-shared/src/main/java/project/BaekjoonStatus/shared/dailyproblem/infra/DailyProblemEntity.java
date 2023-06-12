@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
+import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
@@ -40,6 +41,22 @@ public class DailyProblemEntity {
 
         this.problem = problem;
         this.createdDate = createdDate;
+    }
+
+    public static DailyProblemEntity from(DailyProblem dailyProblem) {
+        DailyProblemEntity dailyProblemEntity = new DailyProblemEntity();
+        dailyProblemEntity.problem = ProblemEntity.from(dailyProblem.getProblem());
+        dailyProblemEntity.createdDate = dailyProblem.getCreatedDate();
+
+        return dailyProblemEntity;
+    }
+
+    public DailyProblem to() {
+        return DailyProblem.builder()
+                .id(this.id.toString())
+                .problem(this.problem.to())
+                .createdDate(this.createdDate)
+                .build();
     }
 
     private void validateProblem(ProblemEntity problem) {

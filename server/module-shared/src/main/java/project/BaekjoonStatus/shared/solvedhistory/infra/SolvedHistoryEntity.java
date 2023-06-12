@@ -7,6 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
+import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.infra.UserEntity;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
@@ -70,6 +72,30 @@ public class SolvedHistoryEntity {
         this.problemLevel = problem.getLevel();
         this.createdDate = createdDate;
         this.createdTime = DateProvider.getDateTime();
+    }
+
+    public static SolvedHistoryEntity from(SolvedHistory solvedHistory) {
+        SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity();
+        solvedHistoryEntity.user = UserEntity.from(solvedHistory.getUser());
+        solvedHistoryEntity.problem = ProblemEntity.from(solvedHistory.getProblem());
+        solvedHistoryEntity.isBefore = solvedHistory.getIsBefore();
+        solvedHistoryEntity.problemLevel = solvedHistory.getProblemLevel();
+        solvedHistoryEntity.createdDate = solvedHistory.getCreatedDate();
+        solvedHistoryEntity.createdTime = solvedHistory.getCreatedTime();
+
+        return solvedHistoryEntity;
+    }
+
+    public SolvedHistory to() {
+        return SolvedHistory.builder()
+                .id(this.id.toString())
+                .user(this.user.to())
+                .problem(this.problem.to())
+                .isBefore(this.isBefore)
+                .problemLevel(this.problemLevel)
+                .createdDate(this.createdDate)
+                .createdTime(this.createdTime)
+                .build();
     }
 
     public static SolvedHistoryEntity ofWithUserAndProblem(UserEntity user, ProblemEntity problem, boolean isBefore) {
