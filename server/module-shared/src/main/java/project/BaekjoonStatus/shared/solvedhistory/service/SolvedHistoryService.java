@@ -3,6 +3,7 @@ package project.BaekjoonStatus.shared.solvedhistory.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
 import project.BaekjoonStatus.shared.solvedhistory.service.port.SolvedHistoryRepository;
 import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByDate;
@@ -17,12 +18,12 @@ public class SolvedHistoryService {
     private final SolvedHistoryRepository solvedHistoryRepository;
 
     @Transactional
-    public List<SolvedHistoryEntity> saveAll(List<SolvedHistoryEntity> solvedHistories) {
+    public List<SolvedHistory> saveAll(List<SolvedHistory> solvedHistories) {
         return solvedHistoryRepository.saveAll(solvedHistories);
     }
 
     @Transactional(readOnly = true)
-    public List<SolvedHistoryEntity> findAllByUserId(Long userId) {
+    public List<SolvedHistory> findAllByUserId(Long userId) {
         return solvedHistoryRepository.findAllByUserId(userId);
     }
 

@@ -14,16 +14,16 @@ public class StatController {
     private final StatServiceProxy statServiceProxy;
 
     @GetMapping("/daily")
-    public CommonResponse getDailyProblems(@Auth String userId) {
+    public CommonResponse findTodayProblems(@Auth String userId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(statServiceProxy.getDailyProblems(userId))
+                .data(statServiceProxy.findTodayProblems(userId))
                 .build();
     }
 
     @GetMapping("/date")
-    public CommonResponse getDailySolvedCount(@RequestParam String year, @Auth String userId) {
+    public CommonResponse findDailySolvedCount(@RequestParam String year, @Auth String userId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
@@ -32,7 +32,7 @@ public class StatController {
     }
 
     @GetMapping("/level")
-    public CommonResponse getSolvedCountByLevel(@Auth String userId) {
+    public CommonResponse findSolvedCountByLevel(@Auth String userId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
@@ -41,7 +41,7 @@ public class StatController {
     }
 
     @GetMapping("/tag")
-    public CommonResponse getSolvedCountByTag(@Auth String userId) {
+    public CommonResponse findSolvedCountByTag(@Auth String userId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
@@ -50,7 +50,7 @@ public class StatController {
     }
 
     @GetMapping("/solved-histories")
-    public CommonResponse getSolvedHistories(@Auth String userId, @RequestParam Integer offset) {
+    public CommonResponse findSolvedHistories(@Auth String userId, @RequestParam Integer offset) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())

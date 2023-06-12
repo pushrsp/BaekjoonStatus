@@ -43,7 +43,7 @@ public class AuthController {
 
     @GetMapping("/baekjoon")
     public CommonResponse verifyBaekjoon(@Valid BaekjoonVerifyRequest request) {
-        List<Long> problemIds = authService.findByBaekjoonUsername(request.getUsername());
+        List<Long> problemIds = authService.getByBaekjoonUsername(request.getUsername());
         String registerToken = authService.getRegisterToken(problemIds);
 
         if(problemIds.size() > 0) {

@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.stat.controller.request.StatDto.SolvedHistoriesByUserId;
 import project.BaekjoonStatus.api.stat.controller.request.StatDto.SolvedHistoriesByUserId.Problem;
-import project.BaekjoonStatus.shared.dailyproblem.infra.DailyProblemEntity;
+import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
-import project.BaekjoonStatus.shared.tag.infra.TagEntity;
 import project.BaekjoonStatus.shared.tag.service.TagService;
 import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByDate;
 import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByLevel;
@@ -29,11 +28,8 @@ public class StatService {
     private final SolvedHistoryService solvedHistoryService;
     private final TagService tagService;
 
-    public List<Problem> getDailyProblems() {
-        return dailyProblemService.findTodayProblems(DateProvider.getDate().minusDays(1)).stream()
-                .map(DailyProblemEntity::getProblem)
-                .map(Problem::of)
-                .toList();
+    public List<DailyProblem> findTodayProblems() {
+        return dailyProblemService.findTodayProblems(DateProvider.getDate().minusDays(1));
     }
 
     public List<CountByDate> getSolvedCountGroupByDate(Long userId, String year) {
