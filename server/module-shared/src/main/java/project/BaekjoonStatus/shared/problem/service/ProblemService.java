@@ -20,8 +20,8 @@ public class ProblemService {
     }
 
     @Transactional
-    public List<Problem> saveAll(List<Problem> problems) {
-        return problemRepository.saveAll(problems);
+    public void saveAll(List<Problem> problems) {
+        problemRepository.saveAll(problems);
     }
 
     @Transactional(readOnly = true)

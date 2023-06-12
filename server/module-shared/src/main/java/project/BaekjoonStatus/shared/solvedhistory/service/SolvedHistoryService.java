@@ -18,8 +18,8 @@ public class SolvedHistoryService {
     private final SolvedHistoryRepository solvedHistoryRepository;
 
     @Transactional
-    public List<SolvedHistory> saveAll(List<SolvedHistory> solvedHistories) {
-        return solvedHistoryRepository.saveAll(solvedHistories);
+    public void saveAll(List<SolvedHistory> solvedHistories) {
+        solvedHistoryRepository.saveAll(solvedHistories);
     }
 
     @Transactional(readOnly = true)
