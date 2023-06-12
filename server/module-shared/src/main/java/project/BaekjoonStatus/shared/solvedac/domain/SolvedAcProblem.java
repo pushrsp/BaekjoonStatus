@@ -1,7 +1,8 @@
 package project.BaekjoonStatus.shared.solvedac.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
+@Data
 public class SolvedAcProblem {
     private final Long problemId;
     private final String titleKo;
@@ -24,7 +25,17 @@ public class SolvedAcProblem {
     private final List<SolvedAcTag> tags;
 
     @Builder
-    public SolvedAcProblem(Long problemId, String titleKo, Boolean isSolvable, Boolean isPartial, Long acceptedUserCount, Long level, Long votedUserCount, Boolean isLevelLocked, Float averageTries, List<SolvedAcTag> tags) {
+    public SolvedAcProblem(@JsonProperty("problemId") Long problemId,
+                           @JsonProperty("titleKo") String titleKo,
+                           @JsonProperty("isSolvable") Boolean isSolvable,
+                           @JsonProperty("isPartial") Boolean isPartial,
+                           @JsonProperty("acceptedUserCount") Long acceptedUserCount,
+                           @JsonProperty("level") Long level,
+                           @JsonProperty("votedUserCount") Long votedUserCount,
+                           @JsonProperty("isLevelLocked") Boolean isLevelLocked,
+                           @JsonProperty("averageTries") Float averageTries,
+                           @JsonProperty("tags") List<SolvedAcTag> tags
+    ) {
         this.problemId = problemId;
         this.titleKo = titleKo;
         this.isSolvable = isSolvable;

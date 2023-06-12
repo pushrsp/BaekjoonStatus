@@ -1,14 +1,15 @@
 package project.BaekjoonStatus.shared.solvedac.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class SolvedAcAlias {
     private final String alias;
 
     @Builder
-    public SolvedAcAlias(String alias) {
+    public SolvedAcAlias(@JsonProperty("alias") String alias) {
         this.alias = alias;
     }
 }
