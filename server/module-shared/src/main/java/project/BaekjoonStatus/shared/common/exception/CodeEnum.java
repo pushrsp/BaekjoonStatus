@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.common.domain.exception;
+package project.BaekjoonStatus.shared.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

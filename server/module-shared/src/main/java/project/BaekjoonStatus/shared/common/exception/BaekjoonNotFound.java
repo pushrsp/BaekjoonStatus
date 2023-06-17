@@ -1,9 +1,8 @@
-package project.BaekjoonStatus.shared.common.domain.exception;
+package project.BaekjoonStatus.shared.common.exception;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
 
 @Getter
 @Setter
