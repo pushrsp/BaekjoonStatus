@@ -125,8 +125,8 @@ const SolvedProblemTable = () => {
                                     {problem.tags.map((tag) => (
                                         <Chip
                                             color="info"
-                                            key={tag.tag}
-                                            label={tag.tag}
+                                            key={tag.tagName}
+                                            label={tag.tagName}
                                             sx={{ mr: 1 }}
                                         />
                                     ))}

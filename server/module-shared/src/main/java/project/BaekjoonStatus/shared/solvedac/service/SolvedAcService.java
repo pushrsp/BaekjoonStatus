@@ -4,9 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.domain.exception.MyException;
-import project.BaekjoonStatus.shared.common.service.solvedac.response.SolvedAcProblemResponse;
+import project.BaekjoonStatus.shared.common.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.exception.MyException;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 
 import java.net.URI;

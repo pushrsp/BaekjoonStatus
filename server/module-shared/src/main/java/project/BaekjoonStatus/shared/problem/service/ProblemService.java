@@ -20,6 +20,11 @@ public class ProblemService {
     }
 
     @Transactional
+    public Problem saveAndFlush(Problem problem) {
+        return problemRepository.saveAndFlush(problem);
+    }
+
+    @Transactional
     public void saveAll(List<Problem> problems) {
         problemRepository.saveAll(problems);
     }

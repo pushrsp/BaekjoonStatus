@@ -3,12 +3,8 @@ package project.BaekjoonStatus.shared.solvedhistory.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
-import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
+import project.BaekjoonStatus.shared.solvedhistory.domain.*;
 import project.BaekjoonStatus.shared.solvedhistory.service.port.SolvedHistoryRepository;
-import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByDate;
-import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByLevel;
-import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByTag;
 
 import java.util.List;
 
@@ -28,22 +24,22 @@ public class SolvedHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<CountByDate> findSolvedCountGroupByDate(Long userId, String year) {
+    public List<GroupByDate> findSolvedCountGroupByDate(Long userId, String year) {
         return solvedHistoryRepository.findSolvedCountGroupByDate(userId, year);
     }
 
     @Transactional(readOnly = true)
-    public List<CountByLevel> findSolvedCountGroupByLevel(Long userId) {
+    public List<GroupByTier> findSolvedCountGroupByLevel(Long userId) {
         return solvedHistoryRepository.findSolvedCountGroupByLevel(userId);
     }
 
     @Transactional(readOnly = true)
-    public List<CountByTag> findSolvedCountGroupByTag(Long userId) {
+    public List<GroupByTag> findSolvedCountGroupByTag(Long userId) {
         return solvedHistoryRepository.findSolvedCountGroupByTag(userId);
     }
 
     @Transactional(readOnly = true)
-    public List<SolvedHistoryEntity> findAllByUserId(Long userId, int offset, int pageSize) {
+    public List<SolvedHistoryByUserId> findAllByUserId(Long userId, int offset, int pageSize) {
         return solvedHistoryRepository.findAllByUserId(userId, offset, pageSize);
     }
 }

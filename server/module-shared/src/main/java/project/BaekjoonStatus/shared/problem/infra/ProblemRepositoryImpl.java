@@ -52,6 +52,11 @@ public class ProblemRepositoryImpl implements ProblemRepository {
     }
 
     @Override
+    public Problem saveAndFlush(Problem problem) {
+        return problemJpaRepository.saveAndFlush(ProblemEntity.from(problem)).to();
+    }
+
+    @Override
     public List<Problem> findAllByIdsIn(List<Long> ids) {
         return problemJpaRepository.findAllByIdIn(ids)
                 .stream()

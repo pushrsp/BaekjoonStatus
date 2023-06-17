@@ -1,7 +1,6 @@
-package project.BaekjoonStatus.shared.common.domain.exception;
+package project.BaekjoonStatus.shared.common.exception;
 
 import lombok.Data;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
 
 @Data
 public class MyException extends RuntimeException {

@@ -4,7 +4,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import project.BaekjoonStatus.shared.common.domain.dto.UserDto;
 import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.service.port.UserRepository;
 
@@ -40,10 +39,10 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.findByUsername(username).map(UserEntity::to);
     }
 
-    @Override //FIXME
-    public List<UserDto> findAllByGreaterThanUserId(Long userId, int limit) {
+    @Override
+    public List<User> findAllByGreaterThanUserId(Long userId, int limit) {
         return queryFactory
-                .select(Projections.bean(UserDto.class, userEntity.id.as("userId"), userEntity.username, userEntity.baekjoonUsername))
+                .select(Projections.constructor(User.class, userEntity.id.as("userId"), userEntity.username, userEntity.baekjoonUsername))
                 .from(userEntity)
                 .where(userEntity.id.gt(userId))
                 .limit(limit)

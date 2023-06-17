@@ -13,23 +13,19 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
+import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
+import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
-import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
+import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
+import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
-import project.BaekjoonStatus.shared.tag.infra.TagEntity;
 import project.BaekjoonStatus.shared.tag.service.TagService;
-import project.BaekjoonStatus.shared.user.infra.UserEntity;
+import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.service.UserService;
-import project.BaekjoonStatus.shared.common.domain.dto.UserDto;
-import project.BaekjoonStatus.shared.common.service.solvedac.response.SolvedAcProblemResponse;
 import project.BaekjoonStatus.shared.common.template.ListDividerTemplate;
-import project.BaekjoonStatus.shared.baekjoon.BaekjoonCrawling;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
-import project.BaekjoonStatus.shared.solvedac.service.SolvedAcHttp;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
@@ -41,7 +37,8 @@ public class SaveUserProblemJob {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
-    private final SolvedAcHttp solvedAcHttp;
+    private final SolvedAcService solvedAcService;
+    private final BaekjoonService baekjoonService;
 
     private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
@@ -60,60 +57,55 @@ public class SaveUserProblemJob {
     @JobScope
     public Step userProblemStep(@Value("#{jobParameters[date]}") String date) {
         return this.stepBuilderFactory.get(date + "_userProblemJob")
-                .<UserDto, List<SolvedHistoryEntity>>chunk(CHUNK_SIZE)
+                .<User, List<SolvedHistory>>chunk(CHUNK_SIZE)
                 .reader(new UserJpaPagingItemReader(userService, CHUNK_SIZE))
                 .processor(this.userProblemItemProcessor())
                 .writer(this.userProblemItemWriter())
                 .build();
     }
 
-    private ItemProcessor<UserDto, List<SolvedHistoryEntity>> userProblemItemProcessor() {
-        return userDto -> {
-            List<Long> newIds = findNewIds(userDto);
+    private ItemProcessor<User, List<SolvedHistory>> userProblemItemProcessor() {
+        return user -> {
+            List<Long> newIds = findNewIds(user);
             if(newIds.isEmpty()) {
                 return null;
             }
 
-            List<ProblemEntity> problems = new ArrayList<>();
+            List<Problem> problems = new ArrayList<>();
             ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, newIds);
 
             listDivider.execute((List<Long> ids) -> {
-                List<Long> notExistedIds = problemService.findAllByNotExistedIds(ids);
-                saveNotExistedProblems(notExistedIds);
+                List<Long> notSavedIds = problemService.findAllByNotExistedIds(ids);
+                if(!notSavedIds.isEmpty()) {
+                    List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
+                    List<Problem> newProblems = SolvedAcProblem.toProblemList(solvedAcProblems);
+
+                    problemService.saveAll(newProblems);
+                    tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems));
+                }
+
                 problems.addAll(problemService.findAllByIdsIn(ids));
                 return null;
             });
 
-            return problems.stream()
-                    .map(p -> SolvedHistoryEntity.ofWithUserAndProblem(UserEntity.from(userDto), p, false, DateProvider.getDate().minusDays(1), DateProvider.getDateTime().minusDays(1)))
-                    .collect(Collectors.toList());
+            return SolvedHistory.from(user, problems, false);
         };
     }
 
-    private ItemWriter<List<SolvedHistoryEntity>> userProblemItemWriter() {
+    private ItemWriter<List<SolvedHistory>> userProblemItemWriter() {
         return items -> {
-            for (List<SolvedHistoryEntity> item : items) {
+            for (List<SolvedHistory> item : items) {
                 solvedHistoryService.saveAll(item);
             }
         };
     }
 
-    private void saveNotExistedProblems(List<Long> ids) {
-        if(ids.isEmpty()) {
-            return;
-        }
-
-        List<SolvedAcProblemResponse> infos = solvedAcHttp.getProblemsByProblemIds(ids);
-        List<ProblemEntity> problems = problemService.saveAll(ProblemEntity.ofWithInfos(infos));
-        tagService.saveAll(TagEntity.ofWithInfosAndProblems(infos, problems));
-    }
-
-    private List<Long> findNewIds(UserDto user) {
-        List<Long> newHistories = new BaekjoonCrawling(user.getBaekjoonUsername()).get();
-        List<SolvedHistoryEntity> oldHistories = solvedHistoryService.findAllByUserId(user.getUserId());
+    private List<Long> findNewIds(User user) {
+        List<Long> newHistories = baekjoonService.getByUsername(user.getBaekjoonUsername());
+        List<SolvedHistory> oldHistories = solvedHistoryService.findAllByUserId(user.getId());
 
         Set<Long> newIds = new HashSet<>(newHistories);
-        for (SolvedHistoryEntity oldHistory : oldHistories) {
+        for (SolvedHistory oldHistory : oldHistories) {
             newIds.remove(oldHistory.getProblem().getId());
         }
 

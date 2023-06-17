@@ -7,5 +7,5 @@ import java.util.List;
 public interface TagRepository {
     Tag save(Tag tag);
     void saveAll(List<Tag> tags);
-    List<Tag> findAllByProblemIdIn(List<Long> problemIds);
+    List<Tag> findByProblemIdsIn(List<Long> problemIds);
 }

@@ -7,8 +7,8 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.util.StringUtils;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.domain.exception.MyException;
+import project.BaekjoonStatus.shared.common.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.exception.MyException;
 
 import java.util.Date;
 

@@ -24,7 +24,7 @@ public class TagService {
     }
 
     @Transactional(readOnly = true)
-    public List<Tag> findAllByProblemIdIn(List<Long> problemIds) {
-        return tagRepository.findAllByProblemIdIn(problemIds);
+    public List<Tag> findByProblemIdsIn(List<Long> problemIds) {
+        return tagRepository.findByProblemIdsIn(problemIds);
     }
 }

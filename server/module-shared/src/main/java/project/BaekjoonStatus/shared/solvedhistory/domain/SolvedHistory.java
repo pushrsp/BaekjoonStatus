@@ -32,22 +32,26 @@ public class SolvedHistory {
         this.createdTime = createdTime;
     }
 
+    public static SolvedHistory from(User user, Problem problem, boolean isBefore, LocalDateTime createdTime, LocalDate createdDate) {
+        return SolvedHistory.builder()
+                .user(user)
+                .problem(problem)
+                .isBefore(isBefore)
+                .problemLevel(problem.getLevel())
+                .createdTime(createdTime)
+                .createdDate(createdDate)
+                .build();
+    }
+
     public static List<SolvedHistory> from(User user, List<Problem> problems, boolean isBefore) {
         List<SolvedHistory> ret = new ArrayList<>();
         LocalDateTime ct = DateProvider.getDateTime();
         LocalDate cd = DateProvider.getDate();
 
         for (Problem problem : problems) {
-            ret.add(SolvedHistory.builder()
-                            .user(user)
-                            .problem(problem)
-                            .isBefore(isBefore)
-                            .problemLevel(problem.getLevel())
-                            .createdDate(cd)
-                            .createdTime(ct)
-                    .build()
-            );
+            ret.add(SolvedHistory.from(user, problem, isBefore, ct, cd));
         }
+
         return ret;
     }
 }
