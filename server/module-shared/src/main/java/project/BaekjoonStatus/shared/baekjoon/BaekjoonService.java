@@ -6,8 +6,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.domain.exception.MyException;
+import project.BaekjoonStatus.shared.common.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.exception.MyException;
 
 import java.io.IOException;
 import java.net.UnknownHostException;

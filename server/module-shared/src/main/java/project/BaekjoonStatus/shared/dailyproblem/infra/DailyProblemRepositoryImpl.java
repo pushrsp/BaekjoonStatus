@@ -1,6 +1,9 @@
 package project.BaekjoonStatus.shared.dailyproblem.infra;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
@@ -8,26 +11,41 @@ import project.BaekjoonStatus.shared.dailyproblem.service.port.DailyProblemRepos
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class DailyProblemRepositoryImpl implements DailyProblemRepository {
     private final DailyProblemJpaRepository dailyProblemJpaRepository;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     @Transactional
-    public List<DailyProblem> saveAll(List<DailyProblem> dailyProblems) {
-        return dailyProblemJpaRepository.saveAll(dailyProblems.stream().map(DailyProblemEntity::from).collect(Collectors.toList()))
-                .stream()
-                .map(DailyProblemEntity::to)
-                .collect(Collectors.toList());
+    public void saveAll(List<DailyProblem> dailyProblems) {
+        String sql =
+                """
+                INSERT INTO DAILY_PROBLEM (daily_problem_id, created_date, problem_id)
+                VALUES (:daily_problem_id, :created_date, :problem_id)
+                """;
+
+        SqlParameterSource[] params = dailyProblems.stream()
+                .map(this::generateParams)
+                .toArray(SqlParameterSource[]::new);
+
+        namedParameterJdbcTemplate.batchUpdate(sql, params);
+    }
+
+    private SqlParameterSource generateParams(DailyProblem dailyProblem) {
+        return new MapSqlParameterSource()
+                .addValue("daily_problem_id", UUID.randomUUID().toString())
+                .addValue("problem_id", dailyProblem.getProblem().getId())
+                .addValue("created_date", dailyProblem.getCreatedDate());
     }
 
     @Override
     public List<DailyProblem> findTodayProblems(LocalDate date) {
-        return dailyProblemJpaRepository.findTop4ByCreatedDateGreaterThanEqualOrderByCreatedDateDesc(date)
+        return dailyProblemJpaRepository.findByCreatedDate(date)
                 .stream()
                 .map(DailyProblemEntity::to)
                 .collect(Collectors.toList());

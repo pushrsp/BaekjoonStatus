@@ -12,7 +12,7 @@ import project.BaekjoonStatus.api.auth.controller.response.MyProfileResponse;
 import project.BaekjoonStatus.api.common.argumentresolver.Auth;
 import project.BaekjoonStatus.api.auth.service.AuthService;
 import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.user.domain.User;
 
 import javax.validation.Valid;

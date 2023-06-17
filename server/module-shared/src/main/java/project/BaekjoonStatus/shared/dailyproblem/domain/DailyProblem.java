@@ -18,4 +18,11 @@ public class DailyProblem {
         this.problem = problem;
         this.createdDate = createdDate;
     }
+
+    public static DailyProblem from(Problem problem, LocalDate createdDate) {
+        return DailyProblem.builder()
+                .problem(problem)
+                .createdDate(createdDate)
+                .build();
+    }
 }

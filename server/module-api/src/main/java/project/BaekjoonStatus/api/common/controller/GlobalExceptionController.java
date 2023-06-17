@@ -7,8 +7,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.domain.exception.MyException;
+import project.BaekjoonStatus.shared.common.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.exception.MyException;
 
 @RestControllerAdvice
 @Slf4j
@@ -47,6 +47,7 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(Exception.class)
     public CommonResponse exceptionHandler(Exception e) {
+        e.printStackTrace();
         return CommonResponse.builder()
                 .code(CodeEnum.UNKNOWN_EXCEPTION.getCode())
                 .message(CodeEnum.UNKNOWN_EXCEPTION.getMessage())

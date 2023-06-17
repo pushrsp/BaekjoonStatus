@@ -8,21 +8,18 @@ import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
-import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.infra.UserEntity;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "SOLVED_HISTORY", indexes = {
-        @Index(name = "idx__user_id__problem_level", columnList = "user_id, problem_level"),
-        @Index(name = "idx__user_id__created_date", columnList = "user_id, created_date"),
+        @Index(name = "idx__user_id", columnList = "user_id"),
+        @Index(name = "idx__user_id__problem_level", columnList = "user_id, problem_level DESC"),
+        @Index(name = "idx__user_id__is_before__created_date", columnList = "user_id, is_before, created_date DESC"),
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -56,24 +53,6 @@ public class SolvedHistoryEntity {
     @CreatedDate
     private LocalDateTime createdTime;
 
-    private SolvedHistoryEntity(UserEntity user, ProblemEntity problem, Boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
-        this.user = user;
-        this.problem = problem;
-        this.isBefore = isBefore;
-        this.problemLevel = problem.getLevel();
-        this.createdDate = createdDate;
-        this.createdTime = createdTime;
-    }
-
-    private SolvedHistoryEntity(UserEntity user, ProblemEntity problem, Boolean isBefore, LocalDate createdDate) {
-        this.user = user;
-        this.problem = problem;
-        this.isBefore = isBefore;
-        this.problemLevel = problem.getLevel();
-        this.createdDate = createdDate;
-        this.createdTime = DateProvider.getDateTime();
-    }
-
     public static SolvedHistoryEntity from(SolvedHistory solvedHistory) {
         SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity();
         solvedHistoryEntity.user = UserEntity.from(solvedHistory.getUser());
@@ -97,19 +76,4 @@ public class SolvedHistoryEntity {
                 .createdTime(this.createdTime)
                 .build();
     }
-
-    public static SolvedHistoryEntity ofWithUserAndProblem(UserEntity user, ProblemEntity problem, boolean isBefore) {
-        return new SolvedHistoryEntity(user, problem, isBefore, DateProvider.getDate());
-    }
-
-    public static SolvedHistoryEntity ofWithUserAndProblem(UserEntity user, ProblemEntity problem, boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
-        return new SolvedHistoryEntity(user, problem, isBefore, createdDate, createdTime);
-    }
-
-    public static List<SolvedHistoryEntity> ofWithUserAndProblems(UserEntity user, List<ProblemEntity> problems, boolean isBefore) {
-        return problems.stream()
-                .map(p -> SolvedHistoryEntity.ofWithUserAndProblem(user, p, isBefore))
-                .collect(Collectors.toList());
-    }
-
 }

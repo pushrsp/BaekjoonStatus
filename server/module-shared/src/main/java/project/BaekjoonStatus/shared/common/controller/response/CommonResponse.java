@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 
 @Data
 @Builder

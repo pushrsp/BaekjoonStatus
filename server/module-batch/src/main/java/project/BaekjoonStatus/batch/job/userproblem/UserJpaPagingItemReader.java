@@ -1,12 +1,12 @@
 package project.BaekjoonStatus.batch.job.userproblem;
 
 import org.springframework.batch.item.database.AbstractPagingItemReader;
+import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.service.UserService;
-import project.BaekjoonStatus.shared.common.domain.dto.UserDto;
 
 import java.util.ArrayList;
 
-public class UserJpaPagingItemReader extends AbstractPagingItemReader<UserDto> {
+public class UserJpaPagingItemReader extends AbstractPagingItemReader<User> {
     private final UserService userService;
 
     private Long userId = 0L;

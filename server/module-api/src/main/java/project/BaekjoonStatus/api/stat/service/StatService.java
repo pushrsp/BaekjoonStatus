@@ -2,22 +2,20 @@ package project.BaekjoonStatus.api.stat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.api.stat.controller.request.StatDto.SolvedHistoriesByUserId;
-import project.BaekjoonStatus.api.stat.controller.request.StatDto.SolvedHistoriesByUserId.Problem;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
-import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
+import project.BaekjoonStatus.shared.solvedhistory.domain.GroupByDate;
+import project.BaekjoonStatus.shared.solvedhistory.domain.GroupByTag;
+import project.BaekjoonStatus.shared.solvedhistory.domain.GroupByTier;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistoryByUserId;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.service.TagService;
-import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByDate;
-import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByLevel;
-import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.CountByTag;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,41 +26,39 @@ public class StatService {
     private final SolvedHistoryService solvedHistoryService;
     private final TagService tagService;
 
-    public List<DailyProblem> findTodayProblems() {
-        return dailyProblemService.findTodayProblems(DateProvider.getDate().minusDays(1));
+    public List<DailyProblem> getTodayProblems() {
+        return dailyProblemService.findTodayProblems(DateProvider.getToday());
     }
 
-    public List<CountByDate> getSolvedCountGroupByDate(Long userId, String year) {
+    public List<GroupByDate> getSolvedCountGroupByDate(Long userId, String year) {
         return solvedHistoryService.findSolvedCountGroupByDate(userId, year);
     }
 
-    public List<CountByLevel> getSolvedCountGroupByLevel(Long userId) {
-        List<CountByLevel> solvedCountGroupByLevel = solvedHistoryService.findSolvedCountGroupByLevel(userId);
-        Map<String, Long> map = new HashMap<>();
-
-        for (CountByLevel countByLevel : solvedCountGroupByLevel) {
-            if(map.containsKey(countByLevel.getLevel()))
-                map.replace(countByLevel.getLevel(), map.get(countByLevel.getLevel()) + countByLevel.getCount());
-            else
-                map.put(countByLevel.getLevel(), countByLevel.getCount());
-        }
-
-        return map.keySet().stream()
-                .map((k) -> new CountByLevel(k, map.get(k)))
-                .toList();
+    public List<GroupByTier> getSolvedCountGroupByLevel(Long userId) {
+        return GroupByTier.toMap(solvedHistoryService.findSolvedCountGroupByLevel(userId))
+                .entrySet()
+                .stream()
+                .map(s -> GroupByTier.from(s.getKey(), s.getValue()))
+                .collect(Collectors.toList());
     }
 
-    public List<CountByTag> getSolvedCountGroupByTag(Long userId) {
+    public List<GroupByTag> getSolvedCountGroupByTag(Long userId) {
         return solvedHistoryService.findSolvedCountGroupByTag(userId);
     }
 
-    public SolvedHistoriesByUserId getSolvedHistoriesByUserId(Long userId, int offset) {
+    public List<SolvedHistoryByUserId> getSolvedHistoriesByUserId(Long userId, int offset) {
         if(offset > 0)
             offset *= PAGE_SIZE;
 
-        List<SolvedHistoryEntity> histories = solvedHistoryService.findAllByUserId(userId, offset, PAGE_SIZE);
-        List<Tag> tags = tagService.findAllByProblemIdIn(histories.stream().map(h -> h.getProblem().getId()).toList());
+        List<SolvedHistoryByUserId> histories = solvedHistoryService.findAllByUserId(userId, offset, PAGE_SIZE + 1);
+        Map<Long, List<Tag>> map = Tag.toMap(tagService.findByProblemIdsIn(histories.stream().map(SolvedHistoryByUserId::getProblemId).collect(Collectors.toList())));
 
-        return SolvedHistoriesByUserId.of(histories, null, PAGE_SIZE);
+        for (SolvedHistoryByUserId history : histories) {
+            if(map.containsKey(history.getProblemId())) {
+                history.addTags(map.get(history.getProblemId()));
+            }
+        }
+
+        return histories;
     }
 }

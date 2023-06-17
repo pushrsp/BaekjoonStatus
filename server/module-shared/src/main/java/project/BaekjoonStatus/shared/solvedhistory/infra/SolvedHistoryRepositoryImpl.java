@@ -4,29 +4,28 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import project.BaekjoonStatus.shared.common.domain.dto.SolvedHistoryDto.*;
-import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
+import project.BaekjoonStatus.shared.solvedhistory.domain.*;
 import project.BaekjoonStatus.shared.solvedhistory.service.port.SolvedHistoryRepository;
 
 import javax.persistence.EntityManager;
+import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static project.BaekjoonStatus.shared.problem.infra.QProblemEntity.problemEntity;
 import static project.BaekjoonStatus.shared.solvedhistory.infra.QSolvedHistoryEntity.solvedHistoryEntity;
-import static project.BaekjoonStatus.shared.tag.infra.QTagEntity.tagEntity;
 
 @Repository
 @Transactional(readOnly = true)
 public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     private static final String DATE_FORMAT_EXPRESSION = "DATE_FORMAT({0}, {1})";
-    private static final String DATE_FORMAT = "%Y-%m-%d";
     private static final String YEAR_FORMAT = "%Y";
     private static final String[] TAG_IN = {"dp", "implementation", "graphs", "greedy", "data_structures"};
 
@@ -69,22 +68,21 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
 
     @Override
     @Transactional
-    public List<CountByDate> findSolvedCountGroupByDate(Long userId, String year) {
-        StringTemplate dateFormat = getDateFormat(solvedHistoryEntity.createdDate, DATE_FORMAT);
+    public List<GroupByDate> findSolvedCountGroupByDate(Long userId, String year) {
         StringTemplate yearFormat = getDateFormat(solvedHistoryEntity.createdDate, YEAR_FORMAT);
 
         return queryFactory
-                .select(Projections.bean(CountByDate.class, dateFormat.as("day"), solvedHistoryEntity.user.id.count().as("value")))
+                .select(Projections.constructor(GroupByDate.class, solvedHistoryEntity.createdDate.as("day"), solvedHistoryEntity.user.id.count().as("count")))
                 .from(solvedHistoryEntity)
-                .where(solvedHistoryEntity.user.id.eq(userId).and(yearFormat.eq(year).and(solvedHistoryEntity.isBefore.eq(false))))
+                .where(solvedHistoryEntity.user.id.eq(userId).and(solvedHistoryEntity.isBefore.eq(false)).and(yearFormat.eq(year)))
                 .groupBy(solvedHistoryEntity.createdDate)
                 .fetch();
     }
 
     @Override
-    public List<CountByLevel> findSolvedCountGroupByLevel(Long userId) {
+    public List<GroupByTier> findSolvedCountGroupByLevel(Long userId) {
         return queryFactory
-                .select(Projections.bean(CountByLevel.class, caseBuilder(), solvedHistoryEntity.user.id.count().as("count")))
+                .select(Projections.constructor(GroupByTier.class, caseBuilder(), solvedHistoryEntity.user.id.count().as("count")))
                 .from(solvedHistoryEntity)
                 .where(solvedHistoryEntity.user.id.eq(userId))
                 .groupBy(solvedHistoryEntity.problemLevel)
@@ -92,28 +90,65 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     }
 
     @Override
-    public List<CountByTag> findSolvedCountGroupByTag(Long userId) {
-        return queryFactory
-                .select(Projections.bean(CountByTag.class, tagEntity.tagName.as("tag"), solvedHistoryEntity.user.id.count().as("count")))
-                .from(solvedHistoryEntity)
-                .join(problemEntity).on(problemEntity.id.eq(solvedHistoryEntity.problem.id))
-                .join(tagEntity).on(tagEntity.problem.id.eq(problemEntity.id))
-                .where(solvedHistoryEntity.user.id.eq(userId))
-                .groupBy(tagEntity.tagName)
-                .having(tagEntity.tagName.in(TAG_IN))
-                .fetch();
+    public List<GroupByTag> findSolvedCountGroupByTag(Long userId) {
+        String sql =
+                """
+                SELECT t.tag_name as tagName, count(sh.user_id) as count FROM SOLVED_HISTORY sh force index (idx__user_id)
+                JOIN PROBLEM p ON p.problem_id = sh.problem_id
+                JOIN TAG t ON t.problem_id = p.problem_id
+                WHERE sh.user_id = :userId AND t.tag_name in (:tagNames)
+                GROUP BY t.tag_name
+                """;
+
+
+        RowMapper<GroupByTag> rowMapper = (ResultSet rs, int rowNum) -> GroupByTag.builder()
+                                                        .tag(rs.getString("tagName"))
+                                                        .count(rs.getInt("count"))
+                                                        .build();
+
+        return namedParameterJdbcTemplate.query(sql, generateParams(userId), rowMapper);
     }
 
-    @Override //FIXME
-    public List<SolvedHistoryEntity> findAllByUserId(Long userId, int offset, int limit) {
-        return queryFactory.select(solvedHistoryEntity)
-                .from(solvedHistoryEntity)
-                .join(solvedHistoryEntity.problem, problemEntity).fetchJoin()
-                .where(solvedHistoryEntity.user.id.eq(userId))
-                .offset(offset)
-                .limit(limit + 1)
-                .orderBy(solvedHistoryEntity.problemLevel.desc(), solvedHistoryEntity.problem.id.asc())
-                .fetch();
+    private SqlParameterSource generateParams(Long userId) {
+        return new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("tagNames", Arrays.stream(TAG_IN).toList());
+    }
+
+    @Override
+    public List<SolvedHistoryByUserId> findAllByUserId(Long userId, int offset, int limit) {
+        String sql =
+                """
+                SELECT p.problem_id as problemId, p.title as title, p.level as problemLevel FROM SOLVED_HISTORY sh
+                JOIN PROBLEM p ON p.problem_id = sh.problem_id
+                WHERE sh.user_id = :userId
+                ORDER BY sh.problem_level DESC, sh.problem_id DESC
+                LIMIT :limit
+                OFFSET :offset
+                """;
+
+        RowMapper<SolvedHistoryByUserId> rowMapper = (ResultSet rs, int rowNum) -> SolvedHistoryByUserId.builder()
+                .problemId(rs.getLong("problemId"))
+                .title(rs.getString("title"))
+                .problemLevel(rs.getInt("problemLevel"))
+                .build();
+
+        return namedParameterJdbcTemplate.query(sql, generateParams(userId, limit, offset), rowMapper);
+//        return queryFactory.select(solvedHistoryEntity)
+//                .from(solvedHistoryEntity)
+//                .join(solvedHistoryEntity.problem, problemEntity).fetchJoin()
+//                .where(solvedHistoryEntity.user.id.eq(userId))
+//                .offset(offset)
+//                .limit(limit + 1)
+//                .orderBy(solvedHistoryEntity.problemLevel.desc(), solvedHistoryEntity.problem.id.asc())
+//                .fetch();
+    }
+
+    private SqlParameterSource generateParams(Long userId, int limit, int offset) {
+        return new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("limit", limit)
+                .addValue("offset", offset);
     }
 
     @Override
@@ -136,13 +171,13 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .then("platinum")
                 .when(solvedHistoryEntity.problemLevel.between(21, 25))
                 .then("diamond")
-                .when(solvedHistoryEntity.problemLevel.between(25, 30))
+                .when(solvedHistoryEntity.problemLevel.between(26, 30))
                 .then("ruby")
                 .otherwise("unrated")
-                .as("level");
+                .as("tier");
     }
 
     private StringTemplate getDateFormat(DatePath path, String dateFormat) {
-        return Expressions.stringTemplate(SolvedHistoryRepositoryImpl.DATE_FORMAT_EXPRESSION, path, dateFormat);
+        return Expressions.stringTemplate(DATE_FORMAT_EXPRESSION, path, dateFormat);
     }
 }

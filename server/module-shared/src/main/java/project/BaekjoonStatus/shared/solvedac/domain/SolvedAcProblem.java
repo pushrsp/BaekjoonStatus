@@ -74,4 +74,10 @@ public class SolvedAcProblem {
                 .createdTime(DateProvider.getDateTime())
                 .build();
     }
+
+    public List<Tag> toTagList(Problem problem) {
+        return this.tags.stream()
+                .map(t -> t.to(problem))
+                .collect(Collectors.toList());
+    }
 }

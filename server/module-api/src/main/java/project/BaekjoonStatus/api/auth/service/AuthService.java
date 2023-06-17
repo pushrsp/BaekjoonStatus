@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
-import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryEntity;
 import project.BaekjoonStatus.shared.user.controller.request.UserCreateRequest;
 import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
@@ -19,8 +18,8 @@ import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.tag.service.TagService;
 import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.service.UserService;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.domain.exception.MyException;
+import project.BaekjoonStatus.shared.common.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.exception.MyException;
 
 import java.util.*;
 

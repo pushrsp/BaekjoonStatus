@@ -49,7 +49,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> findAllByProblemIdIn(List<Long> problemIds) {
+    public List<Tag> findByProblemIdsIn(List<Long> problemIds) {
         return tagJpaRepository.findAllByProblemIdIn(problemIds)
                 .stream()
                 .map(TagEntity::to)

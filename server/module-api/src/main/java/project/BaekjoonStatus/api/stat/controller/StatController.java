@@ -3,14 +3,17 @@ package project.BaekjoonStatus.api.stat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.common.argumentresolver.Auth;
+import project.BaekjoonStatus.api.stat.controller.response.*;
 import project.BaekjoonStatus.api.stat.service.StatServiceProxy;
 import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
-import project.BaekjoonStatus.shared.common.domain.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/stat")
 public class StatController {
+    private static final int PAGE_SIZE = 10;
+
     private final StatServiceProxy statServiceProxy;
 
     @GetMapping("/daily")
@@ -18,7 +21,7 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(statServiceProxy.findTodayProblems(userId))
+                .data(TodayProblemsResponse.from(statServiceProxy.findTodayProblems(userId)))
                 .build();
     }
 
@@ -27,7 +30,7 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(statServiceProxy.getSolvedCountGroupByDate(userId, year))
+                .data(GroupByDateResponse.from(statServiceProxy.findSolvedCountGroupByDate(userId, year)))
                 .build();
     }
 
@@ -36,7 +39,7 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(statServiceProxy.getSolvedCountGroupByLevel(userId))
+                .data(GroupByTierResponse.from(statServiceProxy.findSolvedCountGroupByLevel(userId)))
                 .build();
     }
 
@@ -45,7 +48,7 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(statServiceProxy.getSolvedCountGroupByTag(userId))
+                .data(GroupByTagResponse.from(statServiceProxy.findSolvedCountGroupByTag(userId)))
                 .build();
     }
 
@@ -54,7 +57,7 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(statServiceProxy.getSolvedHistoriesByUserId(userId, offset))
+                .data(SolvedHistoryByUserIdResponse.from(statServiceProxy.findSolvedHistoriesByUserId(userId, offset), PAGE_SIZE))
                 .build();
     }
 }
