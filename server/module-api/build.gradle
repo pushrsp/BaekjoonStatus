@@ -1,4 +1,7 @@
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     api project(':module-shared')
 }
