@@ -21,7 +21,6 @@ public class StatServiceProxy {
     private static final Cache<List<GroupByTier>> SOLVED_COUNT_GROUP_BY_LEVEL = new Cache<>();
     private static final Cache<List<GroupByTag>> SOLVED_COUNT_GROUP_BY_TAG = new Cache<>();
 
-
     private final StatService target;
 
     public List<DailyProblem> findTodayProblems(String userId) {
@@ -45,6 +44,7 @@ public class StatServiceProxy {
     }
 
     public List<SolvedHistoryByUserId> findSolvedHistoriesByUserId(String userId, int offset) {
-        return SOLVED_HISTORIES.get(userId + "," + offset, () -> target.getSolvedHistoriesByUserId(Long.parseLong(userId), offset));
+//        return SOLVED_HISTORIES.get(userId + "," + offset, () -> target.getSolvedHistoriesByUserId(Long.parseLong(userId), offset));
+        return target.getSolvedHistoriesByUserId(Long.parseLong(userId), offset);
     }
 }
