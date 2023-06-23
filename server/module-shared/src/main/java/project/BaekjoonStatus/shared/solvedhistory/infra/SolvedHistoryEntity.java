@@ -16,11 +16,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "SOLVED_HISTORY", indexes = {
+@Table(
+        name = "SOLVED_HISTORY",
+        indexes = {
         @Index(name = "idx__user_id", columnList = "user_id"),
-        @Index(name = "idx__user_id__problem_level", columnList = "user_id, problem_level DESC"),
+        @Index(name = "idx__user_id__problem_level__problem_id", columnList = "user_id, problem_level DESC, problem_id ASC"),
         @Index(name = "idx__user_id__is_before__created_date", columnList = "user_id, is_before, created_date DESC"),
-})
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SolvedHistoryEntity {
