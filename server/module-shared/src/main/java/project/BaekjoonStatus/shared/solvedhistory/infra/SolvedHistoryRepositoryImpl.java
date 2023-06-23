@@ -119,12 +119,16 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     public List<SolvedHistoryByUserId> findAllByUserId(Long userId, int offset, int limit) {
         String sql =
                 """
-                SELECT p.problem_id as problemId, p.title as title, p.level as problemLevel FROM SOLVED_HISTORY sh
-                JOIN PROBLEM p ON p.problem_id = sh.problem_id
-                WHERE sh.user_id = :userId
-                ORDER BY sh.problem_level DESC, sh.problem_id DESC
-                LIMIT :limit
-                OFFSET :offset
+                SELECT p.problem_id as problemId, p.title as title, p.level as problemLevel
+                FROM PROBLEM p
+                JOIN (
+                    SELECT sh.problem_id as problem_id
+                    FROM SOLVED_HISTORY sh
+                    WHERE sh.user_id = :userId
+                    ORDER BY sh.problem_level DESC, sh.problem_id ASC
+                    LIMIT :limit
+                    OFFSET :offset
+                ) as temp ON p.problem_id = temp.problem_id
                 """;
 
         RowMapper<SolvedHistoryByUserId> rowMapper = (ResultSet rs, int rowNum) -> SolvedHistoryByUserId.builder()
@@ -134,14 +138,6 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .build();
 
         return namedParameterJdbcTemplate.query(sql, generateParams(userId, limit, offset), rowMapper);
-//        return queryFactory.select(solvedHistoryEntity)
-//                .from(solvedHistoryEntity)
-//                .join(solvedHistoryEntity.problem, problemEntity).fetchJoin()
-//                .where(solvedHistoryEntity.user.id.eq(userId))
-//                .offset(offset)
-//                .limit(limit + 1)
-//                .orderBy(solvedHistoryEntity.problemLevel.desc(), solvedHistoryEntity.problem.id.asc())
-//                .fetch();
     }
 
     private SqlParameterSource generateParams(Long userId, int limit, int offset) {
