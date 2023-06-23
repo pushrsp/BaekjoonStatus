@@ -24,6 +24,6 @@ public class UserCreateRequest {
     private String baekjoonUsername;
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
-    @Length(min = 6, max = 16, message = "최소 6자 최대 16자 이내여야 합니다.")
+    @Length(min = 2, max = 30, message = "최소 6자 최대 16자 이내여야 합니다.")
     private String password;
 }

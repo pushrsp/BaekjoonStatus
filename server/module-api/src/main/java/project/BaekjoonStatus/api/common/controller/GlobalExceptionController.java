@@ -47,7 +47,6 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(Exception.class)
     public CommonResponse exceptionHandler(Exception e) {
-        e.printStackTrace();
         return CommonResponse.builder()
                 .code(CodeEnum.UNKNOWN_EXCEPTION.getCode())
                 .message(CodeEnum.UNKNOWN_EXCEPTION.getMessage())

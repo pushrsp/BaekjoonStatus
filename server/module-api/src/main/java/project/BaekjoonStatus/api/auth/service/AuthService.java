@@ -68,6 +68,16 @@ public class AuthService {
 
             return null;
         });
+
+        sleep(50L);
+    }
+
+    private void sleep(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public User createUser(UserCreateRequest userCreate) {
