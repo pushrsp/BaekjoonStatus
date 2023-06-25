@@ -4,13 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Getter
 @NoArgsConstructor
-public class GroupByTier {
+public class GroupByTier implements Serializable {
     private String tier;
     private Long count;
 

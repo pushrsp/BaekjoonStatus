@@ -4,10 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Getter
-public class DailyProblem {
+public class DailyProblem implements Serializable {
     private final String id;
     private final Problem problem;
     private final LocalDate createdDate;

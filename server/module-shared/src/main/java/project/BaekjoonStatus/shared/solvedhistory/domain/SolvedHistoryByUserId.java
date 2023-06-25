@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class SolvedHistoryByUserId {
+public class SolvedHistoryByUserId implements Serializable {
     private Long problemId;
     private String title;
     private Integer problemLevel;
