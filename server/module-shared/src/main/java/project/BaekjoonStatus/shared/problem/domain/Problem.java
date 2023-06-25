@@ -4,11 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class Problem {
+public class Problem implements Serializable {
     private final Long id;
     private final Integer level;
     private final String title;
