@@ -2,6 +2,7 @@ package project.BaekjoonStatus.api.stat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import project.BaekjoonStatus.api.stat.service.annotation.RedisCacheable;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.domain.GroupByDate;
@@ -26,15 +27,18 @@ public class StatService {
     private final SolvedHistoryService solvedHistoryService;
     private final TagService tagService;
 
-    public List<DailyProblem> getTodayProblems() {
+    @RedisCacheable(key = "getTodayProblems")
+    public List<DailyProblem> findTodayProblems() {
         return dailyProblemService.findTodayProblems(DateProvider.getToday());
     }
 
-    public List<GroupByDate> getSolvedCountGroupByDate(Long userId, String year) {
+    @RedisCacheable(key = "getSolvedCountGroupByDate", paramNames = {"userId"})
+    public List<GroupByDate> findSolvedCountGroupByDate(Long userId, String year) {
         return solvedHistoryService.findSolvedCountGroupByDate(userId, year);
     }
 
-    public List<GroupByTier> getSolvedCountGroupByLevel(Long userId) {
+    @RedisCacheable(key = "getSolvedCountGroupByLevel", paramNames = {"userId"})
+    public List<GroupByTier> findSolvedCountGroupByLevel(Long userId) {
         return GroupByTier.toMap(solvedHistoryService.findSolvedCountGroupByLevel(userId))
                 .entrySet()
                 .stream()
@@ -42,13 +46,14 @@ public class StatService {
                 .collect(Collectors.toList());
     }
 
-    public List<GroupByTag> getSolvedCountGroupByTag(Long userId) {
+    @RedisCacheable(key = "getSolvedCountGroupByTag", paramNames = {"userId"})
+    public List<GroupByTag> findSolvedCountGroupByTag(Long userId) {
         return solvedHistoryService.findSolvedCountGroupByTag(userId);
     }
 
-    public List<SolvedHistoryByUserId> getSolvedHistoriesByUserId(Long userId, int offset) {
-        if(offset > 0)
-            offset *= PAGE_SIZE;
+    @RedisCacheable(key = "getSolvedHistoriesByUserId", paramNames = {"userId", "offset"})
+    public List<SolvedHistoryByUserId> findSolvedHistoriesByUserId(Long userId, int offset) {
+        offset *= PAGE_SIZE;
 
         List<SolvedHistoryByUserId> histories = solvedHistoryService.findAllByUserId(userId, offset, PAGE_SIZE + 1);
         Map<Long, List<Tag>> map = Tag.toMap(tagService.findByProblemIdsIn(histories.stream().map(SolvedHistoryByUserId::getProblemId).collect(Collectors.toList())));
