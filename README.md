@@ -1,7 +1,7 @@
 # BaekjoonStatus
 
 ## 서버 인프라 구조
-![INFRA](https://user-images.githubusercontent.com/58874665/227874793-ca4fd40e-b84d-42ad-9860-d2c5f310695f.png)
+![INFRA](https://github.com/pushrsp/BaekjoonStatus/assets/58874665/f479c519-bcfe-45b1-9902-7bd130e61e02)
 
 ## CD 인프라 구조
 ![CICD](https://user-images.githubusercontent.com/58874665/232942166-b48fdc44-3bb9-4014-8221-22b581a15d11.png)
@@ -58,12 +58,11 @@
 ## 서버 제공 API
 
 * /auth/signup 회원가입 [POST]
-* /auth?username 아이디 중복 체크 [GET]
 * /auth/baekjoon?username 백준 아이디 체크 [GET]
 * /auth/login 로그인 [POST]
-* /users/me 자동 로그인 [GET]
-* /daily-problems 오늘의 문제 [GET]
-* /stats/daily 일별 solved 개수 [GET]
-* /stats/category 카테고리 별 solved 개수 [GET]
-* /stats/tier 티어 별 solved 개수 [GET]
-* /problems 상위 티어 별 solved list [GET]
+* /auth/me 자동 로그인 [GET]
+* /stat/daily 오늘의 문제 [GET]
+* /stat/date 일별 solved 개수 [GET]
+* /stat/tag 카테고리 별 solved 개수 [GET]
+* /stat/level 티어 별 solved 개수 [GET]
+* /stat/solved-histories 상위 티어 별 solved list [GET]
