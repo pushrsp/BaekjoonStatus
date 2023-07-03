@@ -23,6 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
+
+    private static final int OFFSET = 100;
     private static final Long EXPIRE_TIME = 1000L * 60 * 60 * 24; //하루
 
     private final AuthService authService;
@@ -44,9 +46,7 @@ public class AuthController {
         List<Long> problemIds = authService.getByBaekjoonUsername(request.getUsername());
         String registerToken = authService.getRegisterToken(problemIds);
 
-        if(!problemIds.isEmpty()) {
-            authService.createProblems(registerToken);
-        }
+        createProblems(problemIds);
 
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
@@ -55,17 +55,33 @@ public class AuthController {
                 .build();
     }
 
+    private void createProblems(List<Long> problemIds) {
+        int start = 0;
+        while (start < problemIds.size()) {
+            authService.createProblems(problemIds.subList(start, Math.min(start + OFFSET, problemIds.size())));
+            start += OFFSET;
+        }
+    }
+
     @PostMapping("/signup")
     public CommonResponse signup(@RequestBody @Valid UserCreateRequest request) {
         authService.verifyRegisterToken(request.getRegisterToken());
 
         User user = authService.createUser(request);
-        authService.createSolvedHistories(user, request.getRegisterToken());
+        createSolvedHistories(user, authService.getProblemIds(request.getRegisterToken()));
 
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
                 .build();
+    }
+
+    private void createSolvedHistories(User user, List<Long> problemIds) {
+        int start = 0;
+        while (start < problemIds.size()) {
+            authService.createSolvedHistories(user, problemIds.subList(start, Math.min(start + OFFSET, problemIds.size())));
+            start += OFFSET;
+        }
     }
 
     @PostMapping("/login")

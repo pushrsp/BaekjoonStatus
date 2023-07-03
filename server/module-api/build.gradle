@@ -3,5 +3,9 @@ dependencies {
 
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //retry
+    implementation 'org.springframework.retry:spring-retry'
+
     api project(':module-shared')
 }
