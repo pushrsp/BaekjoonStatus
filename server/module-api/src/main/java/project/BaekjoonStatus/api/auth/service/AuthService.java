@@ -1,6 +1,10 @@
 package project.BaekjoonStatus.api.auth.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
@@ -25,8 +29,8 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
-    private static final int OFFSET = 100;
 
     private final RegisterTokenStore registerTokenStore = new RegisterTokenStore();
 
@@ -52,32 +56,47 @@ public class AuthService {
     }
 
     @Async
-    public void createProblems(String registerToken) {
-        RegisterToken token = registerTokenStore.get(registerToken);
-        ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
+    @Retryable(
+            value = {MyException.class},
+            maxAttempts = 10,
+            backoff = @Backoff(value = 180000, multiplier = 2)
+    )
+    public void createProblems(List<Long> problemIds) {
+        List<Long> notSavedIds = problemService.findAllByNotExistedIds(problemIds);
+        if(notSavedIds.isEmpty()) {
+            return;
+        }
 
-        listDivider.execute((List<Long> ids) -> {
-            List<Long> notSavedIds = problemService.findAllByNotExistedIds(ids);
-            if(notSavedIds.isEmpty()) {
-                return null;
-            }
-
-            List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
-            problemService.saveAll(SolvedAcProblem.toProblemList(solvedAcProblems));
-            tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems));
-
-            return null;
-        });
-
-        sleep(50L);
+        List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
+        problemService.saveAll(SolvedAcProblem.toProblemList(solvedAcProblems));
+        tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems));
     }
 
-    private void sleep(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+    @Recover
+    private void recover(MyException e, List<Long> ids) {
+        //FIXME
+        log.info("createProblems ids size: {}", ids.size());
+    }
+
+    @Async
+    @Retryable(
+            value = {MyException.class},
+            maxAttempts = 10,
+            backoff = @Backoff(value = 200000, multiplier = 2)
+    )
+    public void createSolvedHistories(User user, List<Long> problemIds) {
+        List<Problem> problems = problemService.findAllByIdsIn(problemIds);
+        if(problems.size() != problemIds.size()) {
+            throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
         }
+
+        solvedHistoryService.saveAll(SolvedHistory.from(user, problems,true));
+    }
+
+    @Recover
+    public void recover(MyException e, User user, List<Long> problemIds) {
+        //FIXME
+        log.info("createSolvedHistories userId: {}", user.getId());
     }
 
     public User createUser(UserCreateRequest userCreate) {
@@ -86,18 +105,8 @@ public class AuthService {
         return userService.save(User.from(userCreate));
     }
 
-    @Async
-    public void createSolvedHistories(User user, String registerToken) {
-        RegisterToken token = registerTokenStore.get(registerToken);
-        ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, token.getProblemIds());
-
-        listDivider.execute((List<Long> ids) -> {
-            List<Problem> problems = problemService.findAllByIdsIn(ids);
-            solvedHistoryService.saveAll(SolvedHistory.from(user, problems,true));
-            return null;
-        });
-
-        registerTokenStore.remove(registerToken);
+    public List<Long> getProblemIds(String registerToken) {
+        return registerTokenStore.get(registerToken).getProblemIds();
     }
 
     public User login(UserLoginRequest userLogin) {
