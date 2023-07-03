@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.api.common.config;
+package project.BaekjoonStatus.api.common.config.web;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
