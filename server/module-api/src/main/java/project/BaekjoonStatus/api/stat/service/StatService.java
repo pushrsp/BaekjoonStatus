@@ -53,17 +53,18 @@ public class StatService {
 
     @RedisCacheable(key = "getSolvedHistoriesByUserId", paramNames = {"userId", "offset"})
     public List<SolvedHistoryByUserId> findSolvedHistoriesByUserId(Long userId, int offset) {
-        offset *= PAGE_SIZE;
+        List<SolvedHistoryByUserId> histories = solvedHistoryService.findAllByUserId(userId, offset * PAGE_SIZE, PAGE_SIZE + 1);
+        Map<Long, List<Tag>> map = Tag.toMap(tagService.findByProblemIdsIn(histories.stream()
+                                                                                    .map(SolvedHistoryByUserId::getProblemId)
+                                                                                    .collect(Collectors.toList())));
 
-        List<SolvedHistoryByUserId> histories = solvedHistoryService.findAllByUserId(userId, offset, PAGE_SIZE + 1);
-        Map<Long, List<Tag>> map = Tag.toMap(tagService.findByProblemIdsIn(histories.stream().map(SolvedHistoryByUserId::getProblemId).collect(Collectors.toList())));
-
-        for (SolvedHistoryByUserId history : histories) {
-            if(map.containsKey(history.getProblemId())) {
-                history.addTags(map.get(history.getProblemId()));
-            }
-        }
-
+        addTags(histories, map);
         return histories;
+    }
+
+    private void addTags(List<SolvedHistoryByUserId> histories, Map<Long, List<Tag>> map) {
+        histories.stream()
+                .filter(h -> map.containsKey(h.getProblemId()))
+                .forEach(h -> h.addTags(map.get(h.getProblemId())));
     }
 }
