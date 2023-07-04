@@ -10,6 +10,7 @@ import project.BaekjoonStatus.shared.tag.domain.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Data
 public class SolvedAcProblem {
@@ -55,15 +56,9 @@ public class SolvedAcProblem {
     }
 
     public static List<Tag> toTagList(List<SolvedAcProblem> solvedAcProblems) {
-        List<Tag> ret = new ArrayList<>();
-        for (SolvedAcProblem solvedAcProblem : solvedAcProblems) {
-            Problem problem = solvedAcProblem.to();
-            for (SolvedAcTag tag : solvedAcProblem.getTags()) {
-                ret.add(tag.to(problem));
-            }
-        }
-
-        return ret;
+        return solvedAcProblems.stream()
+                .flatMap(sp -> sp.getTags().stream().map(tag -> tag.to(sp.to())))
+                .collect(Collectors.toList());
     }
 
     public Problem to() {

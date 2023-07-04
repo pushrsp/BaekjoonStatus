@@ -26,6 +26,7 @@ import project.BaekjoonStatus.shared.user.service.UserService;
 import project.BaekjoonStatus.shared.common.template.ListDividerTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
@@ -94,21 +95,19 @@ public class SaveUserProblemJob {
 
     private ItemWriter<List<SolvedHistory>> userProblemItemWriter() {
         return items -> {
-            for (List<SolvedHistory> item : items) {
-                solvedHistoryService.saveAll(item);
-            }
+            items.forEach(solvedHistoryService::saveAll);
         };
     }
 
     private List<Long> findNewIds(User user) {
         List<Long> newHistories = baekjoonService.getByUsername(user.getBaekjoonUsername());
-        List<SolvedHistory> oldHistories = solvedHistoryService.findAllByUserId(user.getId());
+        List<Long> oldHistories = solvedHistoryService.findAllByUserId(user.getId())
+                .stream()
+                .map(sh -> Long.parseLong(sh.getId()))
+                .toList();
 
-        Set<Long> newIds = new HashSet<>(newHistories);
-        for (SolvedHistory oldHistory : oldHistories) {
-            newIds.remove(oldHistory.getProblem().getId());
-        }
-
-        return new ArrayList<>(newIds);
+        return newHistories.stream()
+                .filter(id -> !oldHistories.contains(id))
+                .collect(Collectors.toList());
     }
 }

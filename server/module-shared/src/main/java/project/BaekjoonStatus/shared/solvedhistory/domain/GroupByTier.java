@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -22,16 +23,8 @@ public class GroupByTier implements Serializable {
     }
 
     public static Map<String, Long> toMap(List<GroupByTier> groupByTiers) {
-        Map<String, Long> ret = new HashMap<>();
-        for (GroupByTier groupByTier : groupByTiers) {
-            if(!ret.containsKey(groupByTier.getTier())) {
-                ret.put(groupByTier.getTier(), groupByTier.getCount());
-            } else {
-                ret.replace(groupByTier.getTier(), ret.get(groupByTier.getTier()) + groupByTier.getCount());
-            }
-        }
-
-        return ret;
+        return groupByTiers.stream()
+                .collect(Collectors.toMap(GroupByTier::getTier, GroupByTier::getCount, Long::sum));
     }
 
     public static GroupByTier from(String tier, Long count) {
