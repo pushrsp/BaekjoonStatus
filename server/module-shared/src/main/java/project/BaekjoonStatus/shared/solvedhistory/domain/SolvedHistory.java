@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class SolvedHistory {
@@ -44,14 +45,11 @@ public class SolvedHistory {
     }
 
     public static List<SolvedHistory> from(User user, List<Problem> problems, boolean isBefore) {
-        List<SolvedHistory> ret = new ArrayList<>();
         LocalDateTime ct = DateProvider.getDateTime();
         LocalDate cd = DateProvider.getDate();
 
-        for (Problem problem : problems) {
-            ret.add(SolvedHistory.from(user, problem, isBefore, ct, cd));
-        }
-
-        return ret;
+        return problems.stream()
+                .map(p -> SolvedHistory.from(user, p, isBefore, ct, cd))
+                .collect(Collectors.toList());
     }
 }
