@@ -5,10 +5,9 @@ import lombok.Getter;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
 public class Tag implements Serializable {
@@ -31,18 +30,7 @@ public class Tag implements Serializable {
     }
 
     public static Map<Long, List<Tag>> toMap(List<Tag> tags) {
-        Map<Long, List<Tag>> ret = new HashMap<>();
-        for (Tag tag : tags) {
-            if(!ret.containsKey(tag.getProblem().getId())) {
-                List<Tag> temp = new ArrayList<>();
-                temp.add(Tag.from(tag.getId(), tag.getTagName()));
-
-                ret.put(tag.getProblem().getId(), temp);
-            } else {
-                ret.get(tag.getProblem().getId()).add(Tag.from(tag.getId(), tag.getTagName()));
-            }
-        }
-
-        return ret;
+        return tags.stream()
+                .collect(Collectors.groupingBy(tag -> tag.getProblem().getId(), Collectors.toList()));
     }
 }
