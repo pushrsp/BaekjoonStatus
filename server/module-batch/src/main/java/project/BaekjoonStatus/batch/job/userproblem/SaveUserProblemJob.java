@@ -94,9 +94,7 @@ public class SaveUserProblemJob {
 
     private ItemWriter<List<SolvedHistory>> userProblemItemWriter() {
         return items -> {
-            for (List<SolvedHistory> item : items) {
-                solvedHistoryService.saveAll(item);
-            }
+            items.forEach(solvedHistoryService::saveAll);
         };
     }
 
