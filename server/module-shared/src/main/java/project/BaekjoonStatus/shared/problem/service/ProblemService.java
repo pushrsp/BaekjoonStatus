@@ -7,6 +7,7 @@ import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.service.port.ProblemRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,13 +41,12 @@ public class ProblemService {
 
     @Transactional(readOnly = true)
     public List<Long> findAllByNotExistedIds(List<Long> ids) {
-        Set<Long> set = new HashSet<>(ids);
-        List<Problem> existedProblems = findAllByIdsIn(ids);
+        List<Long> savedIds = findAllByIdsIn(ids).stream()
+                .map(Problem::getId)
+                .toList();
 
-        for (Problem existedProblem : existedProblems) {
-            set.remove(existedProblem.getId());
-        }
-
-        return new ArrayList<>(set);
+        return ids.stream()
+                .filter(id -> !savedIds.contains(id))
+                .collect(Collectors.toList());
     }
 }
