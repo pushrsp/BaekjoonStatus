@@ -2,20 +2,16 @@ package project.BaekjoonStatus.api.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
+import project.BaekjoonStatus.api.concurrent.annotation.CustomAsync;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.user.controller.request.UserCreateRequest;
 import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
-import project.BaekjoonStatus.shared.common.template.ListDividerTemplate;
-import project.BaekjoonStatus.api.auth.service.token.RegisterToken;
 import project.BaekjoonStatus.api.auth.service.token.RegisterTokenStore;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
@@ -55,12 +51,7 @@ public class AuthService {
         return registerTokenStore.put(problemIds);
     }
 
-    @Async
-    @Retryable(
-            value = {MyException.class},
-            maxAttempts = 10,
-            backoff = @Backoff(value = 180000, multiplier = 2)
-    )
+    @CustomAsync(maxTry = 10, offset = 2, delay = 180000)
     public void createProblems(List<Long> problemIds) {
         List<Long> notSavedIds = problemService.findAllByNotExistedIds(problemIds);
         if(notSavedIds.isEmpty()) {
@@ -73,17 +64,12 @@ public class AuthService {
     }
 
     @Recover
-    private void recover(MyException e, List<Long> ids) {
+    private void recover(MyException e, List<Long> ids, int index) {
         //FIXME
-        log.info("createProblems ids size: {}", ids.size());
+        log.info("createProblems index: {}", index);
     }
 
-    @Async
-    @Retryable(
-            value = {MyException.class},
-            maxAttempts = 10,
-            backoff = @Backoff(value = 200000, multiplier = 2)
-    )
+    @CustomAsync(maxTry = 10, offset = 2, delay = 200000)
     public void createSolvedHistories(User user, List<Long> problemIds) {
         List<Problem> problems = problemService.findAllByIdsIn(problemIds);
         if(problems.size() != problemIds.size()) {
