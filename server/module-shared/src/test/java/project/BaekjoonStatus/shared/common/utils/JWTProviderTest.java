@@ -37,6 +37,19 @@ class JWTProviderTest {
         assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_UNAUTHORIZED.getMessage());
     }
 
+    @Test
+    public void decode_with_different_key_is_not_valid() throws Exception {
+        //given
+        String token = JWTProvider.generateToken("2", "test", 5000L);
+
+        //when
+        MyException myException = catchThrowableOfType(() -> JWTProvider.validateToken(token, "different key"), MyException.class);
+
+        //then
+        assertThat(myException.getCode()).isEqualTo(CodeEnum.MY_SERVER_NOT_VALID_TOKEN.getCode());
+        assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_NOT_VALID_TOKEN.getMessage());
+    }
+
     private static Stream<Arguments> provideWrongAuthorizationHeaderFormat() {
         return Stream.of(
                 Arguments.of(""),
