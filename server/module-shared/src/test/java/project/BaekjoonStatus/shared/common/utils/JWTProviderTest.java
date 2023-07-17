@@ -1,12 +1,15 @@
 package project.BaekjoonStatus.shared.common.utils;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
 
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class JWTProviderTest {
     @Test
@@ -16,10 +19,29 @@ class JWTProviderTest {
 
         //when
         Thread.sleep(2000);
+        MyException myException = catchThrowableOfType(() -> JWTProvider.validateToken(token, "test"), MyException.class);
 
         //then
-        MyException myException = catchThrowableOfType(() -> JWTProvider.validateToken(token, "test"), MyException.class);
         assertThat(myException.getCode()).isEqualTo(CodeEnum.MY_SERVER_TOKEN_EXPIRED.getCode());
         assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_TOKEN_EXPIRED.getMessage());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideWrongAuthorizationHeaderFormat")
+    public void wrong_authorization_header_format_is_not_allowed(String authorizationHeader) throws Exception {
+        //when
+        MyException myException = catchThrowableOfType(() -> JWTProvider.extractToken(authorizationHeader), MyException.class);
+
+        //then
+        assertThat(myException.getCode()).isEqualTo(CodeEnum.MY_SERVER_UNAUTHORIZED.getCode());
+        assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_UNAUTHORIZED.getMessage());
+    }
+
+    private static Stream<Arguments> provideWrongAuthorizationHeaderFormat() {
+        return Stream.of(
+                Arguments.of(""),
+                Arguments.of("aaaaa"),
+                Arguments.of("aaaaa bbbbb ccccc")
+        );
     }
 }
