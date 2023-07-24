@@ -1,5 +1,6 @@
 package project.BaekjoonStatus.shared.common.utils;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,6 +13,8 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.*;
 
 class JWTProviderTest {
+
+    @DisplayName("유통기한이 지난 토큰은 사용할 수 없다.")
     @Test
     public void can_detect_token_is_expired() throws Exception {
         //given
@@ -26,6 +29,7 @@ class JWTProviderTest {
         assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_TOKEN_EXPIRED.getMessage());
     }
 
+    @DisplayName("authorization 헤더의 포맷이 올바른 형태가 아니면 사용할 수 없다.")
     @ParameterizedTest
     @MethodSource("provideWrongAuthorizationHeaderFormat")
     public void wrong_authorization_header_format_is_not_allowed(String authorizationHeader) throws Exception {
@@ -37,6 +41,7 @@ class JWTProviderTest {
         assertThat(myException.getMessage()).isEqualTo(CodeEnum.MY_SERVER_UNAUTHORIZED.getMessage());
     }
 
+    @DisplayName("다른 키 값으로 복호화 시도는 허용하지 않는다.")
     @Test
     public void decode_with_different_key_is_not_valid() throws Exception {
         //given
