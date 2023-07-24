@@ -15,8 +15,7 @@ public class DateProvider {
         return LocalDateTime.now(ZoneId.of(ZONE_ID));
     }
 
-    public static LocalDateTime getNextCacheKey() {
-        LocalDateTime now = DateProvider.getDateTime();
+    public static LocalDateTime getNextCacheKey(LocalDateTime now) {
         LocalDateTime next = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 5,10,0);
         if(now.isBefore(next)) {
             return next;
@@ -26,6 +25,6 @@ public class DateProvider {
     }
 
     public static LocalDate getToday() {
-        return getNextCacheKey().minusDays(1).toLocalDate();
+        return getNextCacheKey(getDateTime()).minusDays(1).toLocalDate();
     }
 }
