@@ -24,7 +24,7 @@ public class DateProvider {
         return next.plusDays(1);
     }
 
-    public static LocalDate getToday() {
-        return getNextCacheKey(getDateTime()).minusDays(1).toLocalDate();
+    public static LocalDate getToday(LocalDateTime now) {
+        return getNextCacheKey(now).minusDays(1).toLocalDate();
     }
 }
