@@ -40,7 +40,7 @@ public class RedisCacheableAspect {
             return new ArrayList<>();
         }
 
-        Duration between = Duration.between(DateProvider.getDateTime(), DateProvider.getNextCacheKey());
+        Duration between = Duration.between(DateProvider.getDateTime(), DateProvider.getNextCacheKey(DateProvider.getDateTime()));
         redisTemplate.opsForValue().setIfAbsent(key, result, between.toSeconds(), TimeUnit.SECONDS);
 
         return result;
