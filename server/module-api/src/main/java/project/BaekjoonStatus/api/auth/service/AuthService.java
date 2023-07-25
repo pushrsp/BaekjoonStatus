@@ -21,6 +21,7 @@ import project.BaekjoonStatus.shared.user.service.UserService;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -52,15 +53,15 @@ public class AuthService {
     }
 
     @CustomAsync(maxTry = 10, offset = 2, delay = 180000)
-    public void createProblems(List<Long> problemIds) {
+    public void createProblems(List<Long> problemIds, LocalDateTime createdTime) {
         List<Long> notSavedIds = problemService.findAllByNotExistedIds(problemIds);
         if(notSavedIds.isEmpty()) {
             return;
         }
 
         List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
-        problemService.saveAll(SolvedAcProblem.toProblemList(solvedAcProblems));
-        tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems));
+        problemService.saveAll(SolvedAcProblem.toProblemList(solvedAcProblems, createdTime));
+        tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems, createdTime));
     }
 
     @Recover

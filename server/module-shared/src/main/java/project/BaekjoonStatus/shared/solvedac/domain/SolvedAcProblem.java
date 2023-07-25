@@ -2,17 +2,16 @@ package project.BaekjoonStatus.shared.solvedac.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@Data
+@Getter
 public class SolvedAcProblem {
     private final Long problemId;
     private final String titleKo;
@@ -26,7 +25,7 @@ public class SolvedAcProblem {
     private final List<SolvedAcTag> tags;
 
     @Builder
-    public SolvedAcProblem(@JsonProperty("problemId") Long problemId,
+    private SolvedAcProblem(@JsonProperty("problemId") Long problemId,
                            @JsonProperty("titleKo") String titleKo,
                            @JsonProperty("isSolvable") Boolean isSolvable,
                            @JsonProperty("isPartial") Boolean isPartial,
@@ -49,30 +48,30 @@ public class SolvedAcProblem {
         this.tags = tags;
     }
 
-    public static List<Problem> toProblemList(List<SolvedAcProblem> solvedAcProblems) {
+    public static List<Problem> toProblemList(List<SolvedAcProblem> solvedAcProblems, LocalDateTime createdTime) {
         return solvedAcProblems.stream()
-                .map(SolvedAcProblem::to)
+                .map(sp -> sp.toDomain(createdTime))
                 .collect(Collectors.toList());
     }
 
-    public static List<Tag> toTagList(List<SolvedAcProblem> solvedAcProblems) {
+    public static List<Tag> toTagList(List<SolvedAcProblem> solvedAcProblems, LocalDateTime createdTime) {
         return solvedAcProblems.stream()
-                .flatMap(sp -> sp.getTags().stream().map(tag -> tag.to(sp.to())))
+                .flatMap(sp -> sp.getTags().stream().map(tag -> tag.toDomain(sp.toDomain(createdTime))))
                 .collect(Collectors.toList());
     }
 
-    public Problem to() {
+    public Problem toDomain(LocalDateTime createdTime) {
         return Problem.builder()
                 .id(this.problemId)
                 .level(this.level.intValue())
                 .title(this.titleKo)
-                .createdTime(DateProvider.getDateTime())
+                .createdTime(createdTime)
                 .build();
     }
 
     public List<Tag> toTagList(Problem problem) {
         return this.tags.stream()
-                .map(t -> t.to(problem))
+                .map(t -> t.toDomain(problem))
                 .collect(Collectors.toList());
     }
 }

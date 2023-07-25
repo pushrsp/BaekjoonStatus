@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.auth.controller.request.BaekjoonVerifyRequest;
 import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
 import project.BaekjoonStatus.api.auth.controller.response.UserLoginResponse;
+import project.BaekjoonStatus.shared.common.utils.DateProvider;
 import project.BaekjoonStatus.shared.user.controller.request.UserCreateRequest;
 import project.BaekjoonStatus.api.auth.controller.response.BaekjoonVerifyResponse;
 import project.BaekjoonStatus.api.auth.controller.response.MyProfileResponse;
@@ -17,6 +18,7 @@ import project.BaekjoonStatus.shared.user.domain.User;
 
 import javax.validation.Valid;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -56,9 +58,11 @@ public class AuthController {
     }
 
     private void createProblems(List<Long> problemIds) {
+        LocalDateTime createdTime = DateProvider.getDateTime();
+
         int start = 0;
         while (start < problemIds.size()) {
-            authService.createProblems(problemIds.subList(start, Math.min(start + OFFSET, problemIds.size())));
+            authService.createProblems(problemIds.subList(start, Math.min(start + OFFSET, problemIds.size())), createdTime);
             start += OFFSET;
         }
     }
