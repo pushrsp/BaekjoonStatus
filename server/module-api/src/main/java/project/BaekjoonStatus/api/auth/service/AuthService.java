@@ -45,7 +45,7 @@ public class AuthService {
     }
 
     public List<Long> getByBaekjoonUsername(String baekjoonUsername) {
-        return baekjoonService.getByUsername(baekjoonUsername);
+        return baekjoonService.getProblemIdsByUsername (baekjoonUsername);
     }
 
     public String getRegisterToken(List<Long> problemIds) {
