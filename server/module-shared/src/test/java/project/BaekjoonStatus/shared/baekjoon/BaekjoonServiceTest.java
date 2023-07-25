@@ -1,8 +1,7 @@
-package project.BaekjoonStatus.shared.common.service.baekjoon;
+package project.BaekjoonStatus.shared.baekjoon;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
 
