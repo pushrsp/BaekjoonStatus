@@ -17,7 +17,7 @@ public class Problem implements Serializable {
     private final LocalDateTime createdTime;
 
     @Builder
-    public Problem(Long id, Integer level, String title, List<Tag> tags, LocalDateTime createdTime) {
+    private Problem(Long id, Integer level, String title, List<Tag> tags, LocalDateTime createdTime) {
         this.id = id;
         this.level = level;
         this.title = title;

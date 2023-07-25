@@ -2,13 +2,13 @@ package project.BaekjoonStatus.shared.solvedac.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 
 import java.util.List;
 
-@Data
+@Getter
 public class SolvedAcTag {
     private final String key;
     private final Boolean isMeta;
@@ -18,7 +18,7 @@ public class SolvedAcTag {
     private final List<SolvedAcAlias> aliases;
 
     @Builder
-    public SolvedAcTag(@JsonProperty("key") String key,
+    private SolvedAcTag(@JsonProperty("key") String key,
                        @JsonProperty("isMeta") Boolean isMeta,
                        @JsonProperty("bojTagId") Long bojTagId,
                        @JsonProperty("problemCount") Long problemCount,
@@ -33,7 +33,7 @@ public class SolvedAcTag {
         this.aliases = aliases;
     }
 
-    public Tag to(Problem problem) {
+    public Tag toDomain(Problem problem) {
         return Tag.builder()
                 .tagName(this.key)
                 .problem(problem)
