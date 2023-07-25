@@ -36,9 +36,6 @@ public class RedisCacheableAspect {
         }
 
         Object result = joinPoint.proceed();
-        if(Objects.isNull(result)) {
-            return new ArrayList<>();
-        }
 
         Duration between = Duration.between(DateProvider.getDateTime(), DateProvider.getNextCacheKey(DateProvider.getDateTime()));
         redisTemplate.opsForValue().setIfAbsent(key, result, between.toSeconds(), TimeUnit.SECONDS);
