@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
+import project.BaekjoonStatus.shared.common.utils.DateProvider;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
@@ -25,6 +26,7 @@ import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.service.UserService;
 import project.BaekjoonStatus.shared.common.template.ListDividerTemplate;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class SaveUserProblemJob {
     private static final int CHUNK_SIZE = 5;
     private static final int OFFSET = 100;
+    private static final LocalDateTime CREATED_TIME = DateProvider.getDateTime();
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -79,10 +82,10 @@ public class SaveUserProblemJob {
                 List<Long> notSavedIds = problemService.findAllByNotExistedIds(ids);
                 if(!notSavedIds.isEmpty()) {
                     List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
-                    List<Problem> newProblems = SolvedAcProblem.toProblemList(solvedAcProblems);
+                    List<Problem> newProblems = SolvedAcProblem.toProblemList(solvedAcProblems, CREATED_TIME);
 
                     problemService.saveAll(newProblems);
-                    tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems));
+                    tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems, CREATED_TIME));
                 }
 
                 problems.addAll(problemService.findAllByIdsIn(ids));
