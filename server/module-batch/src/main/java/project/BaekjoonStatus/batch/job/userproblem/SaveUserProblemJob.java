@@ -103,7 +103,7 @@ public class SaveUserProblemJob {
     }
 
     private List<Long> findNewIds(User user) {
-        List<Long> newHistories = baekjoonService.getByUsername(user.getBaekjoonUsername());
+        List<Long> newHistories = baekjoonService.getProblemIdsByUsername (user.getBaekjoonUsername());
         List<Long> oldHistories = solvedHistoryService.findAllByUserId(user.getId())
                 .stream()
                 .map(sh -> Long.parseLong(sh.getId()))
