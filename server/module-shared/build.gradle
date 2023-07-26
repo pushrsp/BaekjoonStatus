@@ -7,7 +7,6 @@ dependencies {
     api 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     api 'com.auth0:java-jwt:3.19.4'
-    implementation 'org.mindrot:jbcrypt:0.4'
 
     // queryDSL 설정
     implementation "com.querydsl:querydsl-jpa"
