@@ -1,5 +1,6 @@
 package project.BaekjoonStatus.api.auth.controller.request;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.BaekjoonStatus.api.auth.service.request.UserCreateServiceRequest;
@@ -21,6 +22,14 @@ public class UserCreateRequest {
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
+
+    @Builder
+    private UserCreateRequest(String registerToken, String username, String baekjoonUsername, String password) {
+        this.registerToken = registerToken;
+        this.username = username;
+        this.baekjoonUsername = baekjoonUsername;
+        this.password = password;
+    }
 
     public UserCreateServiceRequest toServiceRequest(LocalDateTime now) {
         return UserCreateServiceRequest.builder()
