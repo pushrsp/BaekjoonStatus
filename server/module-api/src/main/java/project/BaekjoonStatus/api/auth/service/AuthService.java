@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
 import project.BaekjoonStatus.api.concurrent.annotation.CustomAsync;
+import project.BaekjoonStatus.shared.common.utils.PasswordEncryptor;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.user.controller.request.UserCreateRequest;
@@ -38,6 +39,8 @@ public class AuthService {
     private final TagService tagService;
     private final UserService userService;
     private final SolvedHistoryService solvedHistoryService;
+
+    private final PasswordEncryptor passwordEncryptor;
 
     public User getById(String userId) {
         return userService.findById(Long.parseLong(userId))
@@ -89,7 +92,7 @@ public class AuthService {
     public User createUser(UserCreateRequest userCreate) {
         duplicateUsername(userCreate.getUsername());
 
-        return userService.save(User.from(userCreate));
+        return userService.save(User.from(userCreate, passwordEncryptor));
     }
 
     public List<Long> getProblemIds(String registerToken) {
@@ -100,7 +103,7 @@ public class AuthService {
         User findUser = userService.findByUsername(userLogin.getUsername())
                 .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
 
-        findUser.login(userLogin.getUsername(), userLogin.getPassword());
+        findUser.login(userLogin.getUsername(), userLogin.getPassword(), passwordEncryptor);
 
         return findUser;
     }
