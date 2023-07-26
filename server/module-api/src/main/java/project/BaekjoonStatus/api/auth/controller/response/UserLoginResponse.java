@@ -2,7 +2,6 @@ package project.BaekjoonStatus.api.auth.controller.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import project.BaekjoonStatus.shared.common.utils.JWTProvider;
 import project.BaekjoonStatus.shared.user.domain.User;
 
 @Getter
@@ -18,11 +17,11 @@ public class UserLoginResponse {
         this.token = token;
     }
 
-    public static UserLoginResponse from(User user, String secret, long expiredTime) {
+    public static UserLoginResponse from(User user, String token) {
         return UserLoginResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .token(JWTProvider.generateToken(user.getId().toString(), secret, expiredTime))
+                .token(token)
                 .build();
     }
 }

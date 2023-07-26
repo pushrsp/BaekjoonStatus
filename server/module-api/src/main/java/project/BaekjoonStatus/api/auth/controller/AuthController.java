@@ -14,6 +14,7 @@ import project.BaekjoonStatus.api.common.argumentresolver.Auth;
 import project.BaekjoonStatus.api.auth.service.AuthService;
 import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
+import project.BaekjoonStatus.shared.common.utils.JWTProvider;
 import project.BaekjoonStatus.shared.user.domain.User;
 
 import javax.validation.Valid;
@@ -91,10 +92,12 @@ public class AuthController {
     @PostMapping("/login")
     public CommonResponse login(@RequestBody @Valid UserLoginRequest request) {
         User user = authService.login(request.toServiceRequest());
+
+        // TODO: 토큰 인터페이스 분리
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(UserLoginResponse.from(user, tokenSecret, EXPIRE_TIME))
+                .data(UserLoginResponse.from(user, JWTProvider.generateToken(user.getId().toString(), tokenSecret, EXPIRE_TIME)))
                 .build();
     }
 }
