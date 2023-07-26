@@ -2,11 +2,10 @@ package project.BaekjoonStatus.shared.user.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
 import project.BaekjoonStatus.shared.common.utils.PasswordEncryptor;
-import project.BaekjoonStatus.shared.user.controller.request.UserCreateRequest;
 
 import java.time.LocalDateTime;
 
@@ -29,18 +28,6 @@ public class User {
         this.isPrivate = isPrivate;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
-    }
-
-    // FIXME UserCreateRequest -> toDomain 메서드 생성
-    public static User from(UserCreateRequest userCreate, PasswordEncryptor passwordEncryptor) {
-        return User.builder()
-                .username(userCreate.getUsername())
-                .baekjoonUsername(userCreate.getBaekjoonUsername())
-                .password(passwordEncryptor.hashPassword(userCreate.getPassword()))
-                .isPrivate(true)
-                .createdTime(DateProvider.getDateTime())
-                .modifiedTime(DateProvider.getDateTime())
-                .build();
     }
 
     public void login(String username, String password, PasswordEncryptor passwordEncryptor) {

@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.auth.controller.request.BaekjoonVerifyRequest;
 import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
+import project.BaekjoonStatus.api.auth.controller.request.UserCreateRequest;
 import project.BaekjoonStatus.api.auth.controller.response.UserLoginResponse;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
-import project.BaekjoonStatus.shared.user.controller.request.UserCreateRequest;
 import project.BaekjoonStatus.api.auth.controller.response.BaekjoonVerifyResponse;
 import project.BaekjoonStatus.api.auth.controller.response.MyProfileResponse;
 import project.BaekjoonStatus.api.common.argumentresolver.Auth;
@@ -71,7 +71,7 @@ public class AuthController {
     public CommonResponse signup(@RequestBody @Valid UserCreateRequest request) {
         authService.verifyRegisterToken(request.getRegisterToken());
 
-        User user = authService.createUser(request);
+        User user = authService.createUser(request.toServiceRequest(DateProvider.getDateTime()));
         createSolvedHistories(user, authService.getProblemIds(request.getRegisterToken()));
 
         return CommonResponse.builder()
@@ -90,7 +90,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public CommonResponse login(@RequestBody @Valid UserLoginRequest request) {
-        User user = authService.login(request);
+        User user = authService.login(request.toServiceRequest());
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
