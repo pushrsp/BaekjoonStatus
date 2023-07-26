@@ -1,5 +1,6 @@
 package project.BaekjoonStatus.api.auth.controller.request;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.BaekjoonStatus.api.auth.service.request.UserLoginServiceRequest;
@@ -14,6 +15,12 @@ public class UserLoginRequest {
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
+
+    @Builder
+    private UserLoginRequest(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     public UserLoginServiceRequest toServiceRequest() {
         return UserLoginServiceRequest.builder()
