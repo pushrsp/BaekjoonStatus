@@ -1,22 +1,31 @@
 package project.BaekjoonStatus.api.auth.controller.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
+import project.BaekjoonStatus.api.auth.service.request.UserLoginServiceRequest;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
-@Data
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserLoginRequest {
     @NotBlank(message = "아이디를 입력해주세요.")
-    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{2,20}$", message = "아이디는 특수문자를 제외한 2~20자리여야 합니다.")
     private String username;
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
-    @Length(min = 6, max = 16, message = "최소 6자 최대 16자 이내여야 합니다.")
     private String password;
+
+    @Builder
+    private UserLoginRequest(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserLoginServiceRequest toServiceRequest() {
+        return UserLoginServiceRequest.builder()
+                .username(this.username)
+                .password(this.password)
+                .build();
+    }
 }

@@ -4,16 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
+
+import project.BaekjoonStatus.api.auth.service.request.UserCreateServiceRequest;
+import project.BaekjoonStatus.api.auth.service.request.UserLoginServiceRequest;
+import project.BaekjoonStatus.api.auth.service.token.RegisterTokenStore;
 import project.BaekjoonStatus.api.concurrent.annotation.CustomAsync;
+
 import project.BaekjoonStatus.shared.common.utils.PasswordEncryptor;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
-import project.BaekjoonStatus.shared.user.controller.request.UserCreateRequest;
 import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
-import project.BaekjoonStatus.api.auth.service.token.RegisterTokenStore;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.tag.service.TagService;
@@ -48,6 +50,8 @@ public class AuthService {
     }
 
     public List<Long> getByBaekjoonUsername(String baekjoonUsername) {
+        // TODO: validation
+        // @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{2,20}$", message = "아이디는 특수문자를 제외한 2~20자리여야 합니다.")
         return baekjoonService.getProblemIdsByUsername (baekjoonUsername);
     }
 
@@ -89,21 +93,21 @@ public class AuthService {
         log.info("createSolvedHistories userId: {}", user.getId());
     }
 
-    public User createUser(UserCreateRequest userCreate) {
-        duplicateUsername(userCreate.getUsername());
+    public User createUser(UserCreateServiceRequest request) {
+        duplicateUsername(request.getUsername());
 
-        return userService.save(User.from(userCreate, passwordEncryptor));
+        return userService.save(request.toServiceDto(true, passwordEncryptor));
     }
 
     public List<Long> getProblemIds(String registerToken) {
         return registerTokenStore.get(registerToken).getProblemIds();
     }
 
-    public User login(UserLoginRequest userLogin) {
-        User findUser = userService.findByUsername(userLogin.getUsername())
+    public User login(UserLoginServiceRequest request) {
+        User findUser = userService.findByUsername(request.getUsername())
                 .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
 
-        findUser.login(userLogin.getUsername(), userLogin.getPassword(), passwordEncryptor);
+        findUser.login(request.getUsername(), request.getPassword(), passwordEncryptor);
 
         return findUser;
     }
