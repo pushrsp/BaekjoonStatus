@@ -36,23 +36,23 @@ public class ProblemEntity implements Persistable<Long> {
     private boolean updated;
 
     @Builder
-    private ProblemEntity(Long id, Integer level, String title, List<TagEntity> tags, LocalDateTime createdTime) {
+    private ProblemEntity(Long id, Integer level, String title, List<TagEntity> tags, LocalDateTime createdTime, boolean updated) {
         this.id = id;
         this.level = level;
         this.title = title;
         this.tags = tags;
         this.createdTime = createdTime;
+        this.updated = updated;
     }
 
     public static ProblemEntity from(Problem problem) {
-        ProblemEntity problemEntity = new ProblemEntity();
-        problemEntity.id = problem.getId();
-        problemEntity.level = problem.getLevel();
-        problemEntity.title = problem.getTitle();
-        problemEntity.createdTime = DateProvider.getDateTime();
-        problemEntity.updated = false;
-
-        return problemEntity;
+        return ProblemEntity.builder()
+                .id(problem.getId())
+                .level(problem.getLevel())
+                .title(problem.getTitle())
+                .createdTime(problem.getCreatedTime())
+                .updated(false)
+                .build();
     }
 
     public Problem to() {
