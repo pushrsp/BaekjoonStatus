@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.common.controller.response;
+package project.BaekjoonStatus.shared.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

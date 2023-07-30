@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.common.argumentresolver.Auth;
 import project.BaekjoonStatus.api.stat.controller.response.*;
 import project.BaekjoonStatus.api.stat.service.StatService;
-import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
+import project.BaekjoonStatus.shared.common.response.CommonResponse;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
 

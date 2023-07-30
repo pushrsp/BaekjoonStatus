@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import project.BaekjoonStatus.shared.common.controller.response.CommonResponse;
+import project.BaekjoonStatus.shared.common.response.CommonResponse;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
 
