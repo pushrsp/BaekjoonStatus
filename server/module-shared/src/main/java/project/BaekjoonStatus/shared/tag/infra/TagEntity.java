@@ -3,7 +3,6 @@ package project.BaekjoonStatus.shared.tag.infra;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.springframework.util.Assert;
 import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 
