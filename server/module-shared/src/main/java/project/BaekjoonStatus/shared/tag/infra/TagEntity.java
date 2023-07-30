@@ -3,7 +3,6 @@ package project.BaekjoonStatus.shared.tag.infra;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.springframework.util.Assert;
 import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 
@@ -31,12 +30,18 @@ public class TagEntity {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
-    public static TagEntity from(Tag tag) {
-        TagEntity tagEntity = new TagEntity();
-        tagEntity.problem = ProblemEntity.from(tag.getProblem());
-        tagEntity.tagName = tag.getTagName();
+    @Builder
+    private TagEntity(UUID id, ProblemEntity problem, String tagName) {
+        this.id = id;
+        this.problem = problem;
+        this.tagName = tagName;
+    }
 
-        return tagEntity;
+    public static TagEntity from(Tag tag) {
+        return TagEntity.builder()
+                .tagName(tag.getTagName())
+                .problem(ProblemEntity.from(tag.getProblem()))
+                .build();
     }
 
     public Tag to() {

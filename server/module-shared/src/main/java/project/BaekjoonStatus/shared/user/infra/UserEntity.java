@@ -3,12 +3,10 @@ package project.BaekjoonStatus.shared.user.infra;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.util.Assert;
 import project.BaekjoonStatus.shared.user.domain.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Entity
 @Table(name = "USER")
@@ -41,16 +39,26 @@ public class UserEntity {
     @LastModifiedDate
     private LocalDateTime modifiedTime;
 
-    public static UserEntity from(User user) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.username = user.getUsername();
-        userEntity.baekjoonUsername = user.getBaekjoonUsername();
-        userEntity.password = user.getPassword();
-        userEntity.isPrivate = user.getIsPrivate();
-        userEntity.createdTime = user.getCreatedTime();
-        userEntity.modifiedTime = user.getModifiedTime();
+    @Builder
+    private UserEntity(Long id, String username, String password, String baekjoonUsername, boolean isPrivate, LocalDateTime createdTime, LocalDateTime modifiedTime) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.baekjoonUsername = baekjoonUsername;
+        this.isPrivate = isPrivate;
+        this.createdTime = createdTime;
+        this.modifiedTime = modifiedTime;
+    }
 
-        return userEntity;
+    public static UserEntity from(User user) {
+        return UserEntity.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .baekjoonUsername(user.getBaekjoonUsername())
+                .isPrivate(user.getIsPrivate())
+                .createdTime(user.getCreatedTime())
+                .modifiedTime(user.getModifiedTime())
+                .build();
     }
 
     public User to() {

@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.data.domain.Persistable;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.tag.infra.TagEntity;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -35,15 +34,24 @@ public class ProblemEntity implements Persistable<Long> {
     @Transient
     private boolean updated;
 
-    public static ProblemEntity from(Problem problem) {
-        ProblemEntity problemEntity = new ProblemEntity();
-        problemEntity.id = problem.getId();
-        problemEntity.level = problem.getLevel();
-        problemEntity.title = problem.getTitle();
-        problemEntity.createdTime = DateProvider.getDateTime();
-        problemEntity.updated = false;
+    @Builder
+    private ProblemEntity(Long id, Integer level, String title, List<TagEntity> tags, LocalDateTime createdTime, boolean updated) {
+        this.id = id;
+        this.level = level;
+        this.title = title;
+        this.tags = tags;
+        this.createdTime = createdTime;
+        this.updated = updated;
+    }
 
-        return problemEntity;
+    public static ProblemEntity from(Problem problem) {
+        return ProblemEntity.builder()
+                .id(problem.getId())
+                .level(problem.getLevel())
+                .title(problem.getTitle())
+                .createdTime(problem.getCreatedTime())
+                .updated(false)
+                .build();
     }
 
     public Problem to() {
