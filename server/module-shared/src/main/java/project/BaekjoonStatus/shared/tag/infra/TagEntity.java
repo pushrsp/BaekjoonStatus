@@ -32,17 +32,17 @@ public class TagEntity {
     private String tagName;
 
     @Builder
-    private TagEntity(UUID id, String tagName) {
+    private TagEntity(UUID id, ProblemEntity problem, String tagName) {
         this.id = id;
+        this.problem = problem;
         this.tagName = tagName;
     }
 
     public static TagEntity from(Tag tag) {
-        TagEntity tagEntity = new TagEntity();
-        tagEntity.problem = ProblemEntity.from(tag.getProblem());
-        tagEntity.tagName = tag.getTagName();
-
-        return tagEntity;
+        return TagEntity.builder()
+                .tagName(tag.getTagName())
+                .problem(ProblemEntity.from(tag.getProblem()))
+                .build();
     }
 
     public Tag to() {
