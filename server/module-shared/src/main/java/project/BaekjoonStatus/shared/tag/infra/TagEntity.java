@@ -31,6 +31,12 @@ public class TagEntity {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
+    @Builder
+    private TagEntity(UUID id, String tagName) {
+        this.id = id;
+        this.tagName = tagName;
+    }
+
     public static TagEntity from(Tag tag) {
         TagEntity tagEntity = new TagEntity();
         tagEntity.problem = ProblemEntity.from(tag.getProblem());

@@ -35,6 +35,15 @@ public class ProblemEntity implements Persistable<Long> {
     @Transient
     private boolean updated;
 
+    @Builder
+    private ProblemEntity(Long id, Integer level, String title, List<TagEntity> tags, LocalDateTime createdTime) {
+        this.id = id;
+        this.level = level;
+        this.title = title;
+        this.tags = tags;
+        this.createdTime = createdTime;
+    }
+
     public static ProblemEntity from(Problem problem) {
         ProblemEntity problemEntity = new ProblemEntity();
         problemEntity.id = problem.getId();
