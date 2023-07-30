@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.shared.solvedhistory.infra;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -56,16 +57,26 @@ public class SolvedHistoryEntity {
     @CreatedDate
     private LocalDateTime createdTime;
 
-    public static SolvedHistoryEntity from(SolvedHistory solvedHistory) {
-        SolvedHistoryEntity solvedHistoryEntity = new SolvedHistoryEntity();
-        solvedHistoryEntity.user = UserEntity.from(solvedHistory.getUser());
-        solvedHistoryEntity.problem = ProblemEntity.from(solvedHistory.getProblem());
-        solvedHistoryEntity.isBefore = solvedHistory.getIsBefore();
-        solvedHistoryEntity.problemLevel = solvedHistory.getProblemLevel();
-        solvedHistoryEntity.createdDate = solvedHistory.getCreatedDate();
-        solvedHistoryEntity.createdTime = solvedHistory.getCreatedTime();
+    @Builder
+    private SolvedHistoryEntity(UUID id, UserEntity user, ProblemEntity problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
+        this.id = id;
+        this.user = user;
+        this.problem = problem;
+        this.isBefore = isBefore;
+        this.problemLevel = problemLevel;
+        this.createdDate = createdDate;
+        this.createdTime = createdTime;
+    }
 
-        return solvedHistoryEntity;
+    public static SolvedHistoryEntity from(SolvedHistory solvedHistory) {
+        return SolvedHistoryEntity.builder()
+                .user(UserEntity.from(solvedHistory.getUser()))
+                .problem(ProblemEntity.from(solvedHistory.getProblem()))
+                .isBefore(solvedHistory.getIsBefore())
+                .problemLevel(solvedHistory.getProblemLevel())
+                .createdTime(solvedHistory.getCreatedTime())
+                .createdDate(solvedHistory.getCreatedDate())
+                .build();
     }
 
     public SolvedHistory to() {
