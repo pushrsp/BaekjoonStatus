@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.shared.dailyproblem.infra;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -33,12 +34,18 @@ public class DailyProblemEntity {
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 
-    public static DailyProblemEntity from(DailyProblem dailyProblem) {
-        DailyProblemEntity dailyProblemEntity = new DailyProblemEntity();
-        dailyProblemEntity.problem = ProblemEntity.from(dailyProblem.getProblem());
-        dailyProblemEntity.createdDate = dailyProblem.getCreatedDate();
+    @Builder
+    private DailyProblemEntity(UUID id, ProblemEntity problem, LocalDate createdDate) {
+        this.id = id;
+        this.problem = problem;
+        this.createdDate = createdDate;
+    }
 
-        return dailyProblemEntity;
+    public static DailyProblemEntity from(DailyProblem dailyProblem) {
+        return DailyProblemEntity.builder()
+                .problem(ProblemEntity.from(dailyProblem.getProblem()))
+                .createdDate(dailyProblem.getCreatedDate())
+                .build();
     }
 
     public DailyProblem to() {
