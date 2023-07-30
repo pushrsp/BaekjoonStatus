@@ -24,7 +24,7 @@ class TagEntityTest {
 
         //then
         assertThat(tagEntity.getTagName()).isEqualTo(tagDomain.getTagName());
-        assertThat(tagEntity.getProblem()).isNotNull();
+        assertThat(tagEntity.getProblem().getId()).isEqualTo(tagDomain.getProblem().getId());
     }
 
     @DisplayName("Tag엔티티는 Tag도메인으로 컨버팅 할 수 있다.")
@@ -40,7 +40,7 @@ class TagEntityTest {
         //then
         assertThat(tagDomain.getId()).isEqualTo(tagEntity.getId().toString());
         assertThat(tagDomain.getTagName()).isEqualTo(tagEntity.getTagName());
-        assertThat(tagDomain.getProblem()).isNotNull();
+        assertThat(tagDomain.getProblem().getId()).isEqualTo(tagEntity.getProblem().getId());
     }
 
     private ProblemEntity createProblemEntity() {
