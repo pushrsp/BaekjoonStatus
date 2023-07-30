@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.*;
 class ProblemEntityTest {
     @DisplayName("Problem도메인으로부터 Problem엔티티를 생성할 수 있다.")
     @Test
-    public void can_create_problem_entity_from_user_entity() throws Exception {
+    public void can_create_problem_entity_from_problem_domain() throws Exception {
         //given
         LocalDateTime now = LocalDateTime.of(2023, 7, 30, 13, 57);
         Problem problemDomain = createProblemDomain(1L, "test", 2, now);
