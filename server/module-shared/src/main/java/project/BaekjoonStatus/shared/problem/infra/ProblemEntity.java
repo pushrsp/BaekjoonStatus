@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.data.domain.Persistable;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.tag.infra.TagEntity;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
