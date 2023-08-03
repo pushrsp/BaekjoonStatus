@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 class DailyProblemTest {
     @DisplayName("DailyProblem도메은 Problem도메인, 생성 날짜를 통해 만들 수 있다.")
     @Test
-    public void can_create_daily_problem_domain_with_problem_created_date() throws Exception {
+    public void can_create_daily_problem_domain_with_problem_domain_created_date() throws Exception {
         //given
         LocalDate now = LocalDate.of(2023, 8, 3);
         Problem problem = createProblem(1L);
@@ -24,6 +24,7 @@ class DailyProblemTest {
         assertThat(dailyProblem.getCreatedDate()).isEqualTo(now);
         assertThat(dailyProblem.getProblem()).isNotNull();
     }
+
     private Problem createProblem(Long id) {
         return Problem.builder()
                 .id(id)
