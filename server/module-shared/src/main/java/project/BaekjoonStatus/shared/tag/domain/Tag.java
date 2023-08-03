@@ -16,7 +16,7 @@ public class Tag implements Serializable {
     private final String tagName;
 
     @Builder
-    public Tag(String id, Problem problem, String tagName) {
+    private Tag(String id, Problem problem, String tagName) {
         this.id = id;
         this.problem = problem;
         this.tagName = tagName;
