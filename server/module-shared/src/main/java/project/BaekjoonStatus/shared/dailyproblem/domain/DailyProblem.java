@@ -14,7 +14,7 @@ public class DailyProblem implements Serializable {
     private final LocalDate createdDate;
 
     @Builder
-    public DailyProblem(String id, Problem problem, LocalDate createdDate) {
+    private DailyProblem(String id, Problem problem, LocalDate createdDate) {
         this.id = id;
         this.problem = problem;
         this.createdDate = createdDate;
