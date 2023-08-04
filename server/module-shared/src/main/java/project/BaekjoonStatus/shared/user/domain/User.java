@@ -30,6 +30,13 @@ public class User {
         this.modifiedTime = modifiedTime;
     }
 
+    //querydsl 전용 생성자
+    public User(Long id, String username, String baekjoonUsername) {
+        this.id = id;
+        this.username = username;
+        this.baekjoonUsername = baekjoonUsername;
+    }
+
     public void login(String username, String password, PasswordEncryptor passwordEncryptor) {
         if(!this.username.equals(username)) {
             throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
