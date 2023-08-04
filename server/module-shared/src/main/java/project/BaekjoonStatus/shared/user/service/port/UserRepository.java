@@ -10,4 +10,5 @@ public interface UserRepository {
     Optional<User> findById(Long userId);
     Optional<User> findByUsername(String username);
     List<User> findAllByGreaterThanUserId(Long userId, int limit);
+    void deleteAllInBatch();
 }

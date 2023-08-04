@@ -48,4 +48,9 @@ public class UserRepositoryImpl implements UserRepository {
                 .limit(limit)
                 .fetch();
     }
+
+    @Override
+    public void deleteAllInBatch() {
+        userJpaRepository.deleteAllInBatch();
+    }
 }
