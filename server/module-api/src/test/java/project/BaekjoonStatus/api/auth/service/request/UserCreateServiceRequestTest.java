@@ -3,14 +3,14 @@ package project.BaekjoonStatus.api.auth.service.request;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import project.BaekjoonStatus.shared.common.utils.PasswordEncryptor;
-import project.BaekjoonStatus.shared.user.service.request.UserCreateServiceDto;
+import project.BaekjoonStatus.shared.user.domain.User;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
 
 class UserCreateServiceRequestTest {
-    @DisplayName("UserCreateServiceRequest는 UserCreateServiceDto로 컨버팅 할 수 있다.")
+    @DisplayName("UserCreateServiceRequest는 User도메인으로 컨버팅 할 수 있다.")
     @Test
     public void can_convert_to_service_dto() throws Exception {
         //given
@@ -32,7 +32,7 @@ class UserCreateServiceRequestTest {
         UserCreateServiceRequest userCreateServiceRequest = createUserCreateServiceRequest(password, now);
 
         //when
-        UserCreateServiceDto result = userCreateServiceRequest.toServiceDto(isPrivate, passwordEncryptor);
+        User result = userCreateServiceRequest.toDomain(isPrivate, passwordEncryptor);
 
         //then
         assertThat(result.getCreatedTime()).isEqualTo(now);

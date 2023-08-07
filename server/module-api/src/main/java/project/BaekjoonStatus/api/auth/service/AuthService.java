@@ -84,7 +84,7 @@ public class AuthService {
             throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
         }
 
-        solvedHistoryService.saveAll(SolvedHistory.from(user, problems,true));
+//        solvedHistoryService.saveAll(SolvedHistory.from(user, problems,true));
     }
 
     @Recover
@@ -96,7 +96,7 @@ public class AuthService {
     public User createUser(UserCreateServiceRequest request) {
         duplicateUsername(request.getUsername());
 
-        return userService.save(request.toServiceDto(true, passwordEncryptor));
+        return userService.save(request.toDomain(true, passwordEncryptor));
     }
 
     public List<Long> getProblemIds(String registerToken) {

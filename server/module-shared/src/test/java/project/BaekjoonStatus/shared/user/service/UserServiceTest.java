@@ -9,7 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 import project.BaekjoonStatus.shared.IntegrationTestSupport;
 import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.infra.UserRepository;
-import project.BaekjoonStatus.shared.user.service.request.UserCreateServiceDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,10 +35,10 @@ class UserServiceTest extends IntegrationTestSupport {
     public void can_create_user_from_UserCreateServiceDto() throws Exception {
         //given
         LocalDateTime now = LocalDateTime.of(2023, 8, 4, 13, 54);
-        UserCreateServiceDto userCreateServiceDto = createUserCreateServiceDto(now, "test");
+        User userDomain = createUserDomain(now, "test");
 
         //when
-        User user = userService.save(userCreateServiceDto);
+        User user = userService.save(userDomain);
 
         //then
         assertThat(user.getId()).isNotNull();
@@ -53,9 +52,9 @@ class UserServiceTest extends IntegrationTestSupport {
         //given
         LocalDateTime now = LocalDateTime.of(2023, 8, 4, 13, 54);
         String username = "test";
-        UserCreateServiceDto userCreateServiceDto = createUserCreateServiceDto(now, username);
+        User userDomain = createUserDomain(now, username);
 
-        User savedUser = userService.save(userCreateServiceDto);
+        User savedUser = userService.save(userDomain);
 
         //when
         Optional<User> findUser = userService.findByUsername(username);
@@ -70,9 +69,9 @@ class UserServiceTest extends IntegrationTestSupport {
     @Test
     public void can_find_user_greater_than_given_userId() throws Exception {
         //given
-        User firstUser = userService.save(createUserCreateServiceDto(LocalDateTime.now(), "test333"));
+        User firstUser = userService.save(createUserDomain(LocalDateTime.now(), "test333"));
         for (int i = 0; i < 5; i++) {
-            userService.save(createUserCreateServiceDto(LocalDateTime.now(), "test333" + i));
+            userService.save(createUserDomain(LocalDateTime.now(), "test333" + i));
         }
 
         //when
@@ -86,8 +85,8 @@ class UserServiceTest extends IntegrationTestSupport {
         assertThat(result3).hasSize(0);
     }
 
-    private static UserCreateServiceDto createUserCreateServiceDto(LocalDateTime now, String username) {
-        return UserCreateServiceDto.builder()
+    private static User createUserDomain(LocalDateTime now, String username) {
+        return User.builder()
                 .username(username)
                 .password("password")
                 .isPrivate(true)

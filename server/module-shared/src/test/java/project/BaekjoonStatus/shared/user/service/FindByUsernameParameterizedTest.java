@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import project.BaekjoonStatus.shared.IntegrationTestSupport;
 import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.infra.UserRepository;
-import project.BaekjoonStatus.shared.user.service.request.UserCreateServiceDto;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -28,8 +27,8 @@ public class FindByUsernameParameterizedTest extends IntegrationTestSupport {
     @BeforeEach
     void setUp() {
         for (int i = 0; i < 10; i++) {
-            UserCreateServiceDto userCreateServiceDto = createUserCreateServiceDto(LocalDateTime.now(), "test" + i);
-            userService.save(userCreateServiceDto);
+            User userDomain = createUserDomain(LocalDateTime.now(), "test" + i);
+            userService.save(userDomain);
         }
     }
 
@@ -59,8 +58,8 @@ public class FindByUsernameParameterizedTest extends IntegrationTestSupport {
         );
     }
 
-    private static UserCreateServiceDto createUserCreateServiceDto(LocalDateTime now, String username) {
-        return UserCreateServiceDto.builder()
+    private static User createUserDomain(LocalDateTime now, String username) {
+        return User.builder()
                 .username(username)
                 .password("password")
                 .isPrivate(true)

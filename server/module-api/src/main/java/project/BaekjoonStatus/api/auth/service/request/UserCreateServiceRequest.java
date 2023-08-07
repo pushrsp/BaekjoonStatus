@@ -3,7 +3,7 @@ package project.BaekjoonStatus.api.auth.service.request;
 import lombok.Builder;
 import lombok.Getter;
 import project.BaekjoonStatus.shared.common.utils.PasswordEncryptor;
-import project.BaekjoonStatus.shared.user.service.request.UserCreateServiceDto;
+import project.BaekjoonStatus.shared.user.domain.User;
 
 import java.time.LocalDateTime;
 
@@ -24,10 +24,8 @@ public class UserCreateServiceRequest {
         this.modifiedTime = modifiedTime;
     }
 
-    // TODO: validation
-
-    public UserCreateServiceDto toServiceDto(boolean isPrivate, PasswordEncryptor passwordEncryptor) {
-        return UserCreateServiceDto.builder()
+    public User toDomain(boolean isPrivate, PasswordEncryptor passwordEncryptor) {
+        return User.builder()
                 .username(this.username)
                 .baekjoonUsername(this.baekjoonUsername)
                 .password(passwordEncryptor.hashPassword(this.password))
