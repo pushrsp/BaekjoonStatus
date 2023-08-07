@@ -1,14 +1,12 @@
 package project.BaekjoonStatus.shared.problem.infra;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
-import project.BaekjoonStatus.shared.problem.service.port.ProblemRepository;
 
 import java.util.List;
 import java.util.Optional;

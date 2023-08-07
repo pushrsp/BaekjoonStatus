@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
-import project.BaekjoonStatus.shared.problem.service.port.ProblemRepository;
+import project.BaekjoonStatus.shared.problem.infra.ProblemRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;

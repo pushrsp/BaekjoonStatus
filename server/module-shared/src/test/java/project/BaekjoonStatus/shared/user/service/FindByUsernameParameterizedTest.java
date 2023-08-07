@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import project.BaekjoonStatus.shared.IntegrationTestSupport;
 import project.BaekjoonStatus.shared.user.domain.User;
-import project.BaekjoonStatus.shared.user.service.port.UserRepository;
+import project.BaekjoonStatus.shared.user.infra.UserRepository;
 import project.BaekjoonStatus.shared.user.service.request.UserCreateServiceDto;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.user.service.port;
+package project.BaekjoonStatus.shared.user.infra;
 
 import project.BaekjoonStatus.shared.user.domain.User;
 

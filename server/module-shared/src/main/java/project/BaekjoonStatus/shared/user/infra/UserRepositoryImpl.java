@@ -5,7 +5,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import project.BaekjoonStatus.shared.user.domain.User;
-import project.BaekjoonStatus.shared.user.service.port.UserRepository;
 
 import javax.persistence.EntityManager;
 import java.util.List;

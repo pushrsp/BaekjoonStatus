@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.solvedhistory.service.port;
+package project.BaekjoonStatus.shared.solvedhistory.infra;
 
 
 import project.BaekjoonStatus.shared.solvedhistory.domain.*;
