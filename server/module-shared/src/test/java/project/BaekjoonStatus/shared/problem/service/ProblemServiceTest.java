@@ -13,6 +13,10 @@ import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.infra.ProblemRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,6 +46,33 @@ class ProblemServiceTest extends IntegrationTestSupport {
         //then
         assertThat(problem.getCreatedTime()).isEqualTo(problemDomain.getCreatedTime());
         assertThat(problem.getId()).isEqualTo(problemDomain.getId());
+    }
+
+    @DisplayName("여러개의 Problem도메인을 통해 여러개의 Problem을 생성할 수 있다.")
+    @Test
+    public void can_create_list_of_problem_from_list_of_ProblemDomain() throws Exception {
+        //given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 7, 11, 21);
+        Long[] ids = {1000L, 1001L, 2000L, 3000L, 4000L, 5000L, 6000L};
+        List<Problem> problemDomains = createProblemDomains(ids, now);
+
+        //when
+        problemService.saveAll(problemDomains);
+
+        //then
+        List<Problem> problems = problemService.findAllByIdsIn(Arrays.stream(ids).collect(Collectors.toList()));
+
+        assertThat(problems).hasSize(ids.length);
+        assertThat(problems).extracting("id").containsExactlyInAnyOrder(ids);
+    }
+
+    private List<Problem> createProblemDomains(Long[] ids, LocalDateTime createdTime) {
+        List<Problem> ret = new ArrayList<>();
+        for (Long id : ids) {
+            ret.add(createProblemDomain(id, "title " + id, createdTime));
+        }
+
+        return ret;
     }
 
     private Problem createProblemDomain(Long id, String title, LocalDateTime createdTime) {
