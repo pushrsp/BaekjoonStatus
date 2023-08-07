@@ -85,6 +85,24 @@ class ProblemServiceTest extends IntegrationTestSupport {
         assertThat(p2.isPresent()).isFalse();
     }
 
+    @DisplayName("ProblemIds를 통해 아직 저장되지 않은 ProblemId를 얻어올 수 있다.")
+    @Test
+    public void can_find_not_saved_problem_by_id() throws Exception {
+        //given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 7, 11, 21);
+        Long[] ids = {1000L, 1001L, 2000L, 3000L, 4000L, 5000L, 6000L};
+        Long[] args = {1000L, 1001L, 2000L, 3000L, 4000L, 5000L, 6000L, 7000L, 8000L};
+        List<Problem> problemDomains = createProblemDomains(ids, now);
+
+        problemService.saveAll(problemDomains);
+
+        //when
+        List<Long> notExistedIds = problemService.findAllByNotExistedIds(Arrays.stream(args).collect(Collectors.toList()));
+
+        //then
+        assertThat(notExistedIds).containsExactlyInAnyOrder(7000L, 8000L);
+    }
+
     private List<Problem> createProblemDomains(Long[] ids, LocalDateTime createdTime) {
         List<Problem> ret = new ArrayList<>();
         for (Long id : ids) {
