@@ -13,9 +13,7 @@ import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.infra.ProblemRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
@@ -64,6 +62,27 @@ class ProblemServiceTest extends IntegrationTestSupport {
 
         assertThat(problems).hasSize(ids.length);
         assertThat(problems).extracting("id").containsExactlyInAnyOrder(ids);
+    }
+
+    @DisplayName("ProblemId를 통해 Problem을 찾을 수 있다.")
+    @Test
+    public void can_find_problem_by_id() throws Exception {
+        //given
+        LocalDateTime now = LocalDateTime.of(2023, 8, 7, 11, 21);
+        Long[] ids = {1000L, 1001L, 2000L, 3000L, 4000L, 5000L, 6000L};
+        List<Problem> problemDomains = createProblemDomains(ids, now);
+
+        problemService.saveAll(problemDomains);
+
+        //when
+        Optional<Problem> p1 = problemService.findById(ids[0]);
+        Optional<Problem> p2 = problemService.findById(0L);
+
+        //then
+        assertThat(p1.isPresent()).isTrue();
+        assertThat(p1.get().getId()).isEqualTo(ids[0]);
+
+        assertThat(p2.isPresent()).isFalse();
     }
 
     private List<Problem> createProblemDomains(Long[] ids, LocalDateTime createdTime) {
