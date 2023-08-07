@@ -66,4 +66,10 @@ public class ProblemRepositoryImpl implements ProblemRepository {
     public Optional<Problem> findById(Long id) {
         return problemJpaRepository.findById(id).map(ProblemEntity::to);
     }
+
+    @Override
+    @Transactional
+    public void deleteAllInBatch() {
+        problemJpaRepository.deleteAllInBatch();
+    }
 }
