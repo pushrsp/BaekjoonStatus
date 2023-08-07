@@ -4,8 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import project.BaekjoonStatus.shared.IntegrationTestSupport;
 import project.BaekjoonStatus.shared.user.domain.User;
 import project.BaekjoonStatus.shared.user.infra.UserRepository;
@@ -16,8 +14,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
 class UserServiceTest extends IntegrationTestSupport {
     @Autowired
     private UserService userService;
@@ -30,9 +26,9 @@ class UserServiceTest extends IntegrationTestSupport {
         userRepository.deleteAllInBatch();
     }
 
-    @DisplayName("UserCreateServiceDto를 통해 user를 생성할 수 있다.")
+    @DisplayName("User도메인을 통해 User를 생성할 수 있다.")
     @Test
-    public void can_create_user_from_UserCreateServiceDto() throws Exception {
+    public void can_create_user_from_UserDomain() throws Exception {
         //given
         LocalDateTime now = LocalDateTime.of(2023, 8, 4, 13, 54);
         User userDomain = createUserDomain(now, "test");
