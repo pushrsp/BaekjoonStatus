@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.solvedhistory.domain.*;
-import project.BaekjoonStatus.shared.solvedhistory.service.port.SolvedHistoryRepository;
 
 import javax.persistence.EntityManager;
 import java.sql.ResultSet;

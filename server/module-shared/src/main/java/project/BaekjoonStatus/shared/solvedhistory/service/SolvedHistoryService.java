@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.solvedhistory.domain.*;
-import project.BaekjoonStatus.shared.solvedhistory.service.port.SolvedHistoryRepository;
+import project.BaekjoonStatus.shared.solvedhistory.infra.SolvedHistoryRepository;
 
 import java.util.List;
 

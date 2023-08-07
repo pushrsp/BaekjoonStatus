@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.dailyproblem.service.port;
+package project.BaekjoonStatus.shared.dailyproblem.infra;
 
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 

@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.tag.service.port;
+package project.BaekjoonStatus.shared.tag.infra;
 
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 

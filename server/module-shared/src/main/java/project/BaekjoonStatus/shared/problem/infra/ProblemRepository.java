@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.problem.service.port;
+package project.BaekjoonStatus.shared.problem.infra;
 
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 
@@ -11,4 +11,5 @@ public interface ProblemRepository {
     Problem saveAndFlush(Problem problem);
     List<Problem> findAllByIdsIn(List<Long> ids);
     Optional<Problem> findById(Long id);
+    void deleteAllInBatch();
 }

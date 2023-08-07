@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
-import project.BaekjoonStatus.shared.tag.service.port.TagRepository;
+import project.BaekjoonStatus.shared.tag.infra.TagRepository;
 
 import java.util.*;
 

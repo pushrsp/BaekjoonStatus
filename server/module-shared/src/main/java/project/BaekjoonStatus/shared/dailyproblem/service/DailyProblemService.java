@@ -9,7 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
-import project.BaekjoonStatus.shared.dailyproblem.service.port.DailyProblemRepository;
+import project.BaekjoonStatus.shared.dailyproblem.infra.DailyProblemRepository;
 
 import java.net.URI;
 import java.nio.charset.Charset;

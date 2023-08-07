@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
-import project.BaekjoonStatus.shared.dailyproblem.service.port.DailyProblemRepository;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import project.BaekjoonStatus.shared.user.domain.User;
-import project.BaekjoonStatus.shared.user.service.port.UserRepository;
-import project.BaekjoonStatus.shared.user.service.request.UserCreateServiceDto;
+import project.BaekjoonStatus.shared.user.infra.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +18,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User save(UserCreateServiceDto request) {
-        return userRepository.save(request.toDomain());
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
