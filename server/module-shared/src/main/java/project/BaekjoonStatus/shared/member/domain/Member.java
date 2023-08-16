@@ -3,8 +3,6 @@ package project.BaekjoonStatus.shared.member.domain;
 import lombok.Builder;
 import lombok.Getter;
 
-import project.BaekjoonStatus.shared.common.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.exception.MyException;
 import project.BaekjoonStatus.shared.common.service.PasswordService;
 
 import java.time.LocalDateTime;
@@ -39,11 +37,11 @@ public class Member {
 
     public void login(String username, String password, PasswordService passwordService) {
         if(!this.username.equals(username)) {
-            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
         if(!passwordService.validatePassword(password, this.password)) {
-            throw new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST);
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
     }
 }
