@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class Member {
-    private Long id;
+    private String id;
     private String username;
     private String password;
     private String baekjoonUsername;
@@ -18,7 +18,7 @@ public class Member {
     private LocalDateTime modifiedTime;
 
     @Builder
-    private Member(Long id, String username, String password, String baekjoonUsername, boolean isPrivate, LocalDateTime createdTime, LocalDateTime modifiedTime) {
+    private Member(String id, String username, String password, String baekjoonUsername, boolean isPrivate, LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -29,7 +29,7 @@ public class Member {
     }
 
     //querydsl 전용 생성자
-    public Member(Long id, String username, String baekjoonUsername) {
+    public Member(String id, String username, String baekjoonUsername) {
         this.id = id;
         this.username = username;
         this.baekjoonUsername = baekjoonUsername;
