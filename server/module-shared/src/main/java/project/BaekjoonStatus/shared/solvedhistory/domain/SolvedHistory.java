@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 public class SolvedHistory {
     private final String id;
-    private final Member user;
+    private final Member member;
     private final Problem problem;
     private final Boolean isBefore;
     private final Integer problemLevel;
@@ -21,9 +21,9 @@ public class SolvedHistory {
     private final LocalDateTime createdTime;
 
     @Builder
-    private SolvedHistory(String id, Member user, Problem problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
+    private SolvedHistory(String id, Member member, Problem problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
         this.id = id;
-        this.user = user;
+        this.member = member;
         this.problem = problem;
         this.isBefore = isBefore;
         this.problemLevel = problemLevel;
@@ -31,9 +31,9 @@ public class SolvedHistory {
         this.createdTime = createdTime;
     }
 
-    private static SolvedHistory from(Member user, Problem problem, boolean isBefore, LocalDateTime createdTime, LocalDate createdDate) {
+    private static SolvedHistory from(Member member, Problem problem, boolean isBefore, LocalDateTime createdTime, LocalDate createdDate) {
         return SolvedHistory.builder()
-                .user(user)
+                .member(member)
                 .problem(problem)
                 .isBefore(isBefore)
                 .problemLevel(problem.getLevel())
