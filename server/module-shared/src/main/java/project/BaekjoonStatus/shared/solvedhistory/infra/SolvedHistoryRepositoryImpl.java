@@ -62,7 +62,7 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .addValue("is_before", solvedHistory.getIsBefore())
                 .addValue("problem_level", solvedHistory.getProblemLevel())
                 .addValue("problem_id", solvedHistory.getProblem().getId())
-                .addValue("user_id", solvedHistory.getUser().getId());
+                .addValue("user_id", solvedHistory.getMember().getId());
     }
 
     @Override
@@ -71,9 +71,9 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
         StringTemplate yearFormat = getDateFormat(solvedHistoryEntity.createdDate, YEAR_FORMAT);
 
         return queryFactory
-                .select(Projections.constructor(GroupByDate.class, solvedHistoryEntity.createdDate.as("day"), solvedHistoryEntity.user.id.count().as("count")))
+                .select(Projections.constructor(GroupByDate.class, solvedHistoryEntity.createdDate.as("day"), solvedHistoryEntity.member.id.count().as("count")))
                 .from(solvedHistoryEntity)
-                .where(solvedHistoryEntity.user.id.eq(userId).and(solvedHistoryEntity.isBefore.eq(false)).and(yearFormat.eq(year)))
+                .where(solvedHistoryEntity.member.id.eq(userId).and(solvedHistoryEntity.isBefore.eq(false)).and(yearFormat.eq(year)))
                 .groupBy(solvedHistoryEntity.createdDate)
                 .fetch();
     }
@@ -81,9 +81,9 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     @Override
     public List<GroupByTier> findSolvedCountGroupByLevel(Long userId) {
         return queryFactory
-                .select(Projections.constructor(GroupByTier.class, caseBuilder(), solvedHistoryEntity.user.id.count().as("count")))
+                .select(Projections.constructor(GroupByTier.class, caseBuilder(), solvedHistoryEntity.member.id.count().as("count")))
                 .from(solvedHistoryEntity)
-                .where(solvedHistoryEntity.user.id.eq(userId))
+                .where(solvedHistoryEntity.member.id.eq(userId))
                 .groupBy(solvedHistoryEntity.problemLevel)
                 .fetch();
     }

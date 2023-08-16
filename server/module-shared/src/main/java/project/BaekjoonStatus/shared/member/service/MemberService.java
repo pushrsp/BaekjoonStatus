@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import project.BaekjoonStatus.shared.member.domain.Member;
 import project.BaekjoonStatus.shared.member.infra.MemberRepository;
+import project.BaekjoonStatus.shared.member.service.request.MemberCreateSharedServiceRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,39 +19,22 @@ public class MemberService {
     private final MemberRepository userRepository;
 
     @Transactional
-    public Member save(Member user) {
-        return userRepository.save(user);
+    public Member save(MemberCreateSharedServiceRequest request) {
+        return userRepository.save(request.toDomain());
     }
 
     @Transactional(readOnly = true)
-    public Optional<Member> findById(Long userId) {
-        return userRepository.findById(userId);
+    public Optional<Member> findById(String memberId) {
+        return userRepository.findById(memberId);
     }
 
     @Transactional(readOnly = true)
     public Optional<Member> findByUsername(String username) {
-        if(!isValidUsername(username)) {
-            return Optional.empty();
-        }
-
         return userRepository.findByUsername(username);
     }
 
-    private boolean isValidUsername(String username) {
-        return username != null && !username.isBlank() && !hasSpecialCharacter(username);
-    }
-
-    private boolean hasSpecialCharacter(String username) {
-        String specialCharactersPattern = "[^a-zA-Z0-9]";
-
-        Pattern pattern = Pattern.compile(specialCharactersPattern);
-        Matcher matcher = pattern.matcher(username);
-
-        return matcher.find();
-    }
-
     @Transactional(readOnly = true)
-    public List<Member> findAllByGreaterThanUserId(Long userId, int limit) {
-        return userRepository.findAllByGreaterThanUserId(userId, limit);
+    public List<Member> findAllByGreaterThanUserId(String memberId, int limit) {
+        return userRepository.findAllGreaterThanMemberId(memberId, limit);
     }
 }

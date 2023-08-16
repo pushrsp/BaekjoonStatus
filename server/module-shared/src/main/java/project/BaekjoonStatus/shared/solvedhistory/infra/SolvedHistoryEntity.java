@@ -36,9 +36,9 @@ public class SolvedHistoryEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     @Type(type = "uuid-char")
-    private MemberEntity user;
+    private MemberEntity member;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id", columnDefinition = "BIGINT")
@@ -58,9 +58,9 @@ public class SolvedHistoryEntity {
     private LocalDateTime createdTime;
 
     @Builder
-    private SolvedHistoryEntity(UUID id, MemberEntity user, ProblemEntity problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
+    private SolvedHistoryEntity(UUID id, MemberEntity member, ProblemEntity problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
         this.id = id;
-        this.user = user;
+        this.member = member;
         this.problem = problem;
         this.isBefore = isBefore;
         this.problemLevel = problemLevel;
@@ -70,7 +70,7 @@ public class SolvedHistoryEntity {
 
     public static SolvedHistoryEntity from(SolvedHistory solvedHistory) {
         return SolvedHistoryEntity.builder()
-                .user(MemberEntity.from(solvedHistory.getUser()))
+                .member(MemberEntity.from(solvedHistory.getMember()))
                 .problem(ProblemEntity.from(solvedHistory.getProblem()))
                 .isBefore(solvedHistory.getIsBefore())
                 .problemLevel(solvedHistory.getProblemLevel())
@@ -82,7 +82,7 @@ public class SolvedHistoryEntity {
     public SolvedHistory to() {
         return SolvedHistory.builder()
                 .id(this.id.toString())
-                .user(this.user.to())
+                .member(this.member.to())
                 .problem(this.problem.to())
                 .isBefore(this.isBefore)
                 .problemLevel(this.problemLevel)

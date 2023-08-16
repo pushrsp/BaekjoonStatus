@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository {
-    Member save(Member user);
-    Optional<Member> findById(Long userId);
+    Member save(Member member);
+    Optional<Member> findById(String memberId);
     Optional<Member> findByUsername(String username);
-    List<Member> findAllByGreaterThanUserId(Long userId, int limit);
+    List<Member> findAllGreaterThanMemberId(String memberId, Integer limit);
     void deleteAllInBatch();
 }
