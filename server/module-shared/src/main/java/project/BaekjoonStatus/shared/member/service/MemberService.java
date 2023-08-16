@@ -51,6 +51,6 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public List<Member> findAllByGreaterThanUserId(Long userId, int limit) {
-        return userRepository.findAllByGreaterThanUserId(userId, limit);
+        return userRepository.findAllGreaterThanMemberId(userId, limit);
     }
 }
