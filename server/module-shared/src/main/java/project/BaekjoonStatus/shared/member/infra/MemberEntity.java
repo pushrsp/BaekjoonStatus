@@ -29,7 +29,7 @@ public class MemberEntity {
     private String baekjoonUsername;
 
     @Column(name = "is_private", nullable = false)
-    private boolean isPrivate;
+    private Boolean isPrivate;
 
     @Column(name = "created_time")
     @CreatedDate
@@ -63,7 +63,7 @@ public class MemberEntity {
 
     public Member to() {
         return Member.builder()
-                .id(this.id)
+                .id(String.valueOf(this.id))
                 .username(this.username)
                 .password(this.password)
                 .baekjoonUsername(this.baekjoonUsername)
