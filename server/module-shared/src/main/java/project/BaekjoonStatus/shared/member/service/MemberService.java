@@ -1,11 +1,11 @@
-package project.BaekjoonStatus.shared.user.service;
+package project.BaekjoonStatus.shared.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import project.BaekjoonStatus.shared.user.domain.User;
-import project.BaekjoonStatus.shared.user.infra.UserRepository;
+import project.BaekjoonStatus.shared.member.domain.Member;
+import project.BaekjoonStatus.shared.member.infra.MemberRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,21 +14,21 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
+public class MemberService {
+    private final MemberRepository userRepository;
 
     @Transactional
-    public User save(User user) {
+    public Member save(Member user) {
         return userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> findById(Long userId) {
+    public Optional<Member> findById(Long userId) {
         return userRepository.findById(userId);
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> findByUsername(String username) {
+    public Optional<Member> findByUsername(String username) {
         if(!isValidUsername(username)) {
             return Optional.empty();
         }
@@ -50,7 +50,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAllByGreaterThanUserId(Long userId, int limit) {
+    public List<Member> findAllByGreaterThanUserId(Long userId, int limit) {
         return userRepository.findAllByGreaterThanUserId(userId, limit);
     }
 }

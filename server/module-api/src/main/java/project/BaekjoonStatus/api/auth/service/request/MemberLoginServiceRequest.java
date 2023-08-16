@@ -4,12 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class UserLoginServiceRequest {
+public class MemberLoginServiceRequest {
     private String username;
     private String password;
 
     @Builder
-    private UserLoginServiceRequest(String username, String password) {
+    private MemberLoginServiceRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }

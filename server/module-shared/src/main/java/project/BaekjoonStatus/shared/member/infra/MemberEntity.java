@@ -1,22 +1,22 @@
-package project.BaekjoonStatus.shared.user.infra;
+package project.BaekjoonStatus.shared.member.infra;
 
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import project.BaekjoonStatus.shared.user.domain.User;
+import project.BaekjoonStatus.shared.member.domain.Member;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "USER")
+@Table(name = "MEMBER")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserEntity {
+public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
     @Column(name = "username", length = 20, nullable = false)
@@ -40,7 +40,7 @@ public class UserEntity {
     private LocalDateTime modifiedTime;
 
     @Builder
-    private UserEntity(Long id, String username, String password, String baekjoonUsername, boolean isPrivate, LocalDateTime createdTime, LocalDateTime modifiedTime) {
+    private MemberEntity(Long id, String username, String password, String baekjoonUsername, boolean isPrivate, LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -50,8 +50,8 @@ public class UserEntity {
         this.modifiedTime = modifiedTime;
     }
 
-    public static UserEntity from(User user) {
-        return UserEntity.builder()
+    public static MemberEntity from(Member user) {
+        return MemberEntity.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .baekjoonUsername(user.getBaekjoonUsername())
@@ -61,8 +61,8 @@ public class UserEntity {
                 .build();
     }
 
-    public User to() {
-        return User.builder()
+    public Member to() {
+        return Member.builder()
                 .id(this.id)
                 .username(this.username)
                 .password(this.password)

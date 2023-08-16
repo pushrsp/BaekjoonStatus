@@ -2,7 +2,7 @@ package project.BaekjoonStatus.api.auth.controller.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import project.BaekjoonStatus.shared.user.domain.User;
+import project.BaekjoonStatus.shared.member.domain.Member;
 
 @Getter
 public class UserLoginResponse {
@@ -17,7 +17,7 @@ public class UserLoginResponse {
         this.token = token;
     }
 
-    public static UserLoginResponse from(User user, String token) {
+    public static UserLoginResponse from(Member user, String token) {
         return UserLoginResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())

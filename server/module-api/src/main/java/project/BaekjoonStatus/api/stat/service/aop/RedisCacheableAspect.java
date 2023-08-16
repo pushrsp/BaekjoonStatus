@@ -1,7 +1,6 @@
 package project.BaekjoonStatus.api.stat.service.aop;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,7 +8,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import project.BaekjoonStatus.api.stat.service.annotation.RedisCacheable;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
+import project.BaekjoonStatus.shared.common.service.DateService;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -19,11 +18,11 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Aspect
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisCacheableAspect {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final DateService dateService;
 
     @Around("@annotation(redisCacheable)")
     public Object doRedis(ProceedingJoinPoint joinPoint, RedisCacheable redisCacheable) throws Throwable {
@@ -37,7 +36,7 @@ public class RedisCacheableAspect {
 
         Object result = joinPoint.proceed();
 
-        Duration between = Duration.between(DateProvider.getDateTime(), DateProvider.getNextCacheKey(DateProvider.getDateTime()));
+        Duration between = Duration.between(dateService.getDateTime(), dateService.getNextCacheKey(dateService.getDateTime()));
         redisTemplate.opsForValue().setIfAbsent(key, result, between.toSeconds(), TimeUnit.SECONDS);
 
         return result;

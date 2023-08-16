@@ -7,7 +7,7 @@ import project.BaekjoonStatus.api.stat.controller.response.*;
 import project.BaekjoonStatus.api.stat.service.StatService;
 import project.BaekjoonStatus.shared.common.response.CommonResponse;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
+import project.BaekjoonStatus.shared.common.service.DateService;
 
 import java.util.Objects;
 
@@ -18,6 +18,7 @@ public class StatController {
     private static final int PAGE_SIZE = 10;
 
     private final StatService statService;
+    private final DateService dateService;
 
     @GetMapping("/daily")
     public CommonResponse findTodayProblems() {
@@ -31,7 +32,7 @@ public class StatController {
     @GetMapping("/date")
     public CommonResponse findDailySolvedCount(@RequestParam String year, @Auth String userId) {
         if(year.isEmpty()) {
-            year = String.valueOf(DateProvider.getDate().getYear());
+            year = String.valueOf(dateService.getDate().getYear());
         }
 
         return CommonResponse.builder()

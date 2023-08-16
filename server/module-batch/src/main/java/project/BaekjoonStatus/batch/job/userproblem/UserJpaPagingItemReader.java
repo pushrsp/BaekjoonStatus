@@ -1,17 +1,17 @@
 package project.BaekjoonStatus.batch.job.userproblem;
 
 import org.springframework.batch.item.database.AbstractPagingItemReader;
-import project.BaekjoonStatus.shared.user.domain.User;
-import project.BaekjoonStatus.shared.user.service.UserService;
+import project.BaekjoonStatus.shared.member.domain.Member;
+import project.BaekjoonStatus.shared.member.service.MemberService;
 
 import java.util.ArrayList;
 
-public class UserJpaPagingItemReader extends AbstractPagingItemReader<User> {
-    private final UserService userService;
+public class UserJpaPagingItemReader extends AbstractPagingItemReader<Member> {
+    private final MemberService userService;
 
     private Long userId = 0L;
 
-    public UserJpaPagingItemReader(UserService userService, int chunkSize) {
+    public UserJpaPagingItemReader(MemberService userService, int chunkSize) {
         this.userService = userService;
         setPageSize(chunkSize);
     }
