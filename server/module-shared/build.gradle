@@ -8,6 +8,9 @@ dependencies {
 
     api 'com.auth0:java-jwt:3.19.4'
 
+    //h2
+    testRuntimeOnly 'com.h2database:h2'
+
     // queryDSL 설정
     implementation "com.querydsl:querydsl-jpa"
     implementation "com.querydsl:querydsl-core"

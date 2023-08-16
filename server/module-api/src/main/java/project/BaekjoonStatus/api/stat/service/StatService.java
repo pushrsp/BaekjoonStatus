@@ -3,6 +3,7 @@ package project.BaekjoonStatus.api.stat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.api.stat.service.annotation.RedisCacheable;
+import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.domain.GroupByDate;
@@ -12,7 +13,6 @@ import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistoryByUserId;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.service.TagService;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +27,11 @@ public class StatService {
     private final SolvedHistoryService solvedHistoryService;
     private final TagService tagService;
 
+    private final DateService dateService;
+
     @RedisCacheable(key = "getTodayProblems")
     public List<DailyProblem> findTodayProblems() {
-        return dailyProblemService.findTodayProblems(DateProvider.getToday(DateProvider.getDateTime()));
+        return dailyProblemService.findTodayProblems(dateService.getToday(dateService.getDateTime()));
     }
 
     @RedisCacheable(key = "getSolvedCountGroupByDate", paramNames = {"userId"})

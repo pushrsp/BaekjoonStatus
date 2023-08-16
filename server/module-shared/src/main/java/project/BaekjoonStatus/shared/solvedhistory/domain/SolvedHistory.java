@@ -3,7 +3,7 @@ package project.BaekjoonStatus.shared.solvedhistory.domain;
 import lombok.Builder;
 import lombok.Getter;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
-import project.BaekjoonStatus.shared.user.domain.User;
+import project.BaekjoonStatus.shared.member.domain.Member;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 public class SolvedHistory {
     private final String id;
-    private final User user;
+    private final Member user;
     private final Problem problem;
     private final Boolean isBefore;
     private final Integer problemLevel;
@@ -21,7 +21,7 @@ public class SolvedHistory {
     private final LocalDateTime createdTime;
 
     @Builder
-    private SolvedHistory(String id, User user, Problem problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
+    private SolvedHistory(String id, Member user, Problem problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
         this.id = id;
         this.user = user;
         this.problem = problem;
@@ -31,7 +31,7 @@ public class SolvedHistory {
         this.createdTime = createdTime;
     }
 
-    private static SolvedHistory from(User user, Problem problem, boolean isBefore, LocalDateTime createdTime, LocalDate createdDate) {
+    private static SolvedHistory from(Member user, Problem problem, boolean isBefore, LocalDateTime createdTime, LocalDate createdDate) {
         return SolvedHistory.builder()
                 .user(user)
                 .problem(problem)
@@ -42,7 +42,7 @@ public class SolvedHistory {
                 .build();
     }
 
-    public static List<SolvedHistory> from(User user, List<Problem> problems, boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
+    public static List<SolvedHistory> from(Member user, List<Problem> problems, boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
         return problems.stream()
                 .map(p -> SolvedHistory.from(user, p, isBefore, createdTime, createdDate))
                 .collect(Collectors.toList());

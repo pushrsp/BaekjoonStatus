@@ -1,0 +1,31 @@
+token:
+  secret: test
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  redis:
+    host: localhost
+    port: 6379
+    password: sa
+  datasource:
+    url: jdbc:h2:mem:~/BAEKJOON_STATUS
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database: h2
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.H2Dialect
+        jdbc:
+          batch_size: 100
+    open-in-view: false

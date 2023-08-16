@@ -3,7 +3,7 @@ package project.BaekjoonStatus.api.auth.controller.request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.BaekjoonStatus.api.auth.service.request.UserCreateServiceRequest;
+import project.BaekjoonStatus.api.auth.service.request.MemberCreateServiceRequest;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -31,8 +31,8 @@ public class UserCreateRequest {
         this.password = password;
     }
 
-    public UserCreateServiceRequest toServiceRequest(LocalDateTime now) {
-        return UserCreateServiceRequest.builder()
+    public MemberCreateServiceRequest toServiceRequest(LocalDateTime now) {
+        return MemberCreateServiceRequest.builder()
                 .username(this.username)
                 .baekjoonUsername(this.baekjoonUsername)
                 .password(this.password)

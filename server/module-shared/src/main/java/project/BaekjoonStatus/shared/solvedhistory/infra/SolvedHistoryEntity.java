@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
+import project.BaekjoonStatus.shared.member.infra.MemberEntity;
 import project.BaekjoonStatus.shared.problem.infra.ProblemEntity;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
-import project.BaekjoonStatus.shared.user.infra.UserEntity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -38,7 +38,7 @@ public class SolvedHistoryEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @Type(type = "uuid-char")
-    private UserEntity user;
+    private MemberEntity user;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id", columnDefinition = "BIGINT")
@@ -58,7 +58,7 @@ public class SolvedHistoryEntity {
     private LocalDateTime createdTime;
 
     @Builder
-    private SolvedHistoryEntity(UUID id, UserEntity user, ProblemEntity problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
+    private SolvedHistoryEntity(UUID id, MemberEntity user, ProblemEntity problem, Boolean isBefore, Integer problemLevel, LocalDate createdDate, LocalDateTime createdTime) {
         this.id = id;
         this.user = user;
         this.problem = problem;
@@ -70,7 +70,7 @@ public class SolvedHistoryEntity {
 
     public static SolvedHistoryEntity from(SolvedHistory solvedHistory) {
         return SolvedHistoryEntity.builder()
-                .user(UserEntity.from(solvedHistory.getUser()))
+                .user(MemberEntity.from(solvedHistory.getUser()))
                 .problem(ProblemEntity.from(solvedHistory.getProblem()))
                 .isBefore(solvedHistory.getIsBefore())
                 .problemLevel(solvedHistory.getProblemLevel())

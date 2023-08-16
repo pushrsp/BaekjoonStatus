@@ -10,5 +10,8 @@ dependencies {
     //bcrypt
     implementation 'org.mindrot:jbcrypt:0.4'
 
+    //h2
+    testRuntimeOnly 'com.h2database:h2'
+
     api project(':module-shared')
 }

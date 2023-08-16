@@ -1,6 +1,6 @@
 package project.BaekjoonStatus.api.auth.service.token;
 
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
+import project.BaekjoonStatus.shared.common.service.DateService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,10 +10,10 @@ import java.util.UUID;
 public class RegisterTokenStore {
     private final Map<String, RegisterToken> registerTokenStore = new HashMap<>();
 
-    public synchronized String put(List<Long> problemIds) {
+    public synchronized String put(List<Long> problemIds, DateService dateService) {
         String key = UUID.randomUUID().toString();
         RegisterToken token = RegisterToken.builder()
-                .createdAt(DateProvider.getDate())
+                .createdAt(dateService.getDate())
                 .problemIds(problemIds)
                 .build();
 

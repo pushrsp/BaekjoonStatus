@@ -3,7 +3,7 @@ package project.BaekjoonStatus.api.auth.controller.request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.BaekjoonStatus.api.auth.service.request.UserLoginServiceRequest;
+import project.BaekjoonStatus.api.auth.service.request.MemberLoginServiceRequest;
 
 import javax.validation.constraints.NotBlank;
 
@@ -22,8 +22,8 @@ public class UserLoginRequest {
         this.password = password;
     }
 
-    public UserLoginServiceRequest toServiceRequest() {
-        return UserLoginServiceRequest.builder()
+    public MemberLoginServiceRequest toServiceRequest() {
+        return MemberLoginServiceRequest.builder()
                 .username(this.username)
                 .password(this.password)
                 .build();

@@ -5,22 +5,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.stereotype.Service;
 
-import project.BaekjoonStatus.api.auth.service.request.UserCreateServiceRequest;
-import project.BaekjoonStatus.api.auth.service.request.UserLoginServiceRequest;
+import project.BaekjoonStatus.api.auth.service.request.MemberCreateServiceRequest;
+import project.BaekjoonStatus.api.auth.service.request.MemberLoginServiceRequest;
 import project.BaekjoonStatus.api.auth.service.token.RegisterTokenStore;
 import project.BaekjoonStatus.api.concurrent.annotation.CustomAsync;
 
-import project.BaekjoonStatus.shared.common.utils.PasswordEncryptor;
+import project.BaekjoonStatus.shared.common.service.DateService;
+import project.BaekjoonStatus.shared.common.service.PasswordService;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
-import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.tag.service.TagService;
-import project.BaekjoonStatus.shared.user.domain.User;
-import project.BaekjoonStatus.shared.user.service.UserService;
+import project.BaekjoonStatus.shared.member.domain.Member;
+import project.BaekjoonStatus.shared.member.service.MemberService;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
 
@@ -39,13 +39,14 @@ public class AuthService {
 
     private final ProblemService problemService;
     private final TagService tagService;
-    private final UserService userService;
+    private final MemberService memberService;
     private final SolvedHistoryService solvedHistoryService;
 
-    private final PasswordEncryptor passwordEncryptor;
+    private final PasswordService passwordService;
+    private final DateService dateService;
 
-    public User getById(String userId) {
-        return userService.findById(Long.parseLong(userId))
+    public Member getById(String userId) {
+        return memberService.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
     }
 
@@ -56,7 +57,7 @@ public class AuthService {
     }
 
     public String getRegisterToken(List<Long> problemIds) {
-        return registerTokenStore.put(problemIds);
+        return registerTokenStore.put(problemIds, dateService);
     }
 
     @CustomAsync(maxTry = 10, offset = 2, delay = 180000)
@@ -78,7 +79,7 @@ public class AuthService {
     }
 
     @CustomAsync(maxTry = 10, offset = 2, delay = 200000)
-    public void createSolvedHistories(User user, List<Long> problemIds) {
+    public void createSolvedHistories(Member user, List<Long> problemIds) {
         List<Problem> problems = problemService.findAllByIdsIn(problemIds);
         if(problems.size() != problemIds.size()) {
             throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
@@ -88,26 +89,26 @@ public class AuthService {
     }
 
     @Recover
-    public void recover(MyException e, User user, List<Long> problemIds) {
+    public void recover(MyException e, Member user, List<Long> problemIds) {
         //FIXME
         log.info("createSolvedHistories userId: {}", user.getId());
     }
 
-    public User createUser(UserCreateServiceRequest request) {
+    public Member createUser(MemberCreateServiceRequest request) {
         duplicateUsername(request.getUsername());
 
-        return userService.save(request.toDomain(true, passwordEncryptor));
+        return memberService.save(request.toDomain(true, passwordService));
     }
 
     public List<Long> getProblemIds(String registerToken) {
         return registerTokenStore.get(registerToken).getProblemIds();
     }
 
-    public User login(UserLoginServiceRequest request) {
-        User findUser = userService.findByUsername(request.getUsername())
+    public Member login(MemberLoginServiceRequest request) {
+        Member findUser = memberService.findByUsername(request.getUsername())
                 .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
 
-        findUser.login(request.getUsername(), request.getPassword(), passwordEncryptor);
+        findUser.login(request.getUsername(), request.getPassword(), passwordService);
 
         return findUser;
     }
@@ -119,7 +120,7 @@ public class AuthService {
     }
 
     private void duplicateUsername(String username) {
-        userService.findByUsername(username).ifPresent((u) -> {
+        memberService.findByUsername(username).ifPresent((u) -> {
                     throw new MyException(CodeEnum.MY_SERVER_DUPLICATE);
                 });
     }

@@ -22,8 +22,8 @@ import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.tag.service.TagService;
-import project.BaekjoonStatus.shared.user.domain.User;
-import project.BaekjoonStatus.shared.user.service.UserService;
+import project.BaekjoonStatus.shared.member.domain.Member;
+import project.BaekjoonStatus.shared.member.service.MemberService;
 import project.BaekjoonStatus.shared.common.template.ListDividerTemplate;
 
 import java.time.LocalDateTime;
@@ -44,7 +44,7 @@ public class SaveUserProblemJob {
     private final SolvedAcService solvedAcService;
     private final BaekjoonService baekjoonService;
 
-    private final UserService userService;
+    private final MemberService userService;
     private final SolvedHistoryService solvedHistoryService;
     private final ProblemService problemService;
     private final TagService tagService;
@@ -61,14 +61,14 @@ public class SaveUserProblemJob {
     @JobScope
     public Step userProblemStep(@Value("#{jobParameters[date]}") String date) {
         return this.stepBuilderFactory.get(date + "_userProblemJob")
-                .<User, List<SolvedHistory>>chunk(CHUNK_SIZE)
+                .<Member, List<SolvedHistory>>chunk(CHUNK_SIZE)
                 .reader(new UserJpaPagingItemReader(userService, CHUNK_SIZE))
                 .processor(this.userProblemItemProcessor())
                 .writer(this.userProblemItemWriter())
                 .build();
     }
 
-    private ItemProcessor<User, List<SolvedHistory>> userProblemItemProcessor() {
+    private ItemProcessor<Member, List<SolvedHistory>> userProblemItemProcessor() {
         return user -> {
             List<Long> newIds = findNewIds(user);
             if(newIds.isEmpty()) {
@@ -102,7 +102,7 @@ public class SaveUserProblemJob {
         };
     }
 
-    private List<Long> findNewIds(User user) {
+    private List<Long> findNewIds(Member user) {
         List<Long> newHistories = baekjoonService.getProblemIdsByUsername (user.getBaekjoonUsername());
         List<Long> oldHistories = solvedHistoryService.findAllByUserId(user.getId())
                 .stream()
