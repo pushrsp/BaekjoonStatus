@@ -1,9 +1,9 @@
-package project.BaekjoonStatus.api.common.utils;
+package project.BaekjoonStatus.api.common.service;
 
 import org.mindrot.jbcrypt.BCrypt;
-import project.BaekjoonStatus.shared.common.utils.PasswordEncryptor;
+import project.BaekjoonStatus.shared.common.service.PasswordService;
 
-public class PasswordBcryptor implements PasswordEncryptor {
+public class BcryptService implements PasswordService {
     @Override
     public String hashPassword(String plainPassword) {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt());

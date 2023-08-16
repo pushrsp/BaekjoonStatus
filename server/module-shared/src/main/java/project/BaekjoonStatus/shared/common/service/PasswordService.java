@@ -1,6 +1,6 @@
-package project.BaekjoonStatus.shared.common.utils;
+package project.BaekjoonStatus.shared.common.service;
 
-public interface PasswordEncryptor {
+public interface PasswordService {
     String hashPassword(String plainPassword);
     boolean validatePassword(String plainPassword, String hashedPassword);
 }
