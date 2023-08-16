@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import project.BaekjoonStatus.shared.common.exception.InvalidIdFormatException;
 import project.BaekjoonStatus.shared.member.domain.Member;
 
 import java.sql.ResultSet;
@@ -30,8 +31,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findById(Long userId) {
-        return memberJpaRepository.findById(userId).map(MemberEntity::to);
+    public Optional<Member> findById(String memberId) {
+        if(!isNumeric(memberId)) {
+            throw new InvalidIdFormatException();
+        }
+
+        return memberJpaRepository.findById(Long.parseLong(memberId)).map(MemberEntity::to);
     }
 
     @Override
@@ -40,12 +45,16 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public List<Member> findAllGreaterThanMemberId(Long memberId, Integer limit) {
+    public List<Member> findAllGreaterThanMemberId(String memberId, Integer limit) {
+        if(!isNumeric(memberId)) {
+            throw new InvalidIdFormatException();
+        }
+
         String sql = "select m.member_id, m.username, m.baekjoon_username from MEMBER m " +
                 "where m.member_id > :memberId " +
                 "limit :limit";
 
-        return namedParameterJdbcTemplate.query(sql, generateParams(memberId, limit), MEMBER_ROW_MAPPER);
+        return namedParameterJdbcTemplate.query(sql, generateParams(Long.parseLong(memberId), limit), MEMBER_ROW_MAPPER);
     }
 
     private MapSqlParameterSource generateParams(Long memberId, Integer limit) {
@@ -57,5 +66,14 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public void deleteAllInBatch() {
         memberJpaRepository.deleteAllInBatch();
+    }
+
+    private boolean isNumeric(String str) {
+        try {
+            Long.parseLong(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
