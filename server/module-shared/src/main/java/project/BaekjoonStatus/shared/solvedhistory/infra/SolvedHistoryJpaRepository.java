@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface SolvedHistoryJpaRepository  extends JpaRepository<SolvedHistoryEntity, UUID> {
-    @Query("select sh from SolvedHistoryEntity sh join fetch sh.problem where sh.user.id = :userId")
+    @Query("select sh from SolvedHistoryEntity sh join fetch sh.problem where sh.member.id = :userId")
     List<SolvedHistoryEntity> findAllByUserId(@Param("userId") Long userId);
 }
