@@ -89,13 +89,13 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     }
 
     @Override
-    public List<GroupByTag> findSolvedCountGroupByTag(Long userId) {
+    public List<GroupByTag> findSolvedCountGroupByTag(Long memberId) {
         String sql =
                 """
                 SELECT t.tag_name as tagName, count(sh.user_id) as count FROM SOLVED_HISTORY sh force index (idx__user_id)
                 JOIN PROBLEM p ON p.problem_id = sh.problem_id
                 JOIN TAG t ON t.problem_id = p.problem_id
-                WHERE sh.user_id = :userId AND t.tag_name in (:tagNames)
+                WHERE sh.member_id = :memberId AND t.tag_name in (:tagNames)
                 GROUP BY t.tag_name
                 """;
 
@@ -105,17 +105,17 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                                                         .count(rs.getInt("count"))
                                                         .build();
 
-        return namedParameterJdbcTemplate.query(sql, generateParams(userId), rowMapper);
+        return namedParameterJdbcTemplate.query(sql, generateParams(memberId), rowMapper);
     }
 
-    private SqlParameterSource generateParams(Long userId) {
+    private SqlParameterSource generateParams(Long memberId) {
         return new MapSqlParameterSource()
-                .addValue("userId", userId)
+                .addValue("memberId", memberId)
                 .addValue("tagNames", Arrays.stream(TAG_IN).toList());
     }
 
     @Override
-    public List<SolvedHistoryByUserId> findAllByUserId(Long userId, int offset, int limit) {
+    public List<SolvedHistoryByUserId> findAllByUserId(Long memberId, int offset, int limit) {
         String sql =
                 """
                 SELECT p.problem_id as problemId, p.title as title, p.level as problemLevel
@@ -123,7 +123,7 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 JOIN (
                     SELECT sh.problem_id as problem_id
                     FROM SOLVED_HISTORY sh
-                    WHERE sh.user_id = :userId
+                    WHERE sh.member_id = :memberId
                     ORDER BY sh.problem_level DESC, sh.problem_id ASC
                     LIMIT :limit
                     OFFSET :offset
@@ -136,12 +136,12 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .problemLevel(rs.getInt("problemLevel"))
                 .build();
 
-        return namedParameterJdbcTemplate.query(sql, generateParams(userId, limit, offset), rowMapper);
+        return namedParameterJdbcTemplate.query(sql, generateParams(memberId, limit, offset), rowMapper);
     }
 
-    private SqlParameterSource generateParams(Long userId, int limit, int offset) {
+    private SqlParameterSource generateParams(Long memberId, int limit, int offset) {
         return new MapSqlParameterSource()
-                .addValue("userId", userId)
+                .addValue("memberId", memberId)
                 .addValue("limit", limit)
                 .addValue("offset", offset);
     }

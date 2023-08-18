@@ -61,7 +61,7 @@ public class SolvedAcProblem {
 
     public Problem toDomain(LocalDateTime createdTime) {
         return Problem.builder()
-                .id(this.problemId)
+                .id(String.valueOf(this.problemId))
                 .level(this.level.intValue())
                 .title(this.titleKo)
                 .createdTime(createdTime)

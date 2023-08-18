@@ -1,4 +1,4 @@
-package project.BaekjoonStatus.shared.member;
+package project.BaekjoonStatus.shared;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
