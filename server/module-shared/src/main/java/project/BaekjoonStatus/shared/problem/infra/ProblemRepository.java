@@ -9,7 +9,7 @@ public interface ProblemRepository {
     int saveAll(List<Problem> problems);
     Problem save(Problem problem);
     Problem saveAndFlush(Problem problem);
-    List<Problem> findAllByIdsIn(List<Long> ids);
-    Optional<Problem> findById(Long id);
+    List<Problem> findAllByIdsIn(List<String> ids);
+    Optional<Problem> findById(String id);
     void deleteAllInBatch();
 }

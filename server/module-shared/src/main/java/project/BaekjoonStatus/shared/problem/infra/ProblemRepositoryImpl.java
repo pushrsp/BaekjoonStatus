@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import project.BaekjoonStatus.shared.common.repository.BaseRepository;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 
 import java.util.List;
@@ -14,8 +15,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class ProblemRepositoryImpl implements ProblemRepository {
+public class ProblemRepositoryImpl extends BaseRepository implements ProblemRepository {
     private final ProblemJpaRepository problemJpaRepository;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -50,21 +50,28 @@ public class ProblemRepositoryImpl implements ProblemRepository {
     }
 
     @Override
+    @Transactional
     public Problem saveAndFlush(Problem problem) {
         return problemJpaRepository.saveAndFlush(ProblemEntity.from(problem)).to();
     }
 
     @Override
-    public List<Problem> findAllByIdsIn(List<Long> ids) {
-        return problemJpaRepository.findAllByIdIn(ids)
+    @Transactional(readOnly = true)
+    public List<Problem> findAllByIdsIn(List<String> ids) {
+        List<Long> problemIds = ids.stream()
+                .map(this::parseLong)
+                .collect(Collectors.toList());
+
+        return problemJpaRepository.findAllByIdIn(problemIds)
                 .stream()
                 .map(ProblemEntity::to)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Problem> findById(Long id) {
-        return problemJpaRepository.findById(id).map(ProblemEntity::to);
+    @Transactional(readOnly = true)
+    public Optional<Problem> findById(String id) {
+        return problemJpaRepository.findById(parseLong(id)).map(ProblemEntity::to);
     }
 
     @Override

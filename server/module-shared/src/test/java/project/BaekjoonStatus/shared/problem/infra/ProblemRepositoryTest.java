@@ -54,7 +54,7 @@ class ProblemRepositoryTest extends IntegrationTestSupport {
     @Test
     public void can_save_problem() throws Exception {
         //given
-        Problem problem = createProblem(1000L, "test");
+        Problem problem = createProblem("1000", "test");
 
         //when
         Problem result = problemRepository.save(problem);
@@ -69,7 +69,7 @@ class ProblemRepositoryTest extends IntegrationTestSupport {
     @DisplayName("여러개의 problem을 여러개의 problem_id를 통해 동시에 찾을 수 있다.")
     @ParameterizedTest
     @MethodSource("provideProblemIds")
-    public void can_find_list_of_problems_by_list_of_problem_id(List<Long> problemIds) throws Exception {
+    public void can_find_list_of_problems_by_list_of_problem_id(List<String> problemIds) throws Exception {
         //given
         List<Problem> problems = createProblems(problemIds);
         problemRepository.saveAll(problems);
@@ -85,7 +85,7 @@ class ProblemRepositoryTest extends IntegrationTestSupport {
     @Test
     public void can_find_problem_by_problem_id() throws Exception {
         //given
-        Problem problem = createProblem(1000L, "title");
+        Problem problem = createProblem("1000", "title");
         problemRepository.save(problem);
 
         //when
@@ -98,13 +98,13 @@ class ProblemRepositoryTest extends IntegrationTestSupport {
 
     private static Stream<Arguments> provideProblemIds() {
         return Stream.of(
-                Arguments.of(List.of(1000L)),
-                Arguments.of(List.of(1000L, 1001L, 2002L, 2000L, 3000L)),
-                Arguments.of(List.of(1000L, 5000L, 100L, 2555L, 1222L, 3432L, 2132L, 999L))
+                Arguments.of(List.of("1000")),
+                Arguments.of(List.of("1000", "1001", "2002", "2000", "3000")),
+                Arguments.of(List.of("1000", "5000", "100", "2555", "1222", "3432", "2132", "999"))
         );
     }
 
-    private List<Problem> createProblems(List<Long> problemIds) {
+    private List<Problem> createProblems(List<String> problemIds) {
         return problemIds.stream()
                 .map(id -> createProblem(id, "title: " + id))
                 .collect(Collectors.toList());
@@ -113,13 +113,13 @@ class ProblemRepositoryTest extends IntegrationTestSupport {
     private List<Problem> createProblems(int size) {
         List<Problem> problems = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            problems.add(createProblem((long) i,"test " + i));
+            problems.add(createProblem(String.valueOf(i),"test " + i));
         }
 
         return problems;
     }
 
-    private Problem createProblem(Long id, String title) {
+    private Problem createProblem(String id, String title) {
         return Problem.builder()
                 .id(id)
                 .title(title)
