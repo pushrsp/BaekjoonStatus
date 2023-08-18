@@ -46,7 +46,7 @@ public class ProblemEntity implements Persistable<Long> {
 
     public static ProblemEntity from(Problem problem) {
         return ProblemEntity.builder()
-                .id(problem.getId())
+                .id(Long.parseLong(problem.getId()))
                 .level(problem.getLevel())
                 .title(problem.getTitle())
                 .createdTime(problem.getCreatedTime())
@@ -56,7 +56,7 @@ public class ProblemEntity implements Persistable<Long> {
 
     public Problem to() {
         return Problem.builder()
-                .id(this.id)
+                .id(String.valueOf(this.id))
                 .level(this.level)
                 .title(this.title)
                 .createdTime(this.createdTime)

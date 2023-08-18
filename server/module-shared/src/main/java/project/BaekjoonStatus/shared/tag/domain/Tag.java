@@ -29,7 +29,7 @@ public class Tag implements Serializable {
                 .build();
     }
 
-    public static Map<Long, List<Tag>> toMap(List<Tag> tags) {
+    public static Map<String, List<Tag>> toMap(List<Tag> tags) {
         return tags.stream()
                 .collect(Collectors.groupingBy(tag -> tag.getProblem().getId(), Collectors.toList()));
     }
