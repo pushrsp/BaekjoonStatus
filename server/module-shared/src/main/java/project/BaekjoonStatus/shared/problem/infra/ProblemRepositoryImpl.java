@@ -21,7 +21,7 @@ public class ProblemRepositoryImpl implements ProblemRepository {
 
     @Override
     @Transactional
-    public void saveAll(List<Problem> problems) {
+    public int saveAll(List<Problem> problems) {
         String sql =
                 """
                 INSERT INTO PROBLEM (problem_id, level, title, created_time)
@@ -32,7 +32,7 @@ public class ProblemRepositoryImpl implements ProblemRepository {
                 .map(this::generateParams)
                 .toArray(SqlParameterSource[]::new);
 
-        namedParameterJdbcTemplate.batchUpdate(sql, params);
+        return namedParameterJdbcTemplate.batchUpdate(sql, params).length;
     }
 
     private SqlParameterSource generateParams(Problem problem) {
