@@ -13,7 +13,7 @@ import project.BaekjoonStatus.api.concurrent.annotation.CustomAsync;
 import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.common.service.PasswordService;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
-import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
+import project.BaekjoonStatus.shared.baekjoon.service.BaekjoonService;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;

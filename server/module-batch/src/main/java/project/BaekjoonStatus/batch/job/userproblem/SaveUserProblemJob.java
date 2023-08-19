@@ -13,7 +13,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import project.BaekjoonStatus.shared.baekjoon.BaekjoonService;
+import project.BaekjoonStatus.shared.baekjoon.service.BaekjoonService;
 import project.BaekjoonStatus.shared.common.utils.DateProvider;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
