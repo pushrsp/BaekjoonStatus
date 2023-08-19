@@ -1,16 +1,12 @@
-package project.BaekjoonStatus.shared.baekjoon;
+package project.BaekjoonStatus.shared.baekjoon.service;
 
 import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.shared.common.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.exception.MyException;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,12 +22,10 @@ public class BaekjoonService {
             return Arrays.stream(elements.get(0).text().split(" "))
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
-        } catch (HttpStatusException e) {
-            throw new MyException(CodeEnum.BAEKJOON_NOT_FOUND);
-        } catch (UnknownHostException e) {
-            throw new MyException(CodeEnum.MY_SERVER_UNKNOWN_HOST);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
         } catch (Exception e) {
-            throw new MyException(CodeEnum.BAEKJOON_SERVER_ERROR);
+            throw new InternalError("잠시 후 다시 시도해주세요.");
         }
     }
 

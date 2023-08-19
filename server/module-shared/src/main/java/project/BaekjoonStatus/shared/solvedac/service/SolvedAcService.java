@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import project.BaekjoonStatus.shared.common.exception.CodeEnum;
-import project.BaekjoonStatus.shared.common.exception.MyException;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 
 import java.net.URI;
@@ -33,7 +31,9 @@ public class SolvedAcService {
             RestTemplate restTemplate = new RestTemplate();
             return restTemplate.getForObject(uri, SolvedAcProblem.class);
         } catch (HttpClientErrorException e) {
-            throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
+            throw new IllegalArgumentException("해당 id를 가진 문제가 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new InternalError("잠시 후 다시 시도해주세요.");
         }
     }
 
@@ -49,7 +49,9 @@ public class SolvedAcService {
             RestTemplate restTemplate = new RestTemplate();
             return Arrays.stream(Objects.requireNonNull(restTemplate.getForObject(uri, SolvedAcProblem[].class))).collect(Collectors.toList());
         } catch (HttpClientErrorException e) {
-            throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
+            throw new IllegalArgumentException("해당 id를 가진 문제가 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new InternalError("잠시 후 다시 시도해주세요.");
         }
     }
 
