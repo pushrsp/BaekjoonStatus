@@ -31,11 +31,7 @@ public class ProblemService {
             throw new IllegalArgumentException("중복된 id가 존재합니다.");
         }
 
-        List<Problem> problems = requests.stream()
-                .map(ProblemCreateSharedServiceRequest::toDomain)
-                .collect(Collectors.toList());
-
-        return problemRepository.saveAll(problems);
+        return problemRepository.saveAll(ProblemCreateSharedServiceRequest.toDomainList(requests));
     }
 
     @Transactional(readOnly = true)
