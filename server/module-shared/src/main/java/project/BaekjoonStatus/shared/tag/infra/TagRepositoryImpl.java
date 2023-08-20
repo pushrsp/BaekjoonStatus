@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import project.BaekjoonStatus.shared.common.repository.BaseRepository;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 
 import java.util.List;
@@ -14,8 +15,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class TagRepositoryImpl implements TagRepository {
+public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     private final TagJpaRepository tagJpaRepository;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -27,7 +27,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     @Transactional
-    public void saveAll(List<Tag> tags) {
+    public int saveAll(List<Tag> tags) {
         String sql = """
                 INSERT INTO TAG (tag_id, tag_name, problem_id)
                 VALUES (:tag_id, :tag_name, :problem_id)
@@ -37,7 +37,7 @@ public class TagRepositoryImpl implements TagRepository {
                 .map(this::generateParams)
                 .toArray(SqlParameterSource[]::new);
 
-        namedParameterJdbcTemplate.batchUpdate(sql, params);
+        return namedParameterJdbcTemplate.batchUpdate(sql, params).length;
     }
 
     private SqlParameterSource generateParams(Tag tag) {
@@ -48,10 +48,22 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> findByProblemIdsIn(List<Long> problemIds) {
-        return tagJpaRepository.findAllByProblemIdIn(problemIds)
+    @Transactional(readOnly = true)
+    public List<Tag> findAllByProblemIdsIn(List<String> problemIds) {
+        return tagJpaRepository.findAllByProblemIdIn(convertStringToLong(problemIds))
                 .stream()
                 .map(TagEntity::to)
                 .collect(Collectors.toList());
+    }
+
+    private List<Long> convertStringToLong(List<String> ids) {
+        return ids.stream()
+                .map(this::parseLong)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        tagJpaRepository.deleteAllInBatch();
     }
 }

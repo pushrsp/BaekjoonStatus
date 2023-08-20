@@ -131,7 +131,7 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 """;
 
         RowMapper<SolvedHistoryByUserId> rowMapper = (ResultSet rs, int rowNum) -> SolvedHistoryByUserId.builder()
-                .problemId(rs.getLong("problemId"))
+                .problemId(String.valueOf(rs.getLong("problemId")))
                 .title(rs.getString("title"))
                 .problemLevel(rs.getInt("problemLevel"))
                 .build();

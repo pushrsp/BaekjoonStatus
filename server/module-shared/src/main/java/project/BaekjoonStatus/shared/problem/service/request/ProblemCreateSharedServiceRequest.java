@@ -8,6 +8,7 @@ import project.BaekjoonStatus.shared.problem.domain.Problem;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Getter
 public class ProblemCreateSharedServiceRequest {
@@ -31,6 +32,12 @@ public class ProblemCreateSharedServiceRequest {
                 .count();
 
         return requests.size() != count;
+    }
+
+    public static List<Problem> toDomainList(List<ProblemCreateSharedServiceRequest> requests) {
+        return requests.stream()
+                .map(ProblemCreateSharedServiceRequest::toDomain)
+                .collect(Collectors.toList());
     }
 
     private void verifyId() {

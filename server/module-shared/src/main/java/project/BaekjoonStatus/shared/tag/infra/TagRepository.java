@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface TagRepository {
     Tag save(Tag tag);
-    void saveAll(List<Tag> tags);
-    List<Tag> findByProblemIdsIn(List<Long> problemIds);
+    int saveAll(List<Tag> tags);
+    List<Tag> findAllByProblemIdsIn(List<String> problemIds);
+    void  deleteAllInBatch();
 }

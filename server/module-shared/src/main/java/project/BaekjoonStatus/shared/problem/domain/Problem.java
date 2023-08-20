@@ -24,4 +24,10 @@ public class Problem implements Serializable {
         this.tags = tags;
         this.createdTime = createdTime;
     }
+
+    public static Problem of(String id) {
+        return Problem.builder()
+                .id(id)
+                .build();
+    }
 }

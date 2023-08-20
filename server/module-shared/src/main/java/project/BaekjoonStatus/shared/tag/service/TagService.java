@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.infra.TagRepository;
+import project.BaekjoonStatus.shared.tag.service.request.TagCreateSharedServiceRequest;
 
 import java.util.*;
 
@@ -14,17 +15,17 @@ public class TagService {
     private final TagRepository tagRepository;
 
     @Transactional
-    public Tag save(Tag tag) {
-        return tagRepository.save(tag);
+    public Tag save(TagCreateSharedServiceRequest request) {
+        return tagRepository.save(request.toDomain());
     }
 
     @Transactional
-    public void saveAll(List<Tag> tags) {
-        tagRepository.saveAll(tags);
+    public int saveAll(List<TagCreateSharedServiceRequest> requests) {
+        return tagRepository.saveAll(TagCreateSharedServiceRequest.toDomainList(requests));
     }
 
     @Transactional(readOnly = true)
-    public List<Tag> findByProblemIdsIn(List<Long> problemIds) {
-        return tagRepository.findByProblemIdsIn(problemIds);
+    public List<Tag> findAllByProblemIdsIn(List<String> problemIds) {
+        return tagRepository.findAllByProblemIdsIn(problemIds);
     }
 }
