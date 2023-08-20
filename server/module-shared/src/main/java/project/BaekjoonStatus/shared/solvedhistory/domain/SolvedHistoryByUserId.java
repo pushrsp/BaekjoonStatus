@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class SolvedHistoryByUserId implements Serializable {
-    private Long problemId;
+    private String problemId;
     private String title;
     private Integer problemLevel;
     private List<Tag> tags;
