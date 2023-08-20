@@ -4,13 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
-public class Tag implements Serializable {
+public class Tag {
     private final String id;
     private final Problem problem;
     private final String tagName;
