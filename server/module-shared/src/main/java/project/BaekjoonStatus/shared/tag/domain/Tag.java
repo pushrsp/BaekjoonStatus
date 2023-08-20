@@ -29,6 +29,14 @@ public class Tag implements Serializable {
                 .build();
     }
 
+    public static Tag from(String id, String tagName, Problem problem) {
+        return Tag.builder()
+                .id(id)
+                .tagName(tagName)
+                .problem(problem)
+                .build();
+    }
+
     public static Map<String, List<Tag>> toMap(List<Tag> tags) {
         return tags.stream()
                 .collect(Collectors.groupingBy(tag -> tag.getProblem().getId(), Collectors.toList()));
