@@ -13,7 +13,7 @@ import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
+import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
@@ -40,6 +40,8 @@ public class SaveDailyProblemJob {
     private final TagService tagService;
     private final DailyProblemService dailyProblemService;
 
+    private final DateService dateService;
+
     @Bean
     public Job dailyProblemJob() {
         return this.jobBuilderFactory.get("dailyProblemJob")
@@ -65,16 +67,16 @@ public class SaveDailyProblemJob {
 
     private ItemProcessor<Long, Problem> dailyProblemItemProcessor() {
         return problemId -> {
-            Optional<Problem> optionalProblem = problemService.findById(problemId);
+            Optional<Problem> optionalProblem = problemService.findById(String.valueOf(problemId));
             return optionalProblem.orElseGet(() -> saveProblem(problemId));
         };
     }
 
     private ItemWriter<Problem> dailyProblemItemWriter() {
         return problems -> {
-            LocalDate now = DateProvider.getDate();
+            LocalDate now = dateService.getDate();
             List<DailyProblem> dailyProblems = problems.stream()
-                    .map(p -> DailyProblem.from(p, now))
+                    .map(p -> DailyProblem.of(p, now))
                     .collect(Collectors.toList());
 
             dailyProblemService.saveAll(dailyProblems);

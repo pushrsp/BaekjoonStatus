@@ -31,7 +31,7 @@ public class StatService {
 
     @RedisCacheable(key = "getTodayProblems")
     public List<DailyProblem> findTodayProblems() {
-        return dailyProblemService.findTodayProblems(dateService.getToday(dateService.getDateTime()));
+        return dailyProblemService.findAllByCreatedDate(dateService);
     }
 
     @RedisCacheable(key = "getSolvedCountGroupByDate", paramNames = {"userId"})
