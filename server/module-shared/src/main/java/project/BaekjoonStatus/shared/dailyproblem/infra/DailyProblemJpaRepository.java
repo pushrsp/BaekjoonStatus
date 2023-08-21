@@ -10,5 +10,5 @@ import java.util.UUID;
 
 public interface DailyProblemJpaRepository extends JpaRepository<DailyProblemEntity, UUID> {
     @Query("select dp from DailyProblemEntity dp join fetch dp.problem where dp.createdDate = :date")
-    List<DailyProblemEntity> findByCreatedDate(@Param(value = "date") LocalDate date);
+    List<DailyProblemEntity> findAllByCreatedDate(@Param(value = "date") LocalDate date);
 }
