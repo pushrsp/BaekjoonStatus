@@ -28,7 +28,7 @@ public class DailyProblemEntity {
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "problem_id", columnDefinition = "BIGINT")
+    @JoinColumn(name = "problem_id")
     private ProblemEntity problem;
 
     @Column(name = "created_date", nullable = false)

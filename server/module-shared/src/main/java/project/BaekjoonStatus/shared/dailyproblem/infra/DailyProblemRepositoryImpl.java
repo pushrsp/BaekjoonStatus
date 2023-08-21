@@ -21,7 +21,7 @@ public class DailyProblemRepositoryImpl implements DailyProblemRepository {
 
     @Override
     @Transactional
-    public void saveAll(List<DailyProblem> dailyProblems) {
+    public int saveAll(List<DailyProblem> dailyProblems) {
         String sql =
                 """
                 INSERT INTO DAILY_PROBLEM (daily_problem_id, created_date, problem_id)
@@ -32,7 +32,7 @@ public class DailyProblemRepositoryImpl implements DailyProblemRepository {
                 .map(this::generateParams)
                 .toArray(SqlParameterSource[]::new);
 
-        namedParameterJdbcTemplate.batchUpdate(sql, params);
+        return namedParameterJdbcTemplate.batchUpdate(sql, params).length;
     }
 
     private SqlParameterSource generateParams(DailyProblem dailyProblem) {
@@ -43,10 +43,15 @@ public class DailyProblemRepositoryImpl implements DailyProblemRepository {
     }
 
     @Override
-    public List<DailyProblem> findTodayProblems(LocalDate date) {
-        return dailyProblemJpaRepository.findByCreatedDate(date)
+    public List<DailyProblem> findAllByCreatedDate(LocalDate date) {
+        return dailyProblemJpaRepository.findAllByCreatedDate(date)
                 .stream()
                 .map(DailyProblemEntity::to)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteAllInBatch() {
+        dailyProblemJpaRepository.deleteAllInBatch();
     }
 }

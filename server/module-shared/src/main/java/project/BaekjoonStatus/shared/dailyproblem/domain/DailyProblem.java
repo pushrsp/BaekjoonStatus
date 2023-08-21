@@ -20,7 +20,7 @@ public class DailyProblem implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public static DailyProblem from(Problem problem, LocalDate createdDate) {
+    public static DailyProblem of(Problem problem, LocalDate createdDate) {
         return DailyProblem.builder()
                 .problem(problem)
                 .createdDate(createdDate)

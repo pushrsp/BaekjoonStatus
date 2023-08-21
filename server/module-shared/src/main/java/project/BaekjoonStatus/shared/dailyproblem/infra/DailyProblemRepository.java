@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface DailyProblemRepository {
-    void saveAll(List<DailyProblem> dailyProblems);
-    List<DailyProblem> findTodayProblems(LocalDate date);
+    int saveAll(List<DailyProblem> dailyProblems);
+    List<DailyProblem> findAllByCreatedDate(LocalDate date);
+    void deleteAllInBatch();
 }

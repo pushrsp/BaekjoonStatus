@@ -3,17 +3,17 @@ package project.BaekjoonStatus.shared.dailyproblem.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
+import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.dailyproblem.infra.DailyProblemRepository;
+import project.BaekjoonStatus.shared.dailyproblem.service.request.DailyProblemCreateSharedServiceRequest;
 
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -28,12 +28,13 @@ public class DailyProblemService {
     private final DailyProblemRepository dailyProblemRepository;
 
     @Transactional(readOnly = true)
-    public List<DailyProblem> findTodayProblems(LocalDate date) {
-        return dailyProblemRepository.findTodayProblems(date);
+    public List<DailyProblem> findAllByCreatedDate(DateService dateService) {
+        return dailyProblemRepository.findAllByCreatedDate(dateService.getToday(dateService.getDateTime()));
     }
 
-    public void saveAll(List<DailyProblem> dailyProblems) {
-        dailyProblemRepository.saveAll(dailyProblems);
+    @Transactional
+    public int saveAll(List<DailyProblemCreateSharedServiceRequest> requests) {
+        return dailyProblemRepository.saveAll(DailyProblemCreateSharedServiceRequest.toDomainList(requests));
     }
 
     public List<Long> findTodayProblems() {
@@ -42,17 +43,11 @@ public class DailyProblemService {
             RestTemplate restTemplate = new RestTemplate();
 
             String result = restTemplate.getForObject(uri, String.class);
-            validateResult(result);
 
             return parseResult(result);
         } catch (Exception e) {
             throw new MyException(CodeEnum.UNKNOWN_EXCEPTION);
         }
-    }
-
-    private void validateResult(String result) {
-        Assert.hasText(result, "응답값이 비어있습니다.");
-        Assert.notNull(result, "응답값이 비어있습니다.");
     }
 
     private List<Long> parseResult(String result) {
