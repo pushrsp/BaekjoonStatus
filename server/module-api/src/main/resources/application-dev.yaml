@@ -2,6 +2,10 @@ profile-name: dev
 token:
   secret: test
 
+database:
+  date-format: DATE_FORMAT({0}, {1})
+  year-format: %Y
+
 spring:
   redis:
     host: localhost

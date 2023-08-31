@@ -1,6 +1,10 @@
 token:
   secret: test
 
+database:
+  date-format: FORMATDATETIME({0}, {1})
+  year-format: yyyy
+
 spring:
   config:
     activate:
