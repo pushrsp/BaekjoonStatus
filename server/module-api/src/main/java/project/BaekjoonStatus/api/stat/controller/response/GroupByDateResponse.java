@@ -2,7 +2,7 @@ package project.BaekjoonStatus.api.stat.controller.response;
 
 import lombok.Builder;
 import lombok.Data;
-import project.BaekjoonStatus.shared.solvedhistory.domain.GroupByDate;
+import project.BaekjoonStatus.shared.solvedhistory.domain.CountByDate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,14 +18,14 @@ public class GroupByDateResponse {
         this.value = value;
     }
 
-    public static GroupByDateResponse from(GroupByDate groupByDate) {
+    public static GroupByDateResponse from(CountByDate groupByDate) {
         return GroupByDateResponse.builder()
                 .day(groupByDate.getDay().toString())
                 .value(groupByDate.getCount())
                 .build();
     }
 
-    public static List<GroupByDateResponse> from(List<GroupByDate> groupByDates) {
+    public static List<GroupByDateResponse> from(List<CountByDate> groupByDates) {
         return groupByDates.stream()
                 .map(GroupByDateResponse::from)
                 .collect(Collectors.toList());
