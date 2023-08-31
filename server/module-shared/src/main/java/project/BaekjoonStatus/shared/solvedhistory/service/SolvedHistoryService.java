@@ -24,22 +24,22 @@ public class SolvedHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<GroupByDate> findSolvedCountGroupByDate(Long userId, String year) {
-        return solvedHistoryRepository.findSolvedCountGroupByDate(userId, year);
+    public List<CountByDate> findSolvedCountGroupByDate(String memberId, String year) {
+        return solvedHistoryRepository.findSolvedProblemCountByDate(memberId, year);
     }
 
     @Transactional(readOnly = true)
-    public List<GroupByTier> findSolvedCountGroupByLevel(Long userId) {
-        return solvedHistoryRepository.findSolvedCountGroupByLevel(userId);
+    public List<CountByTier> findSolvedCountGroupByLevel(String memberId) {
+        return solvedHistoryRepository.findSolvedProblemCountByTier(memberId);
     }
 
     @Transactional(readOnly = true)
-    public List<GroupByTag> findSolvedCountGroupByTag(Long userId) {
-        return solvedHistoryRepository.findSolvedCountGroupByTag(userId);
+    public List<GroupByTag> findSolvedCountGroupByTag(Long memberId) {
+        return solvedHistoryRepository.findSolvedCountGroupByTag(memberId);
     }
 
     @Transactional(readOnly = true)
-    public List<SolvedHistoryByUserId> findAllByUserId(Long userId, int offset, int pageSize) {
-        return solvedHistoryRepository.findAllByUserId(userId, offset, pageSize);
+    public List<SolvedHistoryByUserId> findAllByUserId(Long memberId, int offset, int pageSize) {
+        return solvedHistoryRepository.findAllByUserId(memberId, offset, pageSize);
     }
 }

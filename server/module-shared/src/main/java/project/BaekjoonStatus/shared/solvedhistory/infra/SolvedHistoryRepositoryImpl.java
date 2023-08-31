@@ -4,12 +4,14 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import project.BaekjoonStatus.shared.common.repository.BaseRepository;
 import project.BaekjoonStatus.shared.solvedhistory.domain.*;
 
 import javax.persistence.EntityManager;
@@ -22,11 +24,14 @@ import java.util.stream.Collectors;
 import static project.BaekjoonStatus.shared.solvedhistory.infra.QSolvedHistoryEntity.solvedHistoryEntity;
 
 @Repository
-@Transactional(readOnly = true)
-public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
-    private static final String DATE_FORMAT_EXPRESSION = "DATE_FORMAT({0}, {1})";
-    private static final String YEAR_FORMAT = "%Y";
+public class SolvedHistoryRepositoryImpl extends BaseRepository implements SolvedHistoryRepository {
     private static final String[] TAG_IN = {"dp", "implementation", "graphs", "greedy", "data_structures"};
+
+    @Value("${database.date-format}")
+    private String dateFormatExpression;
+
+    @Value("${database.year-format}")
+    private String yearFormatExpression;
 
     private final JPAQueryFactory queryFactory;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -41,17 +46,17 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
 
     @Override
     @Transactional
-    public void saveAll(List<SolvedHistory> solvedHistories) {
+    public int saveAll(List<SolvedHistory> solvedHistories) {
         String sql = """
-                INSERT INTO SOLVED_HISTORY (solved_history_id, created_date, created_time, is_before, problem_level, problem_id, user_id)
-                VALUES (:solved_history_id, :created_date, :created_time, :is_before, :problem_level, :problem_id, :user_id)
+                INSERT INTO SOLVED_HISTORY (solved_history_id, created_date, created_time, is_before, problem_level, problem_id, member_id)
+                VALUES (:solved_history_id, :created_date, :created_time, :is_before, :problem_level, :problem_id, :member_id)
                 """;
 
         SqlParameterSource[] params = solvedHistories.stream()
                 .map(this::generateParams)
                 .toArray(SqlParameterSource[]::new);
 
-        namedParameterJdbcTemplate.batchUpdate(sql, params);
+        return namedParameterJdbcTemplate.batchUpdate(sql, params).length;
     }
 
     private SqlParameterSource generateParams(SolvedHistory solvedHistory) {
@@ -62,28 +67,27 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .addValue("is_before", solvedHistory.getIsBefore())
                 .addValue("problem_level", solvedHistory.getProblemLevel())
                 .addValue("problem_id", solvedHistory.getProblem().getId())
-                .addValue("user_id", solvedHistory.getMember().getId());
+                .addValue("member_id", solvedHistory.getMember().getId());
     }
 
     @Override
-    @Transactional
-    public List<GroupByDate> findSolvedCountGroupByDate(Long userId, String year) {
-        StringTemplate yearFormat = getDateFormat(solvedHistoryEntity.createdDate, YEAR_FORMAT);
+    public List<CountByDate> findSolvedProblemCountByDate(String memberId, String year) {
+        StringTemplate yearFormat = getDateFormat(solvedHistoryEntity.createdDate, yearFormatExpression);
 
         return queryFactory
-                .select(Projections.constructor(GroupByDate.class, solvedHistoryEntity.createdDate.as("day"), solvedHistoryEntity.member.id.count().as("count")))
+                .select(Projections.constructor(CountByDate.class, solvedHistoryEntity.createdDate.as("day"), solvedHistoryEntity.member.id.count().as("count")))
                 .from(solvedHistoryEntity)
-                .where(solvedHistoryEntity.member.id.eq(userId).and(solvedHistoryEntity.isBefore.eq(false)).and(yearFormat.eq(year)))
+                .where(solvedHistoryEntity.member.id.eq(parseLong(memberId)).and(solvedHistoryEntity.isBefore.eq(false)).and(yearFormat.eq(year)))
                 .groupBy(solvedHistoryEntity.createdDate)
                 .fetch();
     }
 
     @Override
-    public List<GroupByTier> findSolvedCountGroupByLevel(Long userId) {
+    public List<CountByTier> findSolvedProblemCountByTier(String memberId) {
         return queryFactory
-                .select(Projections.constructor(GroupByTier.class, caseBuilder(), solvedHistoryEntity.member.id.count().as("count")))
+                .select(Projections.constructor(CountByTier.class, caseBuilder(), solvedHistoryEntity.member.id.count().as("count")))
                 .from(solvedHistoryEntity)
-                .where(solvedHistoryEntity.member.id.eq(userId))
+                .where(solvedHistoryEntity.member.id.eq(parseLong(memberId)))
                 .groupBy(solvedHistoryEntity.problemLevel)
                 .fetch();
     }
@@ -154,6 +158,11 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteAllInBatch() {
+        solvedHistoryJpaRepository.deleteAllInBatch();
+    }
+
     private StringExpression caseBuilder() {
         return new CaseBuilder()
                 .when(solvedHistoryEntity.problemLevel.between(1, 5))
@@ -173,6 +182,6 @@ public class SolvedHistoryRepositoryImpl implements SolvedHistoryRepository {
     }
 
     private StringTemplate getDateFormat(DatePath path, String dateFormat) {
-        return Expressions.stringTemplate(DATE_FORMAT_EXPRESSION, path, dateFormat);
+        return Expressions.stringTemplate(dateFormatExpression, path, dateFormat);
     }
 }
