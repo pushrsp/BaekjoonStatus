@@ -36,8 +36,7 @@ public class SolvedHistoryEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    @Type(type = "uuid-char")
+    @JoinColumn(name = "member_id", columnDefinition = "BIGINT")
     private MemberEntity member;
 
     @OneToOne(fetch = FetchType.LAZY)

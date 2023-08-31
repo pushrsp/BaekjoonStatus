@@ -30,7 +30,7 @@ public class StatController {
     }
 
     @GetMapping("/date")
-    public CommonResponse findDailySolvedCount(@RequestParam String year, @Auth String userId) {
+    public CommonResponse findDailySolvedCount(@RequestParam String year, @Auth String memberId) {
         if(year.isEmpty()) {
             year = String.valueOf(dateService.getDate().getYear());
         }
@@ -38,30 +38,30 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(GroupByDateResponse.from(statService.findSolvedCountGroupByDate(Long.parseLong(userId), year)))
+                .data(GroupByDateResponse.from(statService.findSolvedCountGroupByDate(memberId, year)))
                 .build();
     }
 
     @GetMapping("/level")
-    public CommonResponse findSolvedCountByLevel(@Auth String userId) {
+    public CommonResponse findSolvedCountByLevel(@Auth String memberId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(GroupByTierResponse.from(statService.findSolvedCountGroupByLevel(Long.parseLong(userId))))
+                .data(GroupByTierResponse.from(statService.findSolvedCountGroupByLevel(memberId)))
                 .build();
     }
 
     @GetMapping("/tag")
-    public CommonResponse findSolvedCountByTag(@Auth String userId) {
+    public CommonResponse findSolvedCountByTag(@Auth String memberId) {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(GroupByTagResponse.from(statService.findSolvedCountGroupByTag(Long.parseLong(userId))))
+                .data(GroupByTagResponse.from(statService.findSolvedCountGroupByTag(Long.parseLong(memberId))))
                 .build();
     }
 
     @GetMapping("/solved-histories")
-    public CommonResponse findSolvedHistories(@Auth String userId, @RequestParam Integer offset) {
+    public CommonResponse findSolvedHistories(@Auth String memberId, @RequestParam Integer offset) {
         if(Objects.isNull(offset)) {
             offset = 0;
         }
@@ -69,7 +69,7 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(SolvedHistoryByUserIdResponse.from(statService.findSolvedHistoriesByUserId(Long.parseLong(userId), offset), PAGE_SIZE))
+                .data(SolvedHistoryByUserIdResponse.from(statService.findSolvedHistoriesByUserId(Long.parseLong(memberId), offset), PAGE_SIZE))
                 .build();
     }
 }

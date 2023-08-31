@@ -1,5 +1,9 @@
 profile-name: prod
 
+database:
+  date-format: DATE_FORMAT({0}, {1})
+  year-format: %Y
+
 spring:
   config:
     import: application-aws.yaml
