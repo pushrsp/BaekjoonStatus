@@ -35,7 +35,7 @@ public class SolvedHistoryService {
 
     @Transactional(readOnly = true)
     public List<GroupByTag> findSolvedCountGroupByTag(Long memberId) {
-        return solvedHistoryRepository.findSolvedCountGroupByTag(memberId);
+        return solvedHistoryRepository.findSolvedProblemCountByTag(memberId);
     }
 
     @Transactional(readOnly = true)

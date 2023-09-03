@@ -93,7 +93,7 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
     }
 
     @Override
-    public List<GroupByTag> findSolvedCountGroupByTag(Long memberId) {
+    public List<GroupByTag> findSolvedProblemCountByTag(Long memberId) {
         String sql =
                 """
                 SELECT t.tag_name as tagName, count(sh.user_id) as count FROM SOLVED_HISTORY sh force index (idx__user_id)
