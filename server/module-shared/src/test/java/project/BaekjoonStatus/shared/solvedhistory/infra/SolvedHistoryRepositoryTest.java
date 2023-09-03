@@ -14,14 +14,14 @@ import project.BaekjoonStatus.shared.member.infra.MemberRepository;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.infra.ProblemRepository;
 import project.BaekjoonStatus.shared.solvedhistory.domain.CountByDate;
+import project.BaekjoonStatus.shared.solvedhistory.domain.CountByTier;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.infra.TagRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -95,6 +95,38 @@ class SolvedHistoryRepositoryTest extends IntegrationTestSupport {
         assertThat(countByDate).hasSize(expected);
     }
 
+    @DisplayName("solved_problem_count를 tier별로 묶어서 찾을 수 있다.")
+    @ParameterizedTest
+    @MethodSource("provideProblemIdsAndTiers")
+    public void can_find_solved_problem_count_and_group_by_tier(List<String> problemIds, List<String> tiers, Map<String, Integer> expected) throws Exception {
+        //given
+        Member member = saveMember();
+
+        saveProblems(problemIds, tiers);
+
+        List<SolvedHistory> solvedHistories = new ArrayList<>();
+        for (int i = 0; i < problemIds.size(); i++) {
+            solvedHistories.add(createSolvedHistory(member, problemIds.get(i), tierConverter(tiers.get(i)), LocalDateTime.now()));
+        }
+
+        solvedHistoryRepository.saveAll(solvedHistories);
+
+        //when
+        List<CountByTier> result = solvedHistoryRepository.findSolvedProblemCountByTier(member.getId());
+
+        //then
+        for(CountByTier r: result) {
+            assertThat(r.getCount()).isEqualTo((long) expected.get(r.getTier()));
+        }
+    }
+
+    private static Stream<Arguments> provideProblemIdsAndTiers() {
+        return Stream.of(
+                Arguments.of(List.of("1000", "2000"), List.of("bronze", "silver"), Map.of("bronze", 1, "silver", 1)),
+                Arguments.of(List.of("1000", "2000", "3000", "4000"), List.of("bronze", "silver", "gold", "gold"), Map.of("bronze", 1, "silver", 1, "gold", 2))
+        );
+    }
+
     private static Stream<Arguments> provideDatesAndProblemIds() {
         return Stream.of(
                 Arguments.of(List.of(LocalDate.of(2022, 8, 8), LocalDate.of(2023, 8, 8)), List.of("1000", "2000"), "2023", 1),
@@ -146,16 +178,48 @@ class SolvedHistoryRepositoryTest extends IntegrationTestSupport {
     private void saveProblems(List<String> problemIds) {
         LocalDateTime now = LocalDateTime.now();
         List<Problem> problems = problemIds.stream()
-                .map(id -> createProblem(id, now))
+                .map(id -> createProblem(id, 1, now))
                 .collect(Collectors.toList());
 
         problemRepository.saveAll(problems);
     }
 
-    private Problem createProblem(String problemId, LocalDateTime now) {
+    private void saveProblems(List<String> problemIds, List<String> tiers) {
+        LocalDateTime now = LocalDateTime.now();
+        List<Problem> problems = new ArrayList<>();
+        for (int i = 0; i < problemIds.size(); i++) {
+            problems.add(createProblem(problemIds.get(i), tierConverter(tiers.get(i)),  now));
+        }
+
+        problemRepository.saveAll(problems);
+    }
+
+//    private void saveProblems(List<Integer> tiers) {
+//        LocalDateTime now = LocalDateTime.now();
+//        List<Problem> problems = new ArrayList<>();
+//        for (int i = 0; i < tiers.size(); i++) {
+//            problems.add(createProblem(String.valueOf(i + 1), tiers.get(i), now));
+//        }
+//
+//        problemRepository.saveAll(problems);
+//    }
+
+    private Integer tierConverter(String tier) {
+        return switch (tier) {
+            case "bronze" -> 1;
+            case "silver" -> 6;
+            case "gold" -> 11;
+            case "platinum" -> 16;
+            case "diamond" -> 21;
+            case "ruby" -> 26;
+            default -> 0;
+        };
+    }
+
+    private Problem createProblem(String problemId, Integer level, LocalDateTime now) {
         return Problem.builder()
                 .id(problemId)
-                .level(1)
+                .level(level)
                 .title("title")
                 .createdTime(now)
                 .build();
