@@ -19,8 +19,8 @@ public class SolvedHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<SolvedHistory> findAllByUserId(String userId) {
-        return solvedHistoryRepository.findAllByUserId(userId);
+    public List<SolvedHistory> findAllByMemberId(String userId) {
+        return solvedHistoryRepository.findAllByMemberId(userId);
     }
 
     @Transactional(readOnly = true)
@@ -39,7 +39,7 @@ public class SolvedHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<SolvedHistoryByUserId> findAllByUserId(String memberId, int offset, int pageSize) {
-        return solvedHistoryRepository.findAllByUserId(memberId, offset, pageSize);
+    public List<SolvedHistoryByMemberId> findAllByMemberId(String memberId, int offset, int pageSize) {
+        return solvedHistoryRepository.findAllByMemberId(memberId, offset, pageSize);
     }
 }

@@ -10,7 +10,7 @@ public interface SolvedHistoryRepository {
     List<CountByDate> findSolvedProblemCountByDate(String memberId, String year);
     List<CountByTier> findSolvedProblemCountByTier(String memberId);
     List<GroupByTag> findSolvedProblemCountByTag(String memberId);
-    List<SolvedHistoryByUserId> findAllByUserId(String memberId, int offset, int limit);
-    List<SolvedHistory> findAllByUserId(String memberId);
+    List<SolvedHistoryByMemberId> findAllByMemberId(String memberId, int offset, int limit);
+    List<SolvedHistory> findAllByMemberId(String memberId);
     void deleteAllInBatch();
 }

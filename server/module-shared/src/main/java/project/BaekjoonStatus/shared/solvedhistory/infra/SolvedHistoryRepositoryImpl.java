@@ -119,7 +119,7 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
     }
 
     @Override
-    public List<SolvedHistoryByUserId> findAllByUserId(String memberId, int offset, int limit) {
+    public List<SolvedHistoryByMemberId> findAllByMemberId(String memberId, int offset, int limit) {
         String sql =
                 """
                 SELECT p.problem_id as problemId, p.title as title, p.level as problemLevel
@@ -134,7 +134,7 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
                 ) as temp ON p.problem_id = temp.problem_id
                 """;
 
-        RowMapper<SolvedHistoryByUserId> rowMapper = (ResultSet rs, int rowNum) -> SolvedHistoryByUserId.builder()
+        RowMapper<SolvedHistoryByMemberId> rowMapper = (ResultSet rs, int rowNum) -> SolvedHistoryByMemberId.builder()
                 .problemId(String.valueOf(rs.getLong("problemId")))
                 .title(rs.getString("title"))
                 .problemLevel(rs.getInt("problemLevel"))
@@ -151,7 +151,7 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
     }
 
     @Override
-    public List<SolvedHistory> findAllByUserId(String memberId) {
+    public List<SolvedHistory> findAllByMemberId(String memberId) {
         return solvedHistoryJpaRepository.findAllByUserId(parseLong(memberId))
                 .stream()
                 .map(SolvedHistoryEntity::to)
