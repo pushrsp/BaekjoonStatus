@@ -2,7 +2,7 @@ package project.BaekjoonStatus.api.stat.controller.response;
 
 import lombok.Builder;
 import lombok.Data;
-import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistoryByUserId;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistoryByMemberId;
 
 import java.util.List;
 
@@ -10,14 +10,14 @@ import java.util.List;
 @Builder
 public class SolvedHistoryByUserIdResponse {
     private Boolean hasNext;
-    private List<SolvedHistoryByUserId> problems;
+    private List<SolvedHistoryByMemberId> problems;
 
-    public SolvedHistoryByUserIdResponse(Boolean hasNext, List<SolvedHistoryByUserId> problems) {
+    public SolvedHistoryByUserIdResponse(Boolean hasNext, List<SolvedHistoryByMemberId> problems) {
         this.hasNext = hasNext;
         this.problems = problems;
     }
 
-    public static SolvedHistoryByUserIdResponse from(List<SolvedHistoryByUserId> problems, int pageSize) {
+    public static SolvedHistoryByUserIdResponse from(List<SolvedHistoryByMemberId> problems, int pageSize) {
         boolean hasNext = problems.size() > pageSize;
         if(hasNext) {
             problems.remove(problems.size() - 1);

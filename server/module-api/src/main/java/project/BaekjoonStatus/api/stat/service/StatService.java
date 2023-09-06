@@ -9,7 +9,7 @@ import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.domain.CountByDate;
 import project.BaekjoonStatus.shared.solvedhistory.domain.GroupByTag;
 import project.BaekjoonStatus.shared.solvedhistory.domain.CountByTier;
-import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistoryByUserId;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistoryByMemberId;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.service.TagService;
@@ -49,22 +49,22 @@ public class StatService {
     }
 
     @RedisCacheable(key = "getSolvedCountGroupByTag", paramNames = {"userId"})
-    public List<GroupByTag> findSolvedCountGroupByTag(Long userId) {
+    public List<GroupByTag> findSolvedCountGroupByTag(String userId) {
         return solvedHistoryService.findSolvedCountGroupByTag(userId);
     }
 
     @RedisCacheable(key = "getSolvedHistoriesByUserId", paramNames = {"userId", "offset"})
-    public List<SolvedHistoryByUserId> findSolvedHistoriesByUserId(Long userId, int offset) {
-        List<SolvedHistoryByUserId> histories = solvedHistoryService.findAllByUserId(userId, offset * PAGE_SIZE, PAGE_SIZE + 1);
+    public List<SolvedHistoryByMemberId> findSolvedHistoriesByUserId(String userId, int offset) {
+        List<SolvedHistoryByMemberId> histories = solvedHistoryService.findAllByMemberId(userId, offset * PAGE_SIZE, PAGE_SIZE + 1);
         Map<String, List<Tag>> map = Tag.toMap(tagService.findAllByProblemIdsIn(histories.stream()
-                                                                                    .map(SolvedHistoryByUserId::getProblemId)
+                                                                                    .map(SolvedHistoryByMemberId::getProblemId)
                                                                                     .collect(Collectors.toList())));
 
         addTags(histories, map);
         return histories;
     }
 
-    private void addTags(List<SolvedHistoryByUserId> histories, Map<String, List<Tag>> map) {
+    private void addTags(List<SolvedHistoryByMemberId> histories, Map<String, List<Tag>> map) {
         histories.stream()
                 .filter(h -> map.containsKey(h.getProblemId()))
                 .forEach(h -> h.addTags(map.get(h.getProblemId())));

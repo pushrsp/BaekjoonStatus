@@ -19,8 +19,8 @@ public class SolvedHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<SolvedHistory> findAllByUserId(Long userId) {
-        return solvedHistoryRepository.findAllByUserId(userId);
+    public List<SolvedHistory> findAllByMemberId(String userId) {
+        return solvedHistoryRepository.findAllByMemberId(userId);
     }
 
     @Transactional(readOnly = true)
@@ -34,12 +34,12 @@ public class SolvedHistoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<GroupByTag> findSolvedCountGroupByTag(Long memberId) {
+    public List<GroupByTag> findSolvedCountGroupByTag(String memberId) {
         return solvedHistoryRepository.findSolvedProblemCountByTag(memberId);
     }
 
     @Transactional(readOnly = true)
-    public List<SolvedHistoryByUserId> findAllByUserId(Long memberId, int offset, int pageSize) {
-        return solvedHistoryRepository.findAllByUserId(memberId, offset, pageSize);
+    public List<SolvedHistoryByMemberId> findAllByMemberId(String memberId, int offset, int pageSize) {
+        return solvedHistoryRepository.findAllByMemberId(memberId, offset, pageSize);
     }
 }
