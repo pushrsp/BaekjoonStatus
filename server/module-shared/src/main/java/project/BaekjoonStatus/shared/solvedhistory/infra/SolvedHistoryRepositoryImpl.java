@@ -93,10 +93,10 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
     }
 
     @Override
-    public List<GroupByTag> findSolvedProblemCountByTag(Long memberId) {
+    public List<GroupByTag> findSolvedProblemCountByTag(String memberId) {
         String sql =
                 """
-                SELECT t.tag_name as tagName, count(sh.user_id) as count FROM SOLVED_HISTORY sh force index (idx__user_id)
+                SELECT t.tag_name as tagName, count(sh.member_id) as count FROM SOLVED_HISTORY sh
                 JOIN PROBLEM p ON p.problem_id = sh.problem_id
                 JOIN TAG t ON t.problem_id = p.problem_id
                 WHERE sh.member_id = :memberId AND t.tag_name in (:tagNames)
@@ -112,14 +112,14 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
         return namedParameterJdbcTemplate.query(sql, generateParams(memberId), rowMapper);
     }
 
-    private SqlParameterSource generateParams(Long memberId) {
+    private SqlParameterSource generateParams(String memberId) {
         return new MapSqlParameterSource()
-                .addValue("memberId", memberId)
+                .addValue("memberId", parseLong(memberId))
                 .addValue("tagNames", Arrays.stream(TAG_IN).toList());
     }
 
     @Override
-    public List<SolvedHistoryByUserId> findAllByUserId(Long memberId, int offset, int limit) {
+    public List<SolvedHistoryByUserId> findAllByUserId(String memberId, int offset, int limit) {
         String sql =
                 """
                 SELECT p.problem_id as problemId, p.title as title, p.level as problemLevel
@@ -143,16 +143,16 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
         return namedParameterJdbcTemplate.query(sql, generateParams(memberId, limit, offset), rowMapper);
     }
 
-    private SqlParameterSource generateParams(Long memberId, int limit, int offset) {
+    private SqlParameterSource generateParams(String memberId, int limit, int offset) {
         return new MapSqlParameterSource()
-                .addValue("memberId", memberId)
+                .addValue("memberId", parseLong(memberId))
                 .addValue("limit", limit)
                 .addValue("offset", offset);
     }
 
     @Override
-    public List<SolvedHistory> findAllByUserId(Long userId) {
-        return solvedHistoryJpaRepository.findAllByUserId(userId)
+    public List<SolvedHistory> findAllByUserId(String memberId) {
+        return solvedHistoryJpaRepository.findAllByUserId(parseLong(memberId))
                 .stream()
                 .map(SolvedHistoryEntity::to)
                 .collect(Collectors.toList());

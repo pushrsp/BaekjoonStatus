@@ -56,7 +56,7 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(GroupByTagResponse.from(statService.findSolvedCountGroupByTag(Long.parseLong(memberId))))
+                .data(GroupByTagResponse.from(statService.findSolvedCountGroupByTag(memberId)))
                 .build();
     }
 

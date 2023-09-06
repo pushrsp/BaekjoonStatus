@@ -49,12 +49,12 @@ public class StatService {
     }
 
     @RedisCacheable(key = "getSolvedCountGroupByTag", paramNames = {"userId"})
-    public List<GroupByTag> findSolvedCountGroupByTag(Long userId) {
+    public List<GroupByTag> findSolvedCountGroupByTag(String userId) {
         return solvedHistoryService.findSolvedCountGroupByTag(userId);
     }
 
     @RedisCacheable(key = "getSolvedHistoriesByUserId", paramNames = {"userId", "offset"})
-    public List<SolvedHistoryByUserId> findSolvedHistoriesByUserId(Long userId, int offset) {
+    public List<SolvedHistoryByUserId> findSolvedHistoriesByUserId(String userId, int offset) {
         List<SolvedHistoryByUserId> histories = solvedHistoryService.findAllByUserId(userId, offset * PAGE_SIZE, PAGE_SIZE + 1);
         Map<String, List<Tag>> map = Tag.toMap(tagService.findAllByProblemIdsIn(histories.stream()
                                                                                     .map(SolvedHistoryByUserId::getProblemId)
