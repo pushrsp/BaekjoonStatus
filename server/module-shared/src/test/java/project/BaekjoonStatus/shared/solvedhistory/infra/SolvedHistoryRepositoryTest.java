@@ -15,6 +15,7 @@ import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.infra.ProblemRepository;
 import project.BaekjoonStatus.shared.solvedhistory.domain.CountByDate;
 import project.BaekjoonStatus.shared.solvedhistory.domain.CountByTier;
+import project.BaekjoonStatus.shared.solvedhistory.domain.GroupByTag;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.infra.TagRepository;
@@ -120,6 +121,39 @@ class SolvedHistoryRepositoryTest extends IntegrationTestSupport {
         }
     }
 
+    @DisplayName("solved_problem_count를 tag별로 묶어서 찾을 수 있다.")
+    @ParameterizedTest
+    @MethodSource("provideProblemIdsAndTags")
+    public void can_find_solved_problem_count_and_group_by_tag(List<String> problemIds, List<String> tagNames, Map<String, Integer> expected) throws Exception {
+        //given
+        Member member = saveMember();
+
+        saveProblems(problemIds);
+        saveTags(problemIds, tagNames);
+
+        List<SolvedHistory> solvedHistories = new ArrayList<>();
+        for (String problemId : problemIds) {
+            solvedHistories.add(createSolvedHistory(member, problemId, 1, LocalDateTime.now()));
+        }
+
+        solvedHistoryRepository.saveAll(solvedHistories);
+
+        //when
+        List<GroupByTag> result = solvedHistoryRepository.findSolvedProblemCountByTag(member.getId());
+
+        //then
+        for(GroupByTag r: result) {
+            assertThat(r.getCount()).isEqualTo(expected.get(r.getTag()));
+        }
+    }
+
+    private static Stream<Arguments> provideProblemIdsAndTags() {
+        return Stream.of(
+                Arguments.of(List.of("1000", "2000"), List.of("dp", "graphs"), Map.of("dp", 2, "graphs", 2)),
+                Arguments.of(List.of("1000", "2000", "3000", "4000"), List.of("graphs", "greedy", "data_structures"), Map.of("graphs", 4, "greedy", 4, "data_structures", 4))
+        );
+    }
+
     private static Stream<Arguments> provideProblemIdsAndTiers() {
         return Stream.of(
                 Arguments.of(List.of("1000", "2000"), List.of("bronze", "silver"), Map.of("bronze", 1, "silver", 1)),
@@ -193,16 +227,6 @@ class SolvedHistoryRepositoryTest extends IntegrationTestSupport {
 
         problemRepository.saveAll(problems);
     }
-
-//    private void saveProblems(List<Integer> tiers) {
-//        LocalDateTime now = LocalDateTime.now();
-//        List<Problem> problems = new ArrayList<>();
-//        for (int i = 0; i < tiers.size(); i++) {
-//            problems.add(createProblem(String.valueOf(i + 1), tiers.get(i), now));
-//        }
-//
-//        problemRepository.saveAll(problems);
-//    }
 
     private Integer tierConverter(String tier) {
         return switch (tier) {
