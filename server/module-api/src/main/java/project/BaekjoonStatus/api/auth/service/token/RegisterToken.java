@@ -9,10 +9,10 @@ import java.util.List;
 @Getter
 public class RegisterToken {
     private final LocalDate createdAt;
-    private final List<Long> problemIds;
+    private final List<String> problemIds;
 
     @Builder
-    public RegisterToken(LocalDate createdAt, List<Long> problemIds) {
+    public RegisterToken(LocalDate createdAt, List<String> problemIds) {
         this.createdAt = createdAt;
         this.problemIds = problemIds;
     }

@@ -45,8 +45,8 @@ public class AuthService {
     private final PasswordService passwordService;
     private final DateService dateService;
 
-    public Member getById(String userId) {
-        return memberService.findById(Long.parseLong(userId))
+    public Member getById(String memberId) {
+        return memberService.findById(memberId)
                 .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
     }
 
@@ -56,13 +56,13 @@ public class AuthService {
         return baekjoonService.getProblemIdsByUsername (baekjoonUsername);
     }
 
-    public String getRegisterToken(List<Long> problemIds) {
+    public String getRegisterToken(List<String> problemIds) {
         return registerTokenStore.put(problemIds, dateService);
     }
 
     @CustomAsync(maxTry = 10, offset = 2, delay = 180000)
-    public void createProblems(List<Long> problemIds, LocalDateTime createdTime) {
-        List<Long> notSavedIds = problemService.findAllByNotExistedIds(problemIds);
+    public void createProblems(List<String> problemIds, LocalDateTime createdTime) {
+        List<String> notSavedIds = problemService.findAllByNotExistedIds(problemIds);
         if(notSavedIds.isEmpty()) {
             return;
         }
@@ -79,7 +79,7 @@ public class AuthService {
     }
 
     @CustomAsync(maxTry = 10, offset = 2, delay = 200000)
-    public void createSolvedHistories(Member user, List<Long> problemIds) {
+    public void createSolvedHistories(Member member, List<String> problemIds) {
         List<Problem> problems = problemService.findAllByIdsIn(problemIds);
         if(problems.size() != problemIds.size()) {
             throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);

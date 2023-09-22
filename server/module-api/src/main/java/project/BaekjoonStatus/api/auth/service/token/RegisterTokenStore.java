@@ -10,7 +10,7 @@ import java.util.UUID;
 public class RegisterTokenStore {
     private final Map<String, RegisterToken> registerTokenStore = new HashMap<>();
 
-    public synchronized String put(List<Long> problemIds, DateService dateService) {
+    public synchronized String put(List<String> problemIds, DateService dateService) {
         String key = UUID.randomUUID().toString();
         RegisterToken token = RegisterToken.builder()
                 .createdAt(dateService.getDate())

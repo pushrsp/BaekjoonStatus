@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -49,7 +50,9 @@ class SolvedAcServiceTest {
     @Test
     public void can_find_problem_infos_by_problem_ids() throws Exception {
         //given
-        List<Long> problemIds = List.of(1000L, 2000L, 1002L, 3000L, 10000L);
+        List<String> problemIds = Stream.of(1000L, 2000L, 1002L, 3000L, 10000L)
+                .map(String::valueOf)
+                .collect(Collectors.toList());
 
         //when
         List<SolvedAcProblem> problems = solvedAcService.findByIds(problemIds);
@@ -61,7 +64,7 @@ class SolvedAcServiceTest {
     @DisplayName("올바르지 않은 problem_id는 무시된다.")
     @ParameterizedTest
     @MethodSource("provideWrongProblemIds")
-    public void can_ignore_wrong_problem_id(List<Long> wrongProblemIds) throws Exception {
+    public void can_ignore_wrong_problem_id(List<String> wrongProblemIds) throws Exception {
         //when
         List<SolvedAcProblem> problems = solvedAcService.findByIds(wrongProblemIds);
 
@@ -78,8 +81,8 @@ class SolvedAcServiceTest {
 
     private static Stream<Arguments> provideWrongProblemIds() {
         return Stream.of(
-                Arguments.of(List.of(-1L, 1000000L)),
-                Arguments.of(List.of(-1L, -1L))
+                Arguments.of(List.of("-1", "1000000")),
+                Arguments.of(List.of("-1", "-1"))
         );
     }
 }

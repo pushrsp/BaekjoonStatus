@@ -55,7 +55,7 @@ public class SolvedAcService {
         }
     }
 
-    public List<SolvedAcProblem> findByIds(List<Long> ids) {
-        return findByIds(ids.stream().map(Object::toString).collect(Collectors.joining(",")));
+    public List<SolvedAcProblem> findByIds(List<String> ids) {
+        return findByIds(String.join(",", ids));
     }
 }

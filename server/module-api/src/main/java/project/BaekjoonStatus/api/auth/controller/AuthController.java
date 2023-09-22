@@ -83,7 +83,7 @@ public class AuthController {
                 .build();
     }
 
-    private void createSolvedHistories(Member user, List<Long> problemIds) {
+    private void createSolvedHistories(Member user, List<String> problemIds) {
         int start = 0;
         while (start < problemIds.size()) {
             authService.createSolvedHistories(user, problemIds.subList(start, Math.min(start + OFFSET, problemIds.size())));

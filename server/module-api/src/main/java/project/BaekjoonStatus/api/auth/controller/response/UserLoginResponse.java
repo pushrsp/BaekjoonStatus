@@ -6,21 +6,21 @@ import project.BaekjoonStatus.shared.member.domain.Member;
 
 @Getter
 public class UserLoginResponse {
-    private Long id;
+    private String id;
     private String username;
     private String token;
 
     @Builder
-    private UserLoginResponse(Long id, String username, String token) {
+    private UserLoginResponse(String id, String username, String token) {
         this.id = id;
         this.username = username;
         this.token = token;
     }
 
-    public static UserLoginResponse from(Member user, String token) {
+    public static UserLoginResponse from(Member member, String token) {
         return UserLoginResponse.builder()
-                .id(user.getId())
-                .username(user.getUsername())
+                .id(member.getId())
+                .username(member.getUsername())
                 .token(token)
                 .build();
     }
