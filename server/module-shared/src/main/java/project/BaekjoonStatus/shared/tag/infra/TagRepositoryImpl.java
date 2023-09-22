@@ -28,10 +28,8 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     @Transactional
     public int saveAll(List<Tag> tags) {
-        String sql = """
-                INSERT INTO TAG (tag_id, tag_name, problem_id)
-                VALUES (:tag_id, :tag_name, :problem_id)
-                """;
+        String sql = "INSERT INTO TAG (tag_id, tag_name, problem_id) " +
+                "VALUES (:tag_id, :tag_name, :problem_id)";
 
         SqlParameterSource[] params = tags.stream()
                 .map(this::generateParams)

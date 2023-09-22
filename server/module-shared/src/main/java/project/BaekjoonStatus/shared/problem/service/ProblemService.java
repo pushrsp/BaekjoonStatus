@@ -48,7 +48,7 @@ public class ProblemService {
     public List<String> findAllByNotExistedIds(List<String> ids) {
         List<String> savedIds = findAllByIdsIn(ids).stream()
                 .map(Problem::getId)
-                .toList();
+                .collect(Collectors.toList());
 
         return ids.stream()
                 .filter(id -> !savedIds.contains(id))

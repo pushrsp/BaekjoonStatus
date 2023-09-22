@@ -22,11 +22,8 @@ public class DailyProblemRepositoryImpl implements DailyProblemRepository {
     @Override
     @Transactional
     public int saveAll(List<DailyProblem> dailyProblems) {
-        String sql =
-                """
-                INSERT INTO DAILY_PROBLEM (daily_problem_id, created_date, problem_id)
-                VALUES (:daily_problem_id, :created_date, :problem_id)
-                """;
+        String sql = "INSERT INTO DAILY_PROBLEM (daily_problem_id, created_date, problem_id) " +
+                "VALUES (:daily_problem_id, :created_date, :problem_id)";
 
         SqlParameterSource[] params = dailyProblems.stream()
                 .map(this::generateParams)

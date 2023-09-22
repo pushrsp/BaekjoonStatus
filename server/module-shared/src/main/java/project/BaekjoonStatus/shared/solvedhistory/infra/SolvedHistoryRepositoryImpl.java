@@ -47,10 +47,8 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
     @Override
     @Transactional
     public int saveAll(List<SolvedHistory> solvedHistories) {
-        String sql = """
-                INSERT INTO SOLVED_HISTORY (solved_history_id, created_date, created_time, is_before, problem_level, problem_id, member_id)
-                VALUES (:solved_history_id, :created_date, :created_time, :is_before, :problem_level, :problem_id, :member_id)
-                """;
+        String sql = " INSERT INTO SOLVED_HISTORY (solved_history_id, created_date, created_time, is_before, problem_level, problem_id, member_id) " +
+                "VALUES (:solved_history_id, :created_date, :created_time, :is_before, :problem_level, :problem_id, :member_id) ";
 
         SqlParameterSource[] params = solvedHistories.stream()
                 .map(this::generateParams)
@@ -94,14 +92,11 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
 
     @Override
     public List<GroupByTag> findSolvedProblemCountByTag(String memberId) {
-        String sql =
-                """
-                SELECT t.tag_name as tagName, count(sh.member_id) as count FROM SOLVED_HISTORY sh
-                JOIN PROBLEM p ON p.problem_id = sh.problem_id
-                JOIN TAG t ON t.problem_id = p.problem_id
-                WHERE sh.member_id = :memberId AND t.tag_name in (:tagNames)
-                GROUP BY t.tag_name
-                """;
+        String sql = "SELECT t.tag_name as tagName, count(sh.member_id) as count " +
+                "FROM SOLVED_HISTORY sh JOIN PROBLEM p ON p.problem_id = sh.problem_id " +
+                "JOIN TAG t ON t.problem_id = p.problem_id " +
+                "WHERE sh.member_id = :memberId AND t.tag_name in (:tagNames) " +
+                "GROUP BY t.tag_name ";
 
 
         RowMapper<GroupByTag> rowMapper = (ResultSet rs, int rowNum) -> GroupByTag.builder()
@@ -115,24 +110,15 @@ public class SolvedHistoryRepositoryImpl extends BaseRepository implements Solve
     private SqlParameterSource generateParams(String memberId) {
         return new MapSqlParameterSource()
                 .addValue("memberId", parseLong(memberId))
-                .addValue("tagNames", Arrays.stream(TAG_IN).toList());
+                .addValue("tagNames", Arrays.stream(TAG_IN).collect(Collectors.toList()));
     }
 
     @Override
     public List<SolvedHistoryByMemberId> findAllByMemberId(String memberId, int offset, int limit) {
-        String sql =
-                """
-                SELECT p.problem_id as problemId, p.title as title, p.level as problemLevel
-                FROM PROBLEM p
-                JOIN (
-                    SELECT sh.problem_id as problem_id
-                    FROM SOLVED_HISTORY sh
-                    WHERE sh.member_id = :memberId
-                    ORDER BY sh.problem_level DESC, sh.problem_id ASC
-                    LIMIT :limit
-                    OFFSET :offset
-                ) as temp ON p.problem_id = temp.problem_id
-                """;
+        String sql = "SELECT p.problem_id as problemId, p.title as title, p.level as problemLevel " +
+                "FROM PROBLEM p " +
+                "JOIN (SELECT sh.problem_id as problem_id FROM SOLVED_HISTORY sh WHERE sh.member_id = :memberId ORDER BY sh.problem_level DESC, sh.problem_id ASC LIMIT :limit OFFSET :offset) as temp " +
+                "ON p.problem_id = temp.problem_id";
 
         RowMapper<SolvedHistoryByMemberId> rowMapper = (ResultSet rs, int rowNum) -> SolvedHistoryByMemberId.builder()
                 .problemId(String.valueOf(rs.getLong("problemId")))

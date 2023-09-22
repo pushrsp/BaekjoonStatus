@@ -22,11 +22,8 @@ public class ProblemRepositoryImpl extends BaseRepository implements ProblemRepo
     @Override
     @Transactional
     public int saveAll(List<Problem> problems) {
-        String sql =
-                """
-                INSERT INTO PROBLEM (problem_id, level, title, created_time)
-                VALUES (:problem_id, :level, :title, :created_time)
-                """;
+        String sql = "INSERT INTO PROBLEM (problem_id, level, title, created_time) " +
+                "VALUES (:problem_id, :level, :title, :created_time)";
 
         SqlParameterSource[] params = problems.stream()
                 .map(this::generateParams)

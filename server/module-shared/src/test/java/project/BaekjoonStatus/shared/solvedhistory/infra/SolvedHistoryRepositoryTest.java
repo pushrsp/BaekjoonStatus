@@ -222,8 +222,8 @@ class SolvedHistoryRepositoryTest extends IntegrationTestSupport {
         List<Tag> tags = new ArrayList<>();
         for (String problemId : problemIds) {
             List<Tag> t = tagNames.stream()
-                    .map(tagName -> createTag(tagName, problemId))
-                    .toList();
+                            .map(tagName -> createTag(tagName, problemId))
+                            .collect(Collectors.toList());
 
             tags.addAll(t);
         }
@@ -258,15 +258,22 @@ class SolvedHistoryRepositoryTest extends IntegrationTestSupport {
     }
 
     private Integer tierConverter(String tier) {
-        return switch (tier) {
-            case "bronze" -> 1;
-            case "silver" -> 6;
-            case "gold" -> 11;
-            case "platinum" -> 16;
-            case "diamond" -> 21;
-            case "ruby" -> 26;
-            default -> 0;
-        };
+        switch (tier) {
+            case "bronze":
+                return 1;
+            case "silver":
+                return 6;
+            case "gold":
+                return 11;
+            case "platinum":
+                return 16;
+            case "diamond":
+                return 21;
+            case "ruby":
+                return 26;
+            default:
+                return 0;
+        }
     }
 
     private Problem createProblem(String problemId, Integer level, LocalDateTime now) {
