@@ -16,9 +16,6 @@
 ### 통계 쿼리
 ![통계 쿼리](https://user-images.githubusercontent.com/58874665/227873771-29039fa4-dbfd-4985-93de-93022f0397ff.png)
 
-### 배치
-![배치](https://user-images.githubusercontent.com/58874665/227873917-9a802744-271d-4ddb-8308-941415ae378f.png)
-
 ## 외부 API
 * 크롤링
   * https://www.acmicpc.net/user/{{baekjoon_username}}
