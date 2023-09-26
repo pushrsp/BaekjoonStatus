@@ -69,8 +69,8 @@ public class SaveUserProblemJob {
     }
 
     private ItemProcessor<Member, List<SolvedHistory>> userProblemItemProcessor() {
-        return user -> {
-            List<Long> newIds = findNewIds(user);
+        return member -> {
+            List<Long> newIds = findNewIds(member);
             if(newIds.isEmpty()) {
                 return null;
             }
@@ -78,8 +78,8 @@ public class SaveUserProblemJob {
             List<Problem> problems = new ArrayList<>();
             ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, newIds);
 
-            listDivider.execute((List<Long> ids) -> {
-                List<Long> notSavedIds = problemService.findAllByNotExistedIds(ids);
+            listDivider.execute((List<String> ids) -> {
+                List<String> notSavedIds = problemService.findAllByNotExistedIds(ids);
                 if(!notSavedIds.isEmpty()) {
                     List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
                     List<Problem> newProblems = SolvedAcProblem.toProblemList(solvedAcProblems, CREATED_TIME);
@@ -92,7 +92,7 @@ public class SaveUserProblemJob {
                 return null;
             });
 
-            return SolvedHistory.from(user, problems, false);
+            return SolvedHistory.from(member, problems, false);
         };
     }
 
@@ -107,7 +107,7 @@ public class SaveUserProblemJob {
         List<Long> oldHistories = solvedHistoryService.findAllByMemberId(user.getId())
                 .stream()
                 .map(sh -> Long.parseLong(sh.getId()))
-                .toList();
+                .collect(Collectors.toList());
 
         return newHistories.stream()
                 .filter(id -> !oldHistories.contains(id))

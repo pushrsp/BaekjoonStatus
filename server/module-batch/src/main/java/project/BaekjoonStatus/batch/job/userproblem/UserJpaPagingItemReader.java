@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class UserJpaPagingItemReader extends AbstractPagingItemReader<Member> {
     private final MemberService userService;
 
-    private Long userId = 0L;
+    private String memberId = "0";
 
     public UserJpaPagingItemReader(MemberService userService, int chunkSize) {
         this.userService = userService;
@@ -24,8 +24,8 @@ public class UserJpaPagingItemReader extends AbstractPagingItemReader<Member> {
             results.clear();
         }
 
-        results.addAll(userService.findAllByGreaterThanUserId(userId, getPageSize()));
-        userId += getPageSize();
+        results.addAll(userService.findAllByGreaterThanUserId(memberId, getPageSize()));
+        memberId = String.valueOf(Long.parseLong(memberId) + getPageSize());
     }
 
     @Override
