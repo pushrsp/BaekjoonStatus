@@ -14,18 +14,23 @@ import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.common.service.PasswordService;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.baekjoon.service.BaekjoonService;
+import project.BaekjoonStatus.shared.problem.service.request.ProblemCreateSharedServiceRequest;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
+import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
+import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.service.TagService;
 import project.BaekjoonStatus.shared.member.domain.Member;
 import project.BaekjoonStatus.shared.member.service.MemberService;
 import project.BaekjoonStatus.shared.common.exception.CodeEnum;
 import project.BaekjoonStatus.shared.common.exception.MyException;
+import project.BaekjoonStatus.shared.tag.service.request.TagCreateSharedServiceRequest;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,10 +55,10 @@ public class AuthService {
                 .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
     }
 
-    public List<Long> getByBaekjoonUsername(String baekjoonUsername) {
+    public List<String> getByBaekjoonUsername(String baekjoonUsername) {
         // TODO: validation
         // @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]{2,20}$", message = "아이디는 특수문자를 제외한 2~20자리여야 합니다.")
-        return baekjoonService.getProblemIdsByUsername (baekjoonUsername);
+        return baekjoonService.getProblemIdsByUsername(baekjoonUsername);
     }
 
     public String getRegisterToken(List<String> problemIds) {
@@ -68,8 +73,22 @@ public class AuthService {
         }
 
         List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
-        problemService.saveAll(SolvedAcProblem.toProblemList(solvedAcProblems, createdTime));
-        tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems, createdTime));
+        problemService.saveAll(toProblemCreateSharedServiceRequests(solvedAcProblems, createdTime));
+        tagService.saveAll(toTagCreateSharedServiceRequests(solvedAcProblems, createdTime));
+    }
+
+    private List<ProblemCreateSharedServiceRequest> toProblemCreateSharedServiceRequests(List<SolvedAcProblem> solvedAcProblems, LocalDateTime createdTime) {
+        return SolvedAcProblem.toProblemList(solvedAcProblems, createdTime)
+                .stream()
+                .map(ProblemCreateSharedServiceRequest::from)
+                .collect(Collectors.toList());
+    }
+
+    private List<TagCreateSharedServiceRequest> toTagCreateSharedServiceRequests(List<SolvedAcProblem> solvedAcProblems, LocalDateTime createdTime) {
+         return SolvedAcProblem.toTagList(solvedAcProblems, createdTime)
+                 .stream()
+                 .map(TagCreateSharedServiceRequest::from)
+                 .collect(Collectors.toList());
     }
 
     @Recover
@@ -85,7 +104,7 @@ public class AuthService {
             throw new MyException(CodeEnum.SOLVED_AC_SERVER_ERROR);
         }
 
-//        solvedHistoryService.saveAll(SolvedHistory.from(user, problems,true));
+        solvedHistoryService.saveAll(SolvedHistory.from(member, problems, true, dateService));
     }
 
     @Recover
@@ -97,10 +116,10 @@ public class AuthService {
     public Member createUser(MemberCreateServiceRequest request) {
         duplicateUsername(request.getUsername());
 
-        return memberService.save(request.toDomain(true, passwordService));
+        return memberService.save(request.toRequest(true, passwordService));
     }
 
-    public List<Long> getProblemIds(String registerToken) {
+    public List<String> getProblemIds(String registerToken) {
         return registerTokenStore.get(registerToken).getProblemIds();
     }
 
