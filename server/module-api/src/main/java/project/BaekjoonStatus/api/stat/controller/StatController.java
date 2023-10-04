@@ -69,7 +69,7 @@ public class StatController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(SolvedHistoryByUserIdResponse.from(statService.findSolvedHistoriesByUserId(Long.parseLong(memberId), offset), PAGE_SIZE))
+                .data(SolvedHistoryByUserIdResponse.from(statService.findSolvedHistoriesByUserId(memberId, offset), PAGE_SIZE))
                 .build();
     }
 }
