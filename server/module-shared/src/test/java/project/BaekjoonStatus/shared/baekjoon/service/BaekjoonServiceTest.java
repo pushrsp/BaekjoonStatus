@@ -20,7 +20,7 @@ class BaekjoonServiceTest {
     @Test
     public void can_get_solved_problem_info_by_baekjoon_username() throws Exception {
         //when
-        List<Long> problemIds = baekjoonService.getProblemIdsByUsername("pushrsp");
+        List<String> problemIds = baekjoonService.getProblemIdsByUsername("pushrsp");
 
         //then
         assertThat(problemIds).isNotEmpty();
