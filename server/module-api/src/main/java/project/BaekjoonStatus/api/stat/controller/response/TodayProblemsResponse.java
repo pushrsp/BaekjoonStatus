@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Data
 @Builder
 public class TodayProblemsResponse {
-    private Long problemId;
+    private String problemId;
     private String title;
     private Integer problemLevel;
 
