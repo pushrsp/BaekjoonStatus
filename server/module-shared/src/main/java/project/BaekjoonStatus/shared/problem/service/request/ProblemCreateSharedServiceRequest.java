@@ -25,6 +25,15 @@ public class ProblemCreateSharedServiceRequest {
         this.createdTime = createdTime;
     }
 
+    public static ProblemCreateSharedServiceRequest from(Problem problem) {
+        return ProblemCreateSharedServiceRequest.builder()
+                .id(problem.getId())
+                .level(problem.getLevel())
+                .title(problem.getTitle())
+                .createdTime(problem.getCreatedTime())
+                .build();
+    }
+
     public static boolean hasDuplicateId(List<ProblemCreateSharedServiceRequest> requests) {
         long count = requests.stream()
                 .map(ProblemCreateSharedServiceRequest::getId)

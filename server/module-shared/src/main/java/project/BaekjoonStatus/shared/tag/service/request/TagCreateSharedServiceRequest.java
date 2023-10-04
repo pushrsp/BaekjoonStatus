@@ -19,6 +19,13 @@ public class TagCreateSharedServiceRequest {
         this.problemId = problemId;
     }
 
+    public static TagCreateSharedServiceRequest from(Tag tag) {
+        return TagCreateSharedServiceRequest.builder()
+                .tagName(tag.getTagName())
+                .problemId(tag.getProblem().getId())
+                .build();
+    }
+
     public static List<Tag> toDomainList(List<TagCreateSharedServiceRequest> requests) {
         return requests.stream()
                 .map(TagCreateSharedServiceRequest::toDomain)
