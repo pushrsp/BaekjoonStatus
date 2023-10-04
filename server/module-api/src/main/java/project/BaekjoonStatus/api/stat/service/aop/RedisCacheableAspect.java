@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Aspect
 @Component
@@ -27,7 +28,7 @@ public class RedisCacheableAspect {
     @Around("@annotation(redisCacheable)")
     public Object doRedis(ProceedingJoinPoint joinPoint, RedisCacheable redisCacheable) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        String key = getKey(redisCacheable.key(), joinPoint.getArgs(), methodSignature.getParameterNames(), Arrays.stream(redisCacheable.paramNames()).toList());
+        String key = getKey(redisCacheable.key(), joinPoint.getArgs(), methodSignature.getParameterNames(), Arrays.stream(redisCacheable.paramNames()).collect(Collectors.toList()));
 
         Object ret = redisTemplate.opsForValue().get(key);
         if(!Objects.isNull(ret)) {
