@@ -3,7 +3,7 @@ package project.BaekjoonStatus.api.auth.service.request;
 import lombok.Builder;
 import lombok.Getter;
 import project.BaekjoonStatus.shared.common.service.PasswordService;
-import project.BaekjoonStatus.shared.member.domain.Member;
+import project.BaekjoonStatus.shared.member.service.request.MemberCreateSharedServiceRequest;
 
 import java.time.LocalDateTime;
 
@@ -24,11 +24,11 @@ public class MemberCreateServiceRequest {
         this.modifiedTime = modifiedTime;
     }
 
-    public Member toDomain(boolean isPrivate, PasswordService passwordService) {
-        return Member.builder()
+    public MemberCreateSharedServiceRequest toRequest(Boolean isPrivate, PasswordService passwordService) {
+        return MemberCreateSharedServiceRequest.builder()
                 .username(this.username)
-                .baekjoonUsername(this.baekjoonUsername)
                 .password(passwordService.hashPassword(this.password))
+                .baekjoonUsername(this.baekjoonUsername)
                 .isPrivate(isPrivate)
                 .createdTime(this.createdTime)
                 .modifiedTime(this.modifiedTime)
