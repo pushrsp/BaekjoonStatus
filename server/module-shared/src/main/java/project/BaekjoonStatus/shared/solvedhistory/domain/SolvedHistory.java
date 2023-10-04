@@ -2,6 +2,7 @@ package project.BaekjoonStatus.shared.solvedhistory.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.member.domain.Member;
 
@@ -42,9 +43,12 @@ public class SolvedHistory {
                 .build();
     }
 
-    public static List<SolvedHistory> from(Member user, List<Problem> problems, boolean isBefore, LocalDate createdDate, LocalDateTime createdTime) {
+    public static List<SolvedHistory> from(Member member, List<Problem> problems, boolean isBefore, DateService dateService) {
+        LocalDateTime createdTime = dateService.getDateTime();
+        LocalDate createdDate = createdTime.toLocalDate();
+
         return problems.stream()
-                .map(p -> SolvedHistory.from(user, p, isBefore, createdTime, createdDate))
+                .map(p -> SolvedHistory.from(member, p, isBefore, createdTime, createdDate))
                 .collect(Collectors.toList());
     }
 }
