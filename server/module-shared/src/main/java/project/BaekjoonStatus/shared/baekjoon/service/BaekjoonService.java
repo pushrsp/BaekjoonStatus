@@ -15,12 +15,11 @@ import java.util.stream.Collectors;
 public class BaekjoonService {
     public static final String BAEKJOON_URL = "https://www.acmicpc.net/user";
 
-    public List<Long> getProblemIdsByUsername (String username) {
+    public List<String> getProblemIdsByUsername (String username) {
         Connection conn = Jsoup.connect(BAEKJOON_URL + "/" + username);
         try {
             Elements elements = findElements(conn);
             return Arrays.stream(elements.get(0).text().split(" "))
-                    .map(Long::parseLong)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new IllegalArgumentException("해당 유저가 존재하지 않습니다.");
