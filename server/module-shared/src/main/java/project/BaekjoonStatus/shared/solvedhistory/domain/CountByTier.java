@@ -18,6 +18,13 @@ public class CountByTier {
         this.count = count;
     }
 
+    public static CountByTier from(String key, Long count) {
+        return CountByTier.builder()
+                .tier(key)
+                .count(count)
+                .build();
+    }
+
     public static Map<String, Long> toMap(List<CountByTier> groupByTiers) {
         return groupByTiers.stream()
                 .collect(Collectors.toMap(CountByTier::getTier, CountByTier::getCount, Long::sum));
