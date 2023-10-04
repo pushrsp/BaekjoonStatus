@@ -48,7 +48,7 @@ public class AuthController {
 
     @GetMapping("/baekjoon")
     public CommonResponse verifyBaekjoon(@Valid BaekjoonVerifyRequest request) {
-        List<Long> problemIds = authService.getByBaekjoonUsername(request.getUsername());
+        List<String> problemIds = authService.getByBaekjoonUsername(request.getUsername());
         String registerToken = authService.getRegisterToken(problemIds);
 
         createProblems(problemIds);
@@ -60,7 +60,7 @@ public class AuthController {
                 .build();
     }
 
-    private void createProblems(List<Long> problemIds) {
+    private void createProblems(List<String> problemIds) {
         LocalDateTime createdTime = dateService.getDateTime();
 
         int start = 0;

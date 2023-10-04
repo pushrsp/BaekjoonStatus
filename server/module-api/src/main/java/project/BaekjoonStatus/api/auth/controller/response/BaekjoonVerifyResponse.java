@@ -16,7 +16,7 @@ public class BaekjoonVerifyResponse {
         this.registerToken = registerToken;
     }
 
-    public static BaekjoonVerifyResponse from(List<Long> problems, String registerToken) {
+    public static BaekjoonVerifyResponse from(List<String> problems, String registerToken) {
         return BaekjoonVerifyResponse.builder()
                 .solvedCount(problems.size())
                 .registerToken(registerToken)
