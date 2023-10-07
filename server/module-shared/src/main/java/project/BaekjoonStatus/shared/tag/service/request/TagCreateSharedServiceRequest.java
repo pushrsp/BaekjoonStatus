@@ -3,6 +3,8 @@ package project.BaekjoonStatus.shared.tag.service.request;
 import lombok.Builder;
 import lombok.Getter;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
+import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
+import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcTag;
 import project.BaekjoonStatus.shared.tag.domain.Tag;
 
 import java.util.List;
@@ -23,6 +25,20 @@ public class TagCreateSharedServiceRequest {
         return TagCreateSharedServiceRequest.builder()
                 .tagName(tag.getTagName())
                 .problemId(tag.getProblem().getId())
+                .build();
+    }
+
+    public static List<TagCreateSharedServiceRequest> from(SolvedAcProblem solvedAcProblem) {
+        return solvedAcProblem.getTags()
+                .stream()
+                .map(t -> from(t, String.valueOf(solvedAcProblem.getProblemId())))
+                .collect(Collectors.toList());
+    }
+
+    public static TagCreateSharedServiceRequest from(SolvedAcTag solvedAcTag, String problemId) {
+        return TagCreateSharedServiceRequest.builder()
+                .tagName(solvedAcTag.getKey())
+                .problemId(problemId)
                 .build();
     }
 
