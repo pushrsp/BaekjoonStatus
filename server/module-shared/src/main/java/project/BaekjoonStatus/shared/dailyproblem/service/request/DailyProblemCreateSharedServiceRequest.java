@@ -20,6 +20,13 @@ public class DailyProblemCreateSharedServiceRequest {
         this.createdDate = createdDate;
     }
 
+    public static DailyProblemCreateSharedServiceRequest of(Problem problem, LocalDate createdDate) {
+        return DailyProblemCreateSharedServiceRequest.builder()
+                .problemId(problem.getId())
+                .createdDate(createdDate)
+                .build();
+    }
+
     public static List<DailyProblem> toDomainList(List<DailyProblemCreateSharedServiceRequest> requests) {
         return requests.stream()
                 .map(DailyProblemCreateSharedServiceRequest::toDomain)
