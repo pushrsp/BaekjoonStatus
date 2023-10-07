@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.util.StringUtils;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
+import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +32,15 @@ public class ProblemCreateSharedServiceRequest {
                 .level(problem.getLevel())
                 .title(problem.getTitle())
                 .createdTime(problem.getCreatedTime())
+                .build();
+    }
+
+    public static ProblemCreateSharedServiceRequest from(SolvedAcProblem solvedAcProblem, LocalDateTime createdTime) {
+        return ProblemCreateSharedServiceRequest.builder()
+                .id(String.valueOf(solvedAcProblem.getProblemId()))
+                .level(solvedAcProblem.getLevel().intValue())
+                .title(solvedAcProblem.getTitleKo())
+                .createdTime(createdTime)
                 .build();
     }
 
