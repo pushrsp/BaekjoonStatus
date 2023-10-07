@@ -26,6 +26,12 @@ public class ProblemCreateSharedServiceRequest {
         this.createdTime = createdTime;
     }
 
+    public static List<ProblemCreateSharedServiceRequest> from(List<Problem> problems) {
+        return problems.stream()
+                .map(ProblemCreateSharedServiceRequest::from)
+                .collect(Collectors.toList());
+    }
+
     public static ProblemCreateSharedServiceRequest from(Problem problem) {
         return ProblemCreateSharedServiceRequest.builder()
                 .id(problem.getId())

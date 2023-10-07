@@ -28,6 +28,12 @@ public class TagCreateSharedServiceRequest {
                 .build();
     }
 
+    public static List<TagCreateSharedServiceRequest> from(List<SolvedAcProblem> solvedAcProblems) {
+        return solvedAcProblems.stream()
+                .flatMap(sp -> from(sp).stream())
+                .collect(Collectors.toList());
+    }
+
     public static List<TagCreateSharedServiceRequest> from(SolvedAcProblem solvedAcProblem) {
         return solvedAcProblem.getTags()
                 .stream()
