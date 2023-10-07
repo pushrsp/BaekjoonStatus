@@ -14,16 +14,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import project.BaekjoonStatus.shared.common.service.DateService;
-import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
+import project.BaekjoonStatus.shared.dailyproblem.service.request.DailyProblemCreateSharedServiceRequest;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
+import project.BaekjoonStatus.shared.problem.service.request.ProblemCreateSharedServiceRequest;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
 import project.BaekjoonStatus.shared.tag.service.TagService;
 import org.springframework.batch.item.ItemReader;
+import project.BaekjoonStatus.shared.tag.service.request.TagCreateSharedServiceRequest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,8 +78,8 @@ public class SaveDailyProblemJob {
     private ItemWriter<Problem> dailyProblemItemWriter() {
         return problems -> {
             LocalDate now = dateService.getDate();
-            List<DailyProblem> dailyProblems = problems.stream()
-                    .map(p -> DailyProblem.of(p, now))
+            List<DailyProblemCreateSharedServiceRequest> dailyProblems = problems.stream()
+                    .map(p -> DailyProblemCreateSharedServiceRequest.of(p, now))
                     .collect(Collectors.toList());
 
             dailyProblemService.saveAll(dailyProblems);
@@ -84,9 +87,11 @@ public class SaveDailyProblemJob {
     }
 
     private Problem saveProblem(Long problemId) {
+        LocalDateTime createdTime = dateService.getDateTime();
+
         SolvedAcProblem solvedAcProblem = solvedAcService.findById(problemId);
-        Problem problem = problemService.saveAndFlush(solvedAcProblem.to());
-        tagService.saveAll(solvedAcProblem.toTagList(problem));
+        Problem problem = problemService.saveAndFlush(ProblemCreateSharedServiceRequest.from(solvedAcProblem, createdTime));
+        tagService.saveAll(TagCreateSharedServiceRequest.from(solvedAcProblem));
 
         return problem;
     }
