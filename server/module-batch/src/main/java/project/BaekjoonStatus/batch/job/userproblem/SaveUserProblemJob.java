@@ -1,7 +1,6 @@
 package project.BaekjoonStatus.batch.job.userproblem;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -14,9 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import project.BaekjoonStatus.shared.baekjoon.service.BaekjoonService;
-import project.BaekjoonStatus.shared.common.utils.DateProvider;
+import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.problem.domain.Problem;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
+import project.BaekjoonStatus.shared.problem.service.request.ProblemCreateSharedServiceRequest;
 import project.BaekjoonStatus.shared.solvedac.domain.SolvedAcProblem;
 import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
@@ -25,6 +25,7 @@ import project.BaekjoonStatus.shared.tag.service.TagService;
 import project.BaekjoonStatus.shared.member.domain.Member;
 import project.BaekjoonStatus.shared.member.service.MemberService;
 import project.BaekjoonStatus.shared.common.template.ListDividerTemplate;
+import project.BaekjoonStatus.shared.tag.service.request.TagCreateSharedServiceRequest;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,11 +33,11 @@ import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
-@Slf4j
 public class SaveUserProblemJob {
     private static final int CHUNK_SIZE = 5;
     private static final int OFFSET = 100;
-    private static final LocalDateTime CREATED_TIME = DateProvider.getDateTime();
+
+    private final DateService dateService;
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -70,29 +71,31 @@ public class SaveUserProblemJob {
 
     private ItemProcessor<Member, List<SolvedHistory>> userProblemItemProcessor() {
         return member -> {
-            List<Long> newIds = findNewIds(member);
+            List<String> newIds = findNewIds(member);
             if(newIds.isEmpty()) {
                 return null;
             }
 
             List<Problem> problems = new ArrayList<>();
-            ListDividerTemplate<Long> listDivider = new ListDividerTemplate<>(OFFSET, newIds);
+            ListDividerTemplate<String> listDivider = new ListDividerTemplate<>(OFFSET, newIds);
 
             listDivider.execute((List<String> ids) -> {
                 List<String> notSavedIds = problemService.findAllByNotExistedIds(ids);
                 if(!notSavedIds.isEmpty()) {
-                    List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
-                    List<Problem> newProblems = SolvedAcProblem.toProblemList(solvedAcProblems, CREATED_TIME);
+                    LocalDateTime createdTime = dateService.getDateTime();
 
-                    problemService.saveAll(newProblems);
-                    tagService.saveAll(SolvedAcProblem.toTagList(solvedAcProblems, CREATED_TIME));
+                    List<SolvedAcProblem> solvedAcProblems = solvedAcService.findByIds(notSavedIds);
+                    List<Problem> newProblems = SolvedAcProblem.toProblemList(solvedAcProblems, createdTime);
+
+                    problemService.saveAll(ProblemCreateSharedServiceRequest.from(newProblems));
+                    tagService.saveAll(TagCreateSharedServiceRequest.from(solvedAcProblems));
                 }
 
                 problems.addAll(problemService.findAllByIdsIn(ids));
                 return null;
             });
 
-            return SolvedHistory.from(member, problems, false);
+            return SolvedHistory.from(member, problems, false, dateService);
         };
     }
 
@@ -102,11 +105,11 @@ public class SaveUserProblemJob {
         };
     }
 
-    private List<Long> findNewIds(Member user) {
-        List<Long> newHistories = baekjoonService.getProblemIdsByUsername (user.getBaekjoonUsername());
-        List<Long> oldHistories = solvedHistoryService.findAllByMemberId(user.getId())
+    private List<String> findNewIds(Member user) {
+        List<String> newHistories = baekjoonService.getProblemIdsByUsername (user.getBaekjoonUsername());
+        List<String> oldHistories = solvedHistoryService.findAllByMemberId(user.getId())
                 .stream()
-                .map(sh -> Long.parseLong(sh.getId()))
+                .map(SolvedHistory::getId)
                 .collect(Collectors.toList());
 
         return newHistories.stream()
