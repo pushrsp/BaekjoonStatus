@@ -4,7 +4,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
-
 repositories {
     mavenCentral()
 }
@@ -20,6 +19,22 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java-library'
+    apply plugin: 'jacoco'
+
+    jacoco {
+        toolVersion = "0.8.9"
+    }
+
+    jacocoTestReport {
+        reports {
+            html.required.set(true)
+            xml.required.set(false)
+            csv.required.set(false)
+
+            html.destination file("$buildDir/jacocoHtml")
+            xml.destination file("$buildDir/jacoco.xml")
+        }
+    }
 
     configurations {
         compileOnly {
