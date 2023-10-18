@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 class MemberTest {
     @DisplayName("아이디 또는 비밀번호가 잘못되었는지 확인할 수 있다.")
     @ParameterizedTest
-    @MethodSource("providerUsernameAndPassword")
+    @MethodSource("provideUsernameAndPassword")
     public void can_detect_username_or_password_is_invalid(String username, String password, String givenUsername, boolean passwordCheck, String expected) throws Exception {
         //given
         Member member = Member.builder()
@@ -41,7 +41,7 @@ class MemberTest {
         assertThat(illegalArgumentException.getMessage()).isEqualTo(expected);
     }
 
-    private static Stream<Arguments> providerUsernameAndPassword() {
+    private static Stream<Arguments> provideUsernameAndPassword() {
         return Stream.of(
                 Arguments.of("test", "test", "invalid", true, "아이디 또는 비밀번호가 일치하지 않습니다."),
                 Arguments.of("test", "test", "test", false, "아이디 또는 비밀번호가 일치하지 않습니다."),

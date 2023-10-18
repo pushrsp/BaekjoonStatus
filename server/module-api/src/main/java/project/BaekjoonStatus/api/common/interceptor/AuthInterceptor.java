@@ -17,7 +17,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         if(request.getMethod().equals("OPTIONS"))
             return true;
 
-        String token = tokenService.extract(request);
+        String token = tokenService.extract(request.getHeader("Authorization"));
         String userId = tokenService.verify(token, tokenSecret);
 
         return !userId.isEmpty();

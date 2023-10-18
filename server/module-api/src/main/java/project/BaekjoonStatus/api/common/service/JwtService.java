@@ -26,8 +26,7 @@ public class JwtService implements TokenService {
     }
 
     @Override
-    public String extract(HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
+    public String extract(String authorization) {
         if(!StringUtils.hasText(authorization)) {
             throw new IllegalArgumentException("접근할 수 없는 페이지 입니다.");
         }
