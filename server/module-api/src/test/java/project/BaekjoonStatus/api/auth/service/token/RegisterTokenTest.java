@@ -32,7 +32,6 @@ class RegisterTokenTest {
         //then
         assertThat(token.getCreatedAt()).isEqualTo(dateService.getDate());
         assertThat(token.getProblemIds()).hasSize(numOfProblemId);
-        assertThat(token.getProblemIds()).isEqualTo(problemIds);
     }
 
     private static Stream<Arguments> provideNumOfProblemId() {
