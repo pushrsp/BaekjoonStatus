@@ -1,7 +1,7 @@
 # BaekjoonStatus
 
 ## 서버 인프라 구조
-![INFRA](https://github.com/pushrsp/BaekjoonStatus/assets/58874665/f479c519-bcfe-45b1-9902-7bd130e61e02)
+![INFRA](https://github.com/pushrsp/BaekjoonStatus/assets/58874665/5897a033-ea2f-4563-9034-7d4c64e34ac9)
 
 ## CD 인프라 구조
 ![CICD](https://user-images.githubusercontent.com/58874665/232942166-b48fdc44-3bb9-4014-8221-22b581a15d11.png)
