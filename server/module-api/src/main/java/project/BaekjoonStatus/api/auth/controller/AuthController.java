@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.auth.controller.request.BaekjoonVerifyRequest;
-import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
-import project.BaekjoonStatus.api.auth.controller.request.UserCreateRequest;
+import project.BaekjoonStatus.api.auth.controller.request.MemberCreateRequest;
+import project.BaekjoonStatus.api.auth.controller.request.MemberLoginRequest;
 import project.BaekjoonStatus.api.auth.controller.response.UserLoginResponse;
 import project.BaekjoonStatus.api.auth.controller.response.BaekjoonVerifyResponse;
 import project.BaekjoonStatus.api.auth.controller.response.MyProfileResponse;
@@ -71,7 +71,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public CommonResponse signup(@RequestBody @Valid UserCreateRequest request) {
+    public CommonResponse signup(@RequestBody @Valid MemberCreateRequest request) {
         authService.verifyRegisterToken(request.getRegisterToken());
 
         Member user = authService.createUser(request.toServiceRequest(dateService.getDateTime()));
@@ -92,7 +92,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public CommonResponse login(@RequestBody @Valid UserLoginRequest request) {
+    public CommonResponse login(@RequestBody @Valid MemberLoginRequest request) {
         Member user = authService.login(request.toServiceRequest());
 
         // TODO: 토큰 인터페이스 분리
