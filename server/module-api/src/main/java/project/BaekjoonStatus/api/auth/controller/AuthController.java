@@ -42,7 +42,7 @@ public class AuthController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(MyProfileResponse.from(authService.getById(userId)))
+                .data(MyProfileResponse.from(authService.findById(userId)))
                 .build();
     }
 
