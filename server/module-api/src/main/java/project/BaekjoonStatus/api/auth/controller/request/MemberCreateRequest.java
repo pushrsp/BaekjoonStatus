@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class UserCreateRequest {
+public class MemberCreateRequest {
     @NotBlank(message = "토큰이 존재하지 않습니다.")
     private String registerToken;
 
@@ -24,7 +24,7 @@ public class UserCreateRequest {
     private String password;
 
     @Builder
-    private UserCreateRequest(String registerToken, String username, String baekjoonUsername, String password) {
+    private MemberCreateRequest(String registerToken, String username, String baekjoonUsername, String password) {
         this.registerToken = registerToken;
         this.username = username;
         this.baekjoonUsername = baekjoonUsername;

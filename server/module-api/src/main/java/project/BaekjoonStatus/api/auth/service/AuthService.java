@@ -20,7 +20,6 @@ import project.BaekjoonStatus.shared.solvedac.service.SolvedAcService;
 import project.BaekjoonStatus.shared.problem.service.ProblemService;
 import project.BaekjoonStatus.shared.solvedhistory.domain.SolvedHistory;
 import project.BaekjoonStatus.shared.solvedhistory.service.SolvedHistoryService;
-import project.BaekjoonStatus.shared.tag.domain.Tag;
 import project.BaekjoonStatus.shared.tag.service.TagService;
 import project.BaekjoonStatus.shared.member.domain.Member;
 import project.BaekjoonStatus.shared.member.service.MemberService;
@@ -50,7 +49,7 @@ public class AuthService {
     private final PasswordService passwordService;
     private final DateService dateService;
 
-    public Member getById(String memberId) {
+    public Member findById(String memberId) {
         return memberService.findById(memberId)
                 .orElseThrow(() -> new MyException(CodeEnum.MY_SERVER_LOGIN_BAD_REQUEST));
     }

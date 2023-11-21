@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import project.BaekjoonStatus.api.auth.controller.request.BaekjoonVerifyRequest;
-import project.BaekjoonStatus.api.auth.controller.request.UserLoginRequest;
-import project.BaekjoonStatus.api.auth.controller.request.UserCreateRequest;
-import project.BaekjoonStatus.api.auth.controller.response.UserLoginResponse;
+import project.BaekjoonStatus.api.auth.controller.request.MemberCreateRequest;
+import project.BaekjoonStatus.api.auth.controller.request.MemberLoginRequest;
+import project.BaekjoonStatus.api.auth.controller.response.MemberLoginResponse;
 import project.BaekjoonStatus.api.auth.controller.response.BaekjoonVerifyResponse;
 import project.BaekjoonStatus.api.auth.controller.response.MyProfileResponse;
 import project.BaekjoonStatus.api.common.argumentresolver.Auth;
@@ -42,7 +42,7 @@ public class AuthController {
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(MyProfileResponse.from(authService.getById(userId)))
+                .data(MyProfileResponse.from(authService.findById(userId)))
                 .build();
     }
 
@@ -71,7 +71,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public CommonResponse signup(@RequestBody @Valid UserCreateRequest request) {
+    public CommonResponse signup(@RequestBody @Valid MemberCreateRequest request) {
         authService.verifyRegisterToken(request.getRegisterToken());
 
         Member user = authService.createUser(request.toServiceRequest(dateService.getDateTime()));
@@ -92,14 +92,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public CommonResponse login(@RequestBody @Valid UserLoginRequest request) {
+    public CommonResponse login(@RequestBody @Valid MemberLoginRequest request) {
         Member user = authService.login(request.toServiceRequest());
 
         // TODO: 토큰 인터페이스 분리
         return CommonResponse.builder()
                 .code(CodeEnum.SUCCESS.getCode())
                 .message(CodeEnum.SUCCESS.getMessage())
-                .data(UserLoginResponse.from(user, tokenService.generate(user.getId().toString(), tokenSecret, EXPIRE_TIME)))
+                .data(MemberLoginResponse.from(user, tokenService.generate(user.getId().toString(), tokenSecret, EXPIRE_TIME)))
                 .build();
     }
 }

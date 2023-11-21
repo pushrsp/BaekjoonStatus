@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor
-public class UserLoginRequest {
+public class MemberLoginRequest {
     @NotBlank(message = "아이디를 입력해주세요.")
     private String username;
 
@@ -17,7 +17,7 @@ public class UserLoginRequest {
     private String password;
 
     @Builder
-    private UserLoginRequest(String username, String password) {
+    private MemberLoginRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }
