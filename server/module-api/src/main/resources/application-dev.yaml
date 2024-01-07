@@ -4,7 +4,7 @@ token:
 
 database:
   date-format: DATE_FORMAT({0}, {1})
-  year-format: %Y
+  year-format: Y
 
 spring:
   redis:

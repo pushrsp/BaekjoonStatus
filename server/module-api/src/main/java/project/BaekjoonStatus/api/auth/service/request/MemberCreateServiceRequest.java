@@ -12,11 +12,11 @@ import java.util.regex.Pattern;
 public class MemberCreateServiceRequest {
     private static final String REGEX = "^[a-z0-9]+$";
 
-    private String username;
-    private String baekjoonUsername;
-    private String password;
-    private LocalDateTime createdTime;
-    private LocalDateTime modifiedTime;
+    private final String username;
+    private final String baekjoonUsername;
+    private final String password;
+    private final LocalDateTime createdTime;
+    private final LocalDateTime modifiedTime;
 
     @Builder
     private MemberCreateServiceRequest(String username, String baekjoonUsername, String password, LocalDateTime createdTime, LocalDateTime modifiedTime) {

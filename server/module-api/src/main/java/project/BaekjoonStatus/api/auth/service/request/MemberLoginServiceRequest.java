@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class MemberLoginServiceRequest {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
     @Builder
     private MemberLoginServiceRequest(String username, String password) {
