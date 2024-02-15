@@ -12,7 +12,7 @@ bootJar.enabled = false
 
 subprojects {
     group = 'project.BaekjoonStatus'
-    version = '0.0.1-SNAPSHOT'
+    version = '1.0.2'
     sourceCompatibility = '11'
 
     apply plugin: 'java'
