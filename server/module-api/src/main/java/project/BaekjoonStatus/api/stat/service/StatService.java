@@ -34,9 +34,9 @@ public class StatService {
         return dailyProblemService.findAllByCreatedDate(dateService);
     }
 
-    @RedisCacheable(key = "getSolvedCountGroupByDate", paramNames = {"userId"})
-    public List<CountByDate> findSolvedCountGroupByDate(String userId, String year) {
-        return solvedHistoryService.findSolvedCountGroupByDate(userId, year);
+    @RedisCacheable(key = "getSolvedCountGroupByDate", paramNames = {"memberId"})
+    public List<CountByDate> findSolvedCountGroupByDate(String memberId, String year) {
+        return solvedHistoryService.findSolvedCountGroupByDate(memberId, year);
     }
 
     @RedisCacheable(key = "getSolvedCountGroupByLevel", paramNames = {"memberId"})
@@ -48,14 +48,14 @@ public class StatService {
                 .collect(Collectors.toList());
     }
 
-    @RedisCacheable(key = "getSolvedCountGroupByTag", paramNames = {"userId"})
-    public List<GroupByTag> findSolvedCountGroupByTag(String userId) {
-        return solvedHistoryService.findSolvedCountGroupByTag(userId);
+    @RedisCacheable(key = "getSolvedCountGroupByTag", paramNames = {"memberId"})
+    public List<GroupByTag> findSolvedCountGroupByTag(String memberId) {
+        return solvedHistoryService.findSolvedCountGroupByTag(memberId);
     }
 
-    @RedisCacheable(key = "getSolvedHistoriesByUserId", paramNames = {"userId", "offset"})
-    public List<SolvedHistoryByMemberId> findSolvedHistoriesByUserId(String userId, int offset) {
-        List<SolvedHistoryByMemberId> histories = solvedHistoryService.findAllByMemberId(userId, offset * PAGE_SIZE, PAGE_SIZE + 1);
+    @RedisCacheable(key = "getSolvedHistoriesByUserId", paramNames = {"memberId", "offset"})
+    public List<SolvedHistoryByMemberId> findSolvedHistoriesByUserId(String memberId, int offset) {
+        List<SolvedHistoryByMemberId> histories = solvedHistoryService.findAllByMemberId(memberId, offset * PAGE_SIZE, PAGE_SIZE + 1);
         Map<String, List<Tag>> map = Tag.toMap(tagService.findAllByProblemIdsIn(histories.stream()
                                                                                     .map(SolvedHistoryByMemberId::getProblemId)
                                                                                     .collect(Collectors.toList())));
