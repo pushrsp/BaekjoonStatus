@@ -5,9 +5,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'net.sf.ehcache:ehcache'
 
-    //redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
     //retry
     implementation 'org.springframework.retry:spring-retry'
 
