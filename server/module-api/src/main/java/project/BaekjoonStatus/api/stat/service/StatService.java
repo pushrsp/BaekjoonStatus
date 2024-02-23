@@ -2,7 +2,6 @@ package project.BaekjoonStatus.api.stat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import project.BaekjoonStatus.api.stat.service.annotation.RedisCacheable;
 import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
 import project.BaekjoonStatus.shared.dailyproblem.service.DailyProblemService;
@@ -29,17 +28,17 @@ public class StatService {
 
     private final DateService dateService;
 
-    @RedisCacheable(key = "getTodayProblems")
+    /* key: 필요 없음 */
     public List<DailyProblem> findTodayProblems() {
         return dailyProblemService.findAllByCreatedDate(dateService);
     }
 
-    @RedisCacheable(key = "getSolvedCountGroupByDate", paramNames = {"memberId"})
+    /* key: memberId */
     public List<CountByDate> findSolvedCountGroupByDate(String memberId, String year) {
         return solvedHistoryService.findSolvedCountGroupByDate(memberId, year);
     }
 
-    @RedisCacheable(key = "getSolvedCountGroupByLevel", paramNames = {"memberId"})
+    /* key: memberId */
     public List<CountByTier> findSolvedCountGroupByLevel(String memberId) {
         return CountByTier.toMap(solvedHistoryService.findSolvedCountGroupByLevel(memberId))
                 .entrySet()
@@ -48,12 +47,12 @@ public class StatService {
                 .collect(Collectors.toList());
     }
 
-    @RedisCacheable(key = "getSolvedCountGroupByTag", paramNames = {"memberId"})
+    /* key: memberId */
     public List<GroupByTag> findSolvedCountGroupByTag(String memberId) {
         return solvedHistoryService.findSolvedCountGroupByTag(memberId);
     }
 
-    @RedisCacheable(key = "getSolvedHistoriesByUserId", paramNames = {"memberId", "offset"})
+    /* key: memberId, offset */
     public List<SolvedHistoryByMemberId> findSolvedHistoriesByUserId(String memberId, int offset) {
         List<SolvedHistoryByMemberId> histories = solvedHistoryService.findAllByMemberId(memberId, offset * PAGE_SIZE, PAGE_SIZE + 1);
         Map<String, List<Tag>> map = Tag.toMap(tagService.findAllByProblemIdsIn(histories.stream()
