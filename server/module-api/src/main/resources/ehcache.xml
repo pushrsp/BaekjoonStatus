@@ -3,60 +3,60 @@
 
     <cache
             name="StatService.findTodayProblems"
-            maxElementsInMemory="10000"
+            maxElementsInMemory="50"
             maxElementsOnDisk="0"
             eternal="false"
             statistics="false"
-            timeToIdleSeconds="10"
-            timeToLiveSeconds="10"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
             overflowToDisk="false"
             diskPersistent="false"
             memoryStoreEvictionPolicy="LRU"/>
 
     <cache
             name="StatService.findSolvedCountGroupByDate"
-            maxElementsInMemory="10000"
+            maxElementsInMemory="50"
             maxElementsOnDisk="0"
             eternal="false"
             statistics="false"
-            timeToIdleSeconds="10"
-            timeToLiveSeconds="10"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
             overflowToDisk="false"
             diskPersistent="false"
             memoryStoreEvictionPolicy="LRU"/>
 
     <cache
             name="StatService.findSolvedCountGroupByLevel"
-            maxElementsInMemory="10000"
+            maxElementsInMemory="50"
             maxElementsOnDisk="0"
             eternal="false"
             statistics="false"
-            timeToIdleSeconds="10"
-            timeToLiveSeconds="10"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
             overflowToDisk="false"
             diskPersistent="false"
             memoryStoreEvictionPolicy="LRU"/>
 
     <cache
             name="StatService.findSolvedCountGroupByTag"
-            maxElementsInMemory="10000"
+            maxElementsInMemory="50"
             maxElementsOnDisk="0"
             eternal="false"
             statistics="false"
-            timeToIdleSeconds="10"
-            timeToLiveSeconds="10"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
             overflowToDisk="false"
             diskPersistent="false"
             memoryStoreEvictionPolicy="LRU"/>
 
     <cache
             name="StatService.findSolvedHistoriesByUserId"
-            maxElementsInMemory="10000"
+            maxElementsInMemory="50"
             maxElementsOnDisk="0"
             eternal="false"
             statistics="false"
-            timeToIdleSeconds="10"
-            timeToLiveSeconds="10"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="3600"
             overflowToDisk="false"
             diskPersistent="false"
             memoryStoreEvictionPolicy="LRU"/>
