@@ -53,7 +53,7 @@ public class StatService {
         return solvedHistoryService.findSolvedCountGroupByTag(memberId);
     }
 
-    /* key: memberId, offset */
+    @Cacheable(value = "StatService.findSolvedHistoriesByUserId", key = "#memberId + '-' + #offset", condition = "#offset <= 3")
     public List<SolvedHistoryByMemberId> findSolvedHistoriesByUserId(String memberId, int offset) {
         List<SolvedHistoryByMemberId> histories = solvedHistoryService.findAllByMemberId(memberId, offset * PAGE_SIZE, PAGE_SIZE + 1);
         Map<String, List<Tag>> map = Tag.toMap(tagService.findAllByProblemIdsIn(histories.stream()
