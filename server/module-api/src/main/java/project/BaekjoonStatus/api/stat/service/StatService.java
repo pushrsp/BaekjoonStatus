@@ -39,7 +39,7 @@ public class StatService {
         return solvedHistoryService.findSolvedCountGroupByDate(memberId, year);
     }
 
-    /* key: memberId */
+    @Cacheable(value = "StatService.findSolvedCountGroupByLevel", key = "#memberId")
     public List<CountByTier> findSolvedCountGroupByLevel(String memberId) {
         return CountByTier.toMap(solvedHistoryService.findSolvedCountGroupByLevel(memberId))
                 .entrySet()
