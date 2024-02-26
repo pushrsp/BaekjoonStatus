@@ -28,13 +28,13 @@ public class StatService {
     private final TagService tagService;
 
     private final DateService dateService;
-    
+
     @Cacheable(value = "StatService.findTodayProblems")
     public List<DailyProblem> findTodayProblems() {
         return dailyProblemService.findAllByCreatedDate(dateService);
     }
 
-    /* key: memberId */
+    @Cacheable(value = "StatService.findSolvedCountGroupByDate", key = "#memberId")
     public List<CountByDate> findSolvedCountGroupByDate(String memberId, String year) {
         return solvedHistoryService.findSolvedCountGroupByDate(memberId, year);
     }
