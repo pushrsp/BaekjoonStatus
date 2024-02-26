@@ -1,6 +1,7 @@
 package project.BaekjoonStatus.api.stat.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import project.BaekjoonStatus.shared.common.service.DateService;
 import project.BaekjoonStatus.shared.dailyproblem.domain.DailyProblem;
@@ -27,8 +28,8 @@ public class StatService {
     private final TagService tagService;
 
     private final DateService dateService;
-
-    /* key: 필요 없음 */
+    
+    @Cacheable(value = "StatService.findTodayProblems")
     public List<DailyProblem> findTodayProblems() {
         return dailyProblemService.findAllByCreatedDate(dateService);
     }
