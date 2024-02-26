@@ -48,7 +48,7 @@ public class StatService {
                 .collect(Collectors.toList());
     }
 
-    /* key: memberId */
+    @Cacheable(value = "StatService.findSolvedCountGroupByTag", key = "#memberId")
     public List<GroupByTag> findSolvedCountGroupByTag(String memberId) {
         return solvedHistoryService.findSolvedCountGroupByTag(memberId);
     }
