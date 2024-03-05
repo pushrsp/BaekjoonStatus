@@ -9,12 +9,17 @@
 ## 데이터베이스 관계도
 ![ERD](https://user-images.githubusercontent.com/58874665/227873361-ebeffda5-4dd3-434c-8c7a-165778678468.png)
 
-## Flow
-### 회원가입
-![회원가입](https://user-images.githubusercontent.com/58874665/227873646-94cb849c-156b-4f8d-ae31-f64058f7a1bf.png)
+## 서버 제공 API
 
-### 통계 쿼리
-![통계 쿼리](https://user-images.githubusercontent.com/58874665/227873771-29039fa4-dbfd-4985-93de-93022f0397ff.png)
+* /auth/signup 회원가입 [POST]
+* /auth/baekjoon?username 백준 아이디 체크 [GET]
+* /auth/login 로그인 [POST]
+* /auth/me 자동 로그인 [GET]
+* /stat/daily 오늘의 문제 [GET]
+* /stat/date 일별 solved 개수 [GET]
+* /stat/tag 카테고리 별 solved 개수 [GET]
+* /stat/level 레벨 별 solved 개수 [GET]
+* /stat/solved-histories 상위 티어 별 solved list [GET]
 
 ## 외부 API
 * 크롤링
@@ -50,16 +55,3 @@
 ### 오늘의 문제
 ![오늘의 문제 다크모드](https://user-images.githubusercontent.com/58874665/227873099-4475bbeb-dcad-4e3c-836d-5b3265b94512.png)
 ![오늘의 문제 라이트모드](https://user-images.githubusercontent.com/58874665/227872908-7dada1d7-136b-4799-bc69-3f8780ec0e89.png)
-
-
-## 서버 제공 API
-
-* /auth/signup 회원가입 [POST]
-* /auth/baekjoon?username 백준 아이디 체크 [GET]
-* /auth/login 로그인 [POST]
-* /auth/me 자동 로그인 [GET]
-* /stat/daily 오늘의 문제 [GET]
-* /stat/date 일별 solved 개수 [GET]
-* /stat/tag 카테고리 별 solved 개수 [GET]
-* /stat/level 티어 별 solved 개수 [GET]
-* /stat/solved-histories 상위 티어 별 solved list [GET]
